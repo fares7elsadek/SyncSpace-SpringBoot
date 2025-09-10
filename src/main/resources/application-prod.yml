@@ -1,0 +1,35 @@
+spring:
+
+  datasource:
+    url: jdbc:postgresql://localhost:5433/syncspace
+    username: user
+    password: password
+
+  jpa:
+    hibernate:
+      ddl-auto: none
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: true
+    database: postgresql
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+
+  cache:
+    type: redis
+    redis:
+      key-prefix: "syncspace:prod:"
+      time-to-live: 3600000
+
+  data:
+    redis:
+      host: localhost
+      port: 6379
+
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: ${KEYCLOAK_ISSUER_URI:http://localhost:9090/realms/syncspace}
+          jwk-set-uri: ${KEYCLOAK_JWK_SET_URI:http://localhost:9090/realms/syncspace/protocol/openid-connect/certs}
+

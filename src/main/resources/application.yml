@@ -1,0 +1,12 @@
+spring:
+  profiles:
+    active: dev
+  servlet:
+    multipart:
+      max-file-size: 50MB
+  modulith:
+    detection-strategy: explicitly-annotated
+
+server:
+  servlet:
+    context-path: /api/v1
