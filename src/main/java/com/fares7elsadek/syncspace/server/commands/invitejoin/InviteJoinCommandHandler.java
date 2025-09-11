@@ -1,0 +1,78 @@
+package com.fares7elsadek.syncspace.server.commands.invitejoin;
+
+import com.fares7elsadek.syncspace.server.model.ServerMember;
+import com.fares7elsadek.syncspace.server.model.ServerMemberId;
+import com.fares7elsadek.syncspace.server.repository.ServerInvitesRepository;
+import com.fares7elsadek.syncspace.server.repository.ServerMemberRepository;
+import com.fares7elsadek.syncspace.server.repository.ServerRepository;
+import com.fares7elsadek.syncspace.server.shared.InviteJoinEvent;
+import com.fares7elsadek.syncspace.server.shared.ServerRoles;
+import com.fares7elsadek.syncspace.shared.api.ApiResponse;
+import com.fares7elsadek.syncspace.shared.cqrs.CommandHandler;
+import com.fares7elsadek.syncspace.shared.events.SpringEventPublisher;
+import com.fares7elsadek.syncspace.shared.exceptions.ServerExceptions;
+import com.fares7elsadek.syncspace.user.api.UserValidationService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
+
+@Component
+@RequiredArgsConstructor
+public class InviteJoinCommandHandler implements
+        CommandHandler<InviteJoinCommand, ApiResponse<String>> {
+
+    private final UserValidationService userValidationService;
+    private final ServerRepository serverRepository;
+    private final ServerMemberRepository serverMemberRepository;
+    private final SpringEventPublisher springEventPublisher;
+    private final ServerInvitesRepository serverInvitesRepository;
+    @Transactional
+    @Override
+    public ApiResponse<String> handle(InviteJoinCommand command) {
+        var currentUser = userValidationService.getCurrentUserInfo();
+
+        var invite = serverInvitesRepository.findByCode(command.code())
+                .orElseThrow(() -> new ServerExceptions(
+                        String.format("Invite code not found for code %s", command.code()))
+                );
+
+        if (invite.isExpired()) {
+            throw new ServerExceptions(String.format("Invite code %s has expired", command.code()));
+        }
+
+        if (invite.getUses() >= invite.getMaxUses()) {
+            throw new ServerExceptions(String.format("Invite code %s has reached its max uses", command.code()));
+        }
+
+        var server = invite.getServer();
+
+        serverMemberRepository.findById(new ServerMemberId(server.getId(), currentUser.getId()))
+                .ifPresent(member -> {
+                    throw new ServerExceptions(
+                            String.format("You are already joined to this server (%s)", server.getId())
+                    );
+                });
+
+        // increment uses, not maxUses
+        invite.setUses(invite.getUses() + 1);
+        serverInvitesRepository.save(invite);
+
+        var newServerMember = ServerMember.builder()
+                .server(server)
+                .user(currentUser)
+                .role(userValidationService.getRoleByName(ServerRoles.USER.name()))
+                .build();
+
+        serverMemberRepository.save(newServerMember);
+
+        springEventPublisher.publish(new InviteJoinEvent(
+                currentUser.getId(), server.getId(), newServerMember.getId()
+        ));
+
+        return ApiResponse.success(
+                String.format("User joined the server (%s) successfully", server.getId()),
+                null
+        );
+    }
+
+}

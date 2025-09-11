@@ -1,4 +1,4 @@
-package com.fares7elsadek.syncspace.friendship.commands.sendfriendrequest;
+package com.fares7elsadek.syncspace.friendship.commands.sendrequest;
 
 import com.fares7elsadek.syncspace.friendship.enums.FriendShipStatus;
 import com.fares7elsadek.syncspace.friendship.model.Friendships;

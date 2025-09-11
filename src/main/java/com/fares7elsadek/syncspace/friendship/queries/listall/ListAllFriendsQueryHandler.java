@@ -1,4 +1,4 @@
-package com.fares7elsadek.syncspace.friendship.queries.listallpendingrequests;
+package com.fares7elsadek.syncspace.friendship.queries.listall;
 
 import com.fares7elsadek.syncspace.friendship.enums.FriendShipStatus;
 import com.fares7elsadek.syncspace.friendship.mapper.FriendshipMapper;
@@ -15,20 +15,20 @@ import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
-public class ListAllPendingRequestsQueryHandler
-        implements QueryHandler<ListAllPendingRequestsQuery, ApiResponse<List<FriendShipDto>>> {
+public class ListAllFriendsQueryHandler
+        implements QueryHandler<ListAllFriendsQuery, ApiResponse<List<FriendShipDto>>> {
 
     private final FriendshipRepository friendshipRepository;
     private final UserValidationService userValidationService;
     private final FriendshipMapper friendshipMapper;
     @Override
-    public ApiResponse<List<FriendShipDto>> handle(ListAllPendingRequestsQuery query) {
+    public ApiResponse<List<FriendShipDto>> handle(ListAllFriendsQuery query) {
         var userId = userValidationService.getCurrentUserInfo().getId();
-        var friendships = friendshipRepository.findFriendshipsByUserId(userId, FriendShipStatus.PENDING)
+        var friendships = friendshipRepository.findFriendshipsByUserId(userId, FriendShipStatus.ACCEPTED)
                 ;
 
         if (friendships.isEmpty()) {
-            return ApiResponse.success("No pending friendships found", List.of());
+            return ApiResponse.success("No friendships found", List.of());
         }
 
         List<FriendShipDto> dto =
@@ -39,6 +39,6 @@ public class ListAllPendingRequestsQueryHandler
                             return new  FriendShipDto(f.getId(),friendshipMapper.toFriendshipUserDto(user));
                         }).collect(Collectors.toList());
 
-        return ApiResponse.success("All pending friendships", dto);
+        return ApiResponse.success("All friendships", dto);
     }
 }

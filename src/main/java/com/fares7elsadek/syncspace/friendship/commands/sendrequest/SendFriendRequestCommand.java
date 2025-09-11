@@ -1,4 +1,4 @@
-package com.fares7elsadek.syncspace.friendship.commands.sendfriendrequest;
+package com.fares7elsadek.syncspace.friendship.commands.sendrequest;
 
 import com.fares7elsadek.syncspace.shared.cqrs.Command;
 import jakarta.validation.constraints.NotBlank;

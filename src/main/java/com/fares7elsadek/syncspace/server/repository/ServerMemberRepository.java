@@ -6,10 +6,14 @@ import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
 public interface ServerMemberRepository extends JpaRepository<ServerMember, ServerMemberId> {
     @EntityGraph(attributePaths = {"role"})
-    Optional<ServerMember> findByIdAndServerId(ServerMemberId serverMemberId);
+    Optional<ServerMember> findById(ServerMemberId serverMemberId);
+
+    @EntityGraph(attributePaths = {"user","role"})
+    List<ServerMember> findByIdServerId(String serverId);
 }

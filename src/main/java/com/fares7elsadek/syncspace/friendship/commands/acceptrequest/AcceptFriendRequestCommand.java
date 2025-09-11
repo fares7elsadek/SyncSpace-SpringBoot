@@ -1,10 +1,10 @@
-package com.fares7elsadek.syncspace.friendship.commands.rejectfriendrequest;
+package com.fares7elsadek.syncspace.friendship.commands.acceptrequest;
 
 import com.fares7elsadek.syncspace.shared.cqrs.Command;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 
-public record RejectFriendRequestCommand(
+public record AcceptFriendRequestCommand(
         @NotBlank(message = "Request ID cannot be blank")
         @Pattern(regexp = "^[0-9a-fA-F-]{36}$", message = "Request ID must be a valid UUID")
         String id

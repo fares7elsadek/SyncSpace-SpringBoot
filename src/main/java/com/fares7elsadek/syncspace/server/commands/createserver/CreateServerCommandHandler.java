@@ -32,7 +32,7 @@ public class CreateServerCommandHandler
 
         var server = serverRepository.save(createServerEntity(command));
         var user = userValidationService.getCurrentUserInfo();
-        var role = userValidationService.getRoleByName(ServerRoles.OWNER.toString());
+        var role = userValidationService.getRoleByName(ServerRoles.OWNER.name());
         var serverMember = createServerMemberEntity(server, user, role);
         serverMemberRepository.save(serverMember);
 

@@ -35,5 +35,7 @@ public class Server extends Auditable {
     private List<ServerMember> members = new ArrayList<>();
     @OneToMany(mappedBy = "server", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Channel> channels = new ArrayList<>();
+    @OneToMany(mappedBy = "server", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ServerInvites> serverInvites = new ArrayList<>();
 
 }

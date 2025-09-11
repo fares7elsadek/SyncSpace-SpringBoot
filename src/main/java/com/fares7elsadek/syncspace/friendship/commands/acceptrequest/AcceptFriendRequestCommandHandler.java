@@ -1,8 +1,8 @@
-package com.fares7elsadek.syncspace.friendship.commands.rejectfriendrequest;
+package com.fares7elsadek.syncspace.friendship.commands.acceptrequest;
 
 import com.fares7elsadek.syncspace.friendship.enums.FriendShipStatus;
 import com.fares7elsadek.syncspace.friendship.repository.FriendshipRepository;
-import com.fares7elsadek.syncspace.friendship.shared.RejectFriendRequestEvent;
+import com.fares7elsadek.syncspace.friendship.shared.AcceptFriendRequestEvent;
 import com.fares7elsadek.syncspace.shared.api.ApiResponse;
 import com.fares7elsadek.syncspace.shared.cqrs.CommandHandler;
 import com.fares7elsadek.syncspace.shared.events.SpringEventPublisher;
@@ -14,15 +14,16 @@ import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
-public class RejectFriendRequestCommandHandler
-        implements CommandHandler<RejectFriendRequestCommand, ApiResponse<String>> {
+public class AcceptFriendRequestCommandHandler
+        implements CommandHandler<AcceptFriendRequestCommand, ApiResponse<String>> {
 
     private final FriendshipRepository friendshipRepository;
     private final SpringEventPublisher springEventPublisher;
     private final UserValidationService userValidationService;
+
     @Transactional
     @Override
-    public ApiResponse<String> handle(RejectFriendRequestCommand command) {
+    public ApiResponse<String> handle(AcceptFriendRequestCommand command) {
 
         var request = friendshipRepository.findById(command.id()).orElseThrow(
                 () -> new FriendshipRequestException(String.format("Request with id %s not found", command.id()))
@@ -32,7 +33,7 @@ public class RejectFriendRequestCommandHandler
 
         if (!currentUserId.equals(request.getAddressee().getId())) {
             throw new FriendshipRequestException(
-                    String.format("User %s is not allowed to reject request %s", currentUserId, request.getId())
+                    String.format("User %s is not allowed to accept request %s", currentUserId, request.getId())
             );
         }
 
@@ -45,14 +46,14 @@ public class RejectFriendRequestCommandHandler
                     String.format("Request with id %s is already rejected", request.getId()));
         }
 
-        request.setFriendShipStatus(FriendShipStatus.REJECTED);
+        request.setFriendShipStatus(FriendShipStatus.ACCEPTED);
         friendshipRepository.save(request);
 
         springEventPublisher.publish(
-                new RejectFriendRequestEvent(currentUserId,request.getAddressee().getId())
+                new AcceptFriendRequestEvent(currentUserId,request.getAddressee().getId())
         );
 
         return ApiResponse
-                .success(String.format("Request with id %s has been rejected", request.getId()),null);
+                .success(String.format("Request with id %s has been accepted", request.getId()),null);
     }
 }

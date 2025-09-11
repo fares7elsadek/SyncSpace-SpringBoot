@@ -1,4 +1,4 @@
-package com.fares7elsadek.syncspace.friendship.queries.listallpendingrequests;
+package com.fares7elsadek.syncspace.friendship.queries.listpending;
 
 import com.fares7elsadek.syncspace.friendship.model.dtos.FriendShipDto;
 import com.fares7elsadek.syncspace.shared.api.ApiResponse;

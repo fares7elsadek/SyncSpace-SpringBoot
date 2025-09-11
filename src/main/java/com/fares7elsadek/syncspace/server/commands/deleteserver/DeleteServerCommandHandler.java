@@ -32,12 +32,12 @@ public class DeleteServerCommandHandler
         var user = userValidationService.getCurrentUserInfo();
 
         var serverMember = serverMemberRepository
-                .findByIdAndServerId(new ServerMemberId(server.getId(),user.getId()))
+                .findById(new ServerMemberId(server.getId(),user.getId()))
                 .orElseThrow(() -> new ServerExceptions(
                         String.format("User %s is not a member of server %s", user.getId(), server.getId())
                 ));
 
-        if(!serverMember.getRole().getName().equals(ServerRoles.OWNER))
+        if(!serverMember.getRole().getName().equals(ServerRoles.OWNER.name()))
             throw new ServerExceptions(String.format("You don't have access to delete this server", server.getId()));
 
         serverMemberRepository.delete(serverMember);
