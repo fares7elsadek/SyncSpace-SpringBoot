@@ -1,4 +1,4 @@
-package com.fares7elsadek.syncspace.server.Queries.getserver;
+package com.fares7elsadek.syncspace.server.queries.getserver;
 
 import com.fares7elsadek.syncspace.server.model.ServerMemberId;
 import com.fares7elsadek.syncspace.server.model.dtos.ServerDto;

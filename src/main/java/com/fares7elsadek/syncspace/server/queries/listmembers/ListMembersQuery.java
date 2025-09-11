@@ -1,4 +1,4 @@
-package com.fares7elsadek.syncspace.server.Queries.listmembers;
+package com.fares7elsadek.syncspace.server.queries.listmembers;
 
 import com.fares7elsadek.syncspace.server.model.dtos.ServerMemberDto;
 import com.fares7elsadek.syncspace.shared.api.ApiResponse;
