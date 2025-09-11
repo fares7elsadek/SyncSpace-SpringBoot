@@ -23,6 +23,8 @@ public class Roles {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
+
+    @Column(unique = true,nullable = false)
     private String name;
 
     @LastModifiedDate
@@ -35,5 +37,4 @@ public class Roles {
 
     @OneToMany(mappedBy = "role")
     private List<ServerMember> serverMembers = new ArrayList<>();
-
 }

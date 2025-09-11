@@ -17,11 +17,11 @@ public class ServerMember {
     private ServerMemberId id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @MapsId("serverId")  // maps the composite key part
+    @MapsId("serverId")
     private Server server;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @MapsId("userId")    // maps the composite key part
+    @MapsId("userId")
     private User user;
 
     private String nickname;

@@ -1,6 +1,7 @@
 package com.fares7elsadek.syncspace.shared.api;
 
 import com.fares7elsadek.syncspace.shared.exceptions.FriendshipRequestException;
+import com.fares7elsadek.syncspace.shared.exceptions.ServerExceptions;
 import com.fares7elsadek.syncspace.shared.exceptions.UserNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -21,6 +22,13 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(FriendshipRequestException.class)
     public ResponseEntity<ApiResponse<Object>> handleFriendShipRequest(FriendshipRequestException ex) {
         log.warn("Friendship request failed : {}", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(ApiResponse.error(ex.getMessage()));
+    }
+
+    @ExceptionHandler(ServerExceptions.class)
+    public ResponseEntity<ApiResponse<Object>> handleServerErrors(ServerExceptions ex) {
+        log.warn("Server request failed : {}", ex.getMessage());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(ApiResponse.error(ex.getMessage()));
     }

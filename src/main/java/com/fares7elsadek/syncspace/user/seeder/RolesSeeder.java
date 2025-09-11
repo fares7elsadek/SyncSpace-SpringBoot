@@ -1,6 +1,6 @@
 package com.fares7elsadek.syncspace.user.seeder;
 
-import com.fares7elsadek.syncspace.user.enums.ServerRoles;
+import com.fares7elsadek.syncspace.server.shared.ServerRoles;
 import com.fares7elsadek.syncspace.user.model.Roles;
 import com.fares7elsadek.syncspace.user.repository.RolesRepository;
 import lombok.RequiredArgsConstructor;
