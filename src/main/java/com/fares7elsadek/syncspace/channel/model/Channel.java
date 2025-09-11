@@ -28,6 +28,7 @@ public class Channel extends Auditable {
     private String name;
     private String description;
     private boolean isPrivate;
+    private boolean isGroup = false;
 
     @OneToMany(mappedBy = "channel", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ChannelMembers> members;
