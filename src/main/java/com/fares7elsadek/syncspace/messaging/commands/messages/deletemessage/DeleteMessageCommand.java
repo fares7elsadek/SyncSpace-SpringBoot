@@ -1,4 +1,10 @@
 package com.fares7elsadek.syncspace.messaging.commands.messages.deletemessage;
 
-public record DeleteMessageCommand() {
+import com.fares7elsadek.syncspace.shared.cqrs.Command;
+import jakarta.validation.constraints.NotBlank;
+
+public record DeleteMessageCommand(
+        @NotBlank(message = "Message ID is required")
+        String messageId
+) implements Command {
 }

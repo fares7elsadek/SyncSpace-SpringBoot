@@ -1,4 +1,9 @@
 package com.fares7elsadek.syncspace.messaging.shared;
 
-public class RemoveAttachmentEvent {
+import com.fares7elsadek.syncspace.shared.events.DomainEvent;
+import lombok.RequiredArgsConstructor;
+
+@RequiredArgsConstructor
+public class RemoveAttachmentEvent extends DomainEvent {
+    private final String attachmentId;
 }

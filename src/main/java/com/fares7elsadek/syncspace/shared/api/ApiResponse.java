@@ -19,7 +19,7 @@ public record ApiResponse<T>(
                 .build();
     }
 
-    public static <T> ApiResponse<T> error(String error) {
+    public static <T> ApiResponse<T> error(String error,T data) {
         return ApiResponse.<T>builder()
                 .success(false)
                 .error(error)
