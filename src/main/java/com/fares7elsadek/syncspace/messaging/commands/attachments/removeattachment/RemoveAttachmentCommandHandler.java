@@ -36,15 +36,6 @@ public class RemoveAttachmentCommandHandler
         attachmentRepository.delete(attachment);
         springEventPublisher.publish(new RemoveAttachmentEvent(command.attachmentId()));
 
-        // optional handled later by event listeners
-
-//        try {
-//            storageService.remove(attachment.getFileName());
-//
-//        } catch (Exception ex) {
-//            throw new RemoveFileException("Storage removal failed: " + ex.getMessage());
-//        }
-
         return ApiResponse.success("Attachment removed successfully", null);
     }
 

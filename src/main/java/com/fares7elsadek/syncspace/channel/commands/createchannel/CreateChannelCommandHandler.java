@@ -24,6 +24,7 @@ public class CreateChannelCommandHandler
     private final ChannelRepository channelRepository;
     private final ServerAccessService serverAccessService;
     private final SpringEventPublisher springEventPublisher;
+    private final String CHANNEL_PREFIX = "#";
     @Override
     @Transactional
     public ApiResponse<ChannelDto> handle(CreateChannelCommand command) {
@@ -38,7 +39,7 @@ public class CreateChannelCommandHandler
         }
 
         var channel = Channel.builder()
-                .name(command.name())
+                .name(CHANNEL_PREFIX + command.name())
                 .description(command.description())
                 .isPrivate(command.isPrivate())
                 .isGroup(true)
