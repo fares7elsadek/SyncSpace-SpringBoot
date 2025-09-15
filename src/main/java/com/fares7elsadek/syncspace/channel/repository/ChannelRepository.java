@@ -12,4 +12,7 @@ import java.util.List;
 public interface ChannelRepository extends JpaRepository<Channel,String> {
     @EntityGraph(attributePaths = {"members"})
     List<Channel> findByServer(Server server);
+
+    @EntityGraph(attributePaths = {"members"})
+    List<Channel> findByIsGroup(boolean isGroup);
 }

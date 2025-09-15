@@ -16,6 +16,10 @@ import lombok.experimental.SuperBuilder;
 @AllArgsConstructor
 @NoArgsConstructor
 @SuperBuilder
+@Table(name = "notifications",
+indexes = {
+        @Index(name = "idx_type_related_entity", columnList = "type, relatedEntityId")
+})
 public class Notifications extends Auditable {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -37,5 +41,4 @@ public class Notifications extends Auditable {
 
     @Column(nullable = false)
     private String relatedEntityId;
-
 }

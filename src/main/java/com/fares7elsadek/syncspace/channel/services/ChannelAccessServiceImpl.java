@@ -10,6 +10,8 @@ import com.fares7elsadek.syncspace.shared.exceptions.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+
 @Service
 @RequiredArgsConstructor
 public class ChannelAccessServiceImpl implements ChannelAccessService {
@@ -27,5 +29,11 @@ public class ChannelAccessServiceImpl implements ChannelAccessService {
         var id = new ChannelUserId(channelId, memberId);
         return channelMemberRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException(String.format("Member with id %s not found", memberId)));
+    }
+
+    @Override
+    public void updateLastUpdatedTime(Channel channel) {
+        channel.setUpdatedAt(LocalDateTime.now());
+        channelRepository.save(channel);
     }
 }

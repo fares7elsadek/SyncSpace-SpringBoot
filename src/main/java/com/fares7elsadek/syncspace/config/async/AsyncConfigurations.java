@@ -1,4 +1,4 @@
-package com.fares7elsadek.syncspace.config.Async;
+package com.fares7elsadek.syncspace.config.async;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

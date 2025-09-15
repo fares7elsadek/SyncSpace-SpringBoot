@@ -1,6 +1,7 @@
 package com.fares7elsadek.syncspace.messaging.commands.messages.sendmessage;
 
 import com.fares7elsadek.syncspace.channel.api.ChannelAccessService;
+import com.fares7elsadek.syncspace.channel.model.Channel;
 import com.fares7elsadek.syncspace.messaging.enums.MessageType;
 import com.fares7elsadek.syncspace.messaging.mapper.MessageMapper;
 import com.fares7elsadek.syncspace.messaging.model.Message;
@@ -55,8 +56,16 @@ public class SendMessageCommandHandler implements CommandHandler<SendMessageComm
             message.setAttachments(attachments);
         }
 
+        String recipientId = "";
+        if(!channel.isGroup()){
+            recipientId = getRecipientId(channel,sender.getId());
+        }
+
         var savedMessage = messageRepository.save(message);
-        springEventPublisher.publish(new SendMessageEvent(command.channelId(), savedMessage.getId()));
+        channelAccessService.updateLastUpdatedTime(channel);
+
+        springEventPublisher.publish(new SendMessageEvent(command.channelId()
+                , savedMessage.getId(),recipientId, channel.isGroup()));
 
         var dto = new MessageDto(
                 savedMessage.getId(),
@@ -81,5 +90,14 @@ public class SendMessageCommandHandler implements CommandHandler<SendMessageComm
             case "VIDEO" -> MessageType.VIDEO;
             default -> throw new IllegalArgumentException("Unsupported message type: " + messageType);
         };
+    }
+
+    private String getRecipientId(Channel channel, String senderId){
+        return channel.getMembers().stream()
+                .map((c) -> c.getId().getUserId())
+                .filter(id -> !id.equals(senderId))
+                .findFirst()
+                .orElseThrow(() -> new IllegalStateException("Private chat has no recipient"));
+
     }
 }

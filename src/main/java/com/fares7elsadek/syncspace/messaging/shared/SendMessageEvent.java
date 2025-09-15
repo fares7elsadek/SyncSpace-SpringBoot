@@ -9,4 +9,6 @@ import lombok.RequiredArgsConstructor;
 public class SendMessageEvent extends DomainEvent {
     private final String channelId;
     private final String messageId;
+    private final String recipientId;
+    private final boolean isGroup;
 }

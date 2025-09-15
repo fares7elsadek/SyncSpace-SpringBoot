@@ -5,9 +5,10 @@ import com.fares7elsadek.syncspace.messaging.commands.messages.sendmessage.SendM
 import com.fares7elsadek.syncspace.messaging.enums.MessageType;
 import com.fares7elsadek.syncspace.shared.cqrs.CommandBus;
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.event.TransactionPhase;
+import org.springframework.transaction.event.TransactionalEventListener;
 
 import java.util.List;
 
@@ -15,7 +16,8 @@ import java.util.List;
 @RequiredArgsConstructor
 public class MessageEventHandler {
     private final CommandBus commandBus;
-    @EventListener(GeneralChannelCreatedEvent.class)
+    @TransactionalEventListener(value = GeneralChannelCreatedEvent.class,
+            phase = TransactionPhase.AFTER_COMMIT)
     @Async("syncspace-executor")
     public void handleServerCreationEvent(GeneralChannelCreatedEvent generalChannelCreatedEvent) {
         var command = new SendMessageCommand(

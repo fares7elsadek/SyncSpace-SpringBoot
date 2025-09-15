@@ -1,8 +1,12 @@
 package com.fares7elsadek.syncspace.notification.enums;
 
 public enum NotificationType {
-    MESSAGE,
+    GROUP_MESSAGE,
+    NEW_SERVER,
+    DELETE_SERVER,
+    DIRECT_MESSAGE,
     FRIEND_REQUEST,
     SERVER_INVITE,
-    MENTION
+    MENTION,
+    FRIEND_ACCEPTED
 }

@@ -8,4 +8,7 @@ import lombok.RequiredArgsConstructor;
 @Getter
 public class DeleteMessageEvent extends DomainEvent {
     private final String messageId;
+    private final String channelId;
+    private final String recipientId;
+    private final boolean isGroup;
 }

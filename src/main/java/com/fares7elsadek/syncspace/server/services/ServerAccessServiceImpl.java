@@ -2,13 +2,17 @@ package com.fares7elsadek.syncspace.server.services;
 
 import com.fares7elsadek.syncspace.server.api.ServerAccessService;
 import com.fares7elsadek.syncspace.server.model.Server;
+import com.fares7elsadek.syncspace.server.model.ServerMember;
 import com.fares7elsadek.syncspace.server.model.ServerMemberId;
 import com.fares7elsadek.syncspace.server.repository.ServerMemberRepository;
 import com.fares7elsadek.syncspace.server.repository.ServerRepository;
 import com.fares7elsadek.syncspace.server.shared.ServerRoles;
 import com.fares7elsadek.syncspace.shared.exceptions.ServerExceptions;
+import com.fares7elsadek.syncspace.user.model.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -40,5 +44,12 @@ public class ServerAccessServiceImpl implements ServerAccessService {
         return serverRepository.findById(serverId).orElseThrow(
                 () -> new ServerExceptions(String.format("Server with id %s not found", serverId))
         );
+    }
+
+    @Override
+    public List<User> getServerMembers(String serverId) {
+        return serverMemberRepository.findByIdServerId(serverId)
+                .stream().map(ServerMember::getUser)
+                .toList();
     }
 }
