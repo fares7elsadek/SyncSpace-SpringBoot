@@ -9,7 +9,7 @@ import com.fares7elsadek.syncspace.shared.api.ApiResponse;
 import com.fares7elsadek.syncspace.shared.cqrs.CommandHandler;
 import com.fares7elsadek.syncspace.shared.events.SpringEventPublisher;
 import com.fares7elsadek.syncspace.shared.exceptions.ServerExceptions;
-import com.fares7elsadek.syncspace.user.api.UserValidationService;
+import com.fares7elsadek.syncspace.user.api.UserAccessService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,7 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class DeleteServerCommandHandler
         implements CommandHandler<DeleteServerCommand, ApiResponse<String>> {
 
-    private final UserValidationService userValidationService;
+    private final UserAccessService userAccessService;
     private final ServerRepository serverRepository;
     private final ServerMemberRepository serverMemberRepository;
     private final SpringEventPublisher springEventPublisher;
@@ -29,7 +29,7 @@ public class DeleteServerCommandHandler
         var server = serverRepository.findById(command.serverId())
                 .orElseThrow(() -> new ServerExceptions(String.format("Server with id %s not found", command.serverId())));
 
-        var user = userValidationService.getCurrentUserInfo();
+        var user = userAccessService.getCurrentUserInfo();
 
         var serverMember = serverMemberRepository
                 .findById(new ServerMemberId(server.getId(),user.getId()))

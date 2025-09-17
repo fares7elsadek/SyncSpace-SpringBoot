@@ -1,6 +1,7 @@
 package com.fares7elsadek.syncspace.messaging.model;
 
 import com.fares7elsadek.syncspace.channel.model.Channel;
+import com.fares7elsadek.syncspace.channel.model.ChannelReadState;
 import com.fares7elsadek.syncspace.messaging.enums.MessageType;
 import com.fares7elsadek.syncspace.shared.model.Auditable;
 import com.fares7elsadek.syncspace.user.model.User;
@@ -41,5 +42,8 @@ public class Message extends Auditable {
     private List<MessageAttachments> attachments;
 
     @OneToMany(mappedBy = "message", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<MessageReactions> reations;
+    private List<MessageReactions> reactions;
+
+    @OneToMany(mappedBy = "lastReadMessage", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ChannelReadState> channelReadStates;
 }

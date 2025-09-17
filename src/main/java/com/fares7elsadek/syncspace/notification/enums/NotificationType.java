@@ -8,5 +8,6 @@ public enum NotificationType {
     FRIEND_REQUEST,
     SERVER_INVITE,
     MENTION,
-    FRIEND_ACCEPTED
+    FRIEND_ACCEPTED,
+    FRIEND_MESSAGE
 }

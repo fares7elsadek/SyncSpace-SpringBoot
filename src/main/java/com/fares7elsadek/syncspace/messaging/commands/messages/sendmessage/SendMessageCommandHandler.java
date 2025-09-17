@@ -13,7 +13,7 @@ import com.fares7elsadek.syncspace.messaging.shared.SendMessageEvent;
 import com.fares7elsadek.syncspace.shared.api.ApiResponse;
 import com.fares7elsadek.syncspace.shared.cqrs.CommandHandler;
 import com.fares7elsadek.syncspace.shared.events.SpringEventPublisher;
-import com.fares7elsadek.syncspace.user.api.UserValidationService;
+import com.fares7elsadek.syncspace.user.api.UserAccessService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,7 +24,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class SendMessageCommandHandler implements CommandHandler<SendMessageCommand, ApiResponse<MessageDto>> {
 
-    private final UserValidationService userValidationService;
+    private final UserAccessService userAccessService;
     private final MessageRepository  messageRepository;
     private final SpringEventPublisher springEventPublisher;
     private final ChannelAccessService channelAccessService;
@@ -33,7 +33,7 @@ public class SendMessageCommandHandler implements CommandHandler<SendMessageComm
     @Override
     @Transactional
     public ApiResponse<MessageDto> handle(SendMessageCommand command) {
-        var sender = userValidationService.getCurrentUserInfo();
+        var sender = userAccessService.getCurrentUserInfo();
         var channel = channelAccessService.getChannel(command.channelId());
 
         var message = Message.builder()
@@ -68,8 +68,8 @@ public class SendMessageCommandHandler implements CommandHandler<SendMessageComm
                 , savedMessage.getId(),recipientId, channel.isGroup()));
 
         var dto = new MessageDto(
-                savedMessage.getId(),
                 command.channelId(),
+                savedMessage.getId(),
                 savedMessage.getContent(),
                 messageMapper.toDto(sender)
                 ,

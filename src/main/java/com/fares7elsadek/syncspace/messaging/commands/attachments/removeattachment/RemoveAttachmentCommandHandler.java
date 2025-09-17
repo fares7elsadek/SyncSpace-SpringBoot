@@ -7,7 +7,7 @@ import com.fares7elsadek.syncspace.shared.cqrs.CommandHandler;
 import com.fares7elsadek.syncspace.shared.events.SpringEventPublisher;
 import com.fares7elsadek.syncspace.shared.exceptions.AccessDeniedException;
 import com.fares7elsadek.syncspace.shared.exceptions.NotFoundException;
-import com.fares7elsadek.syncspace.user.api.UserValidationService;
+import com.fares7elsadek.syncspace.user.api.UserAccessService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,13 +18,13 @@ public class RemoveAttachmentCommandHandler
         implements CommandHandler<RemoveAttachmentCommand, ApiResponse> {
 
     private final AttachmentRepository attachmentRepository;
-    private final UserValidationService userValidationService;
+    private final UserAccessService userAccessService;
     private final SpringEventPublisher springEventPublisher;
 
     @Override
     @Transactional
     public ApiResponse handle(RemoveAttachmentCommand command) {
-        var user = userValidationService.getCurrentUserInfo();
+        var user = userAccessService.getCurrentUserInfo();
         var attachment = attachmentRepository.findById(command.attachmentId())
                 .orElseThrow(() -> new NotFoundException(
                         String.format("Attachment not found (%s)", command.attachmentId())));

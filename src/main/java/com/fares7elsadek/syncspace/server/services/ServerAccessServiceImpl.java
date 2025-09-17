@@ -52,4 +52,11 @@ public class ServerAccessServiceImpl implements ServerAccessService {
                 .stream().map(ServerMember::getUser)
                 .toList();
     }
+
+    @Override
+    public List<String> getUserServers(String userId) {
+        return serverMemberRepository.findUserServers(userId)
+                .stream().map(sm -> sm.getServer().getId())
+                .toList();
+    }
 }

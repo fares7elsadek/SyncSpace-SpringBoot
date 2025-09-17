@@ -7,7 +7,7 @@ import com.fares7elsadek.syncspace.shared.api.ApiResponse;
 import com.fares7elsadek.syncspace.shared.cqrs.CommandHandler;
 import com.fares7elsadek.syncspace.shared.events.SpringEventPublisher;
 import com.fares7elsadek.syncspace.shared.exceptions.FriendshipRequestException;
-import com.fares7elsadek.syncspace.user.api.UserValidationService;
+import com.fares7elsadek.syncspace.user.api.UserAccessService;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -19,7 +19,7 @@ public class AcceptFriendRequestCommandHandler
 
     private final FriendshipRepository friendshipRepository;
     private final SpringEventPublisher springEventPublisher;
-    private final UserValidationService userValidationService;
+    private final UserAccessService userAccessService;
 
     @Transactional
     @Override
@@ -29,7 +29,7 @@ public class AcceptFriendRequestCommandHandler
                 () -> new FriendshipRequestException(String.format("Request with id %s not found", command.id()))
         );
 
-        var currentUserId = userValidationService.getCurrentUserInfo().getId();
+        var currentUserId = userAccessService.getCurrentUserInfo().getId();
 
         if (!currentUserId.equals(request.getAddressee().getId())) {
             throw new FriendshipRequestException(
@@ -50,7 +50,7 @@ public class AcceptFriendRequestCommandHandler
         friendshipRepository.save(request);
 
         springEventPublisher.publish(
-                new AcceptFriendRequestEvent(currentUserId,request.getAddressee().getId())
+                new AcceptFriendRequestEvent(request.getRequester().getId(),currentUserId)
         );
 
         return ApiResponse

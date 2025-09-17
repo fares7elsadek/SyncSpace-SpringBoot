@@ -9,6 +9,7 @@ CREATE TABLE channel
     name        VARCHAR(255),
     description VARCHAR(255),
     is_private  BOOLEAN      NOT NULL,
+    is_group    BOOLEAN      NOT NULL,
     CONSTRAINT pk_channel PRIMARY KEY (id)
 );
 
@@ -23,6 +24,18 @@ CREATE TABLE channel_members
     channel_id           VARCHAR(255) NOT NULL,
     user_id              VARCHAR(255) NOT NULL,
     CONSTRAINT pk_channelmembers PRIMARY KEY (channel_id, user_id)
+);
+
+CREATE TABLE channel_read_state
+(
+    created_at           TIMESTAMP WITHOUT TIME ZONE,
+    updated_at           TIMESTAMP WITHOUT TIME ZONE,
+    created_by           VARCHAR(255),
+    updated_by           VARCHAR(255),
+    user_id              VARCHAR(255),
+    channel_id           VARCHAR(255),
+    last_read_message_id VARCHAR(255),
+    last_read_at         TIMESTAMP WITHOUT TIME ZONE
 );
 
 CREATE TABLE friendships
@@ -100,7 +113,7 @@ CREATE TABLE notifications
 CREATE TABLE roles
 (
     id         VARCHAR(255) NOT NULL,
-    name       VARCHAR(255),
+    name       VARCHAR(255) NOT NULL,
     updated_at TIMESTAMP WITHOUT TIME ZONE,
     created_at TIMESTAMP WITHOUT TIME ZONE,
     CONSTRAINT pk_roles PRIMARY KEY (id)
@@ -119,6 +132,21 @@ CREATE TABLE server
     is_public   BOOLEAN      NOT NULL,
     max_members INTEGER      NOT NULL,
     CONSTRAINT pk_server PRIMARY KEY (id)
+);
+
+CREATE TABLE server_invites
+(
+    id         VARCHAR(255) NOT NULL,
+    created_at TIMESTAMP WITHOUT TIME ZONE,
+    updated_at TIMESTAMP WITHOUT TIME ZONE,
+    created_by VARCHAR(255),
+    updated_by VARCHAR(255),
+    server_id  VARCHAR(255),
+    code       VARCHAR(255) NOT NULL,
+    expires_at TIMESTAMP WITHOUT TIME ZONE,
+    max_uses   INTEGER      NOT NULL,
+    uses       INTEGER      NOT NULL,
+    CONSTRAINT pk_serverinvites PRIMARY KEY (id)
 );
 
 CREATE TABLE server_members
@@ -142,6 +170,7 @@ CREATE TABLE users
     updated_at      TIMESTAMP WITHOUT TIME ZONE,
     created_at      TIMESTAMP WITHOUT TIME ZONE,
     last_seen       TIMESTAMP WITHOUT TIME ZONE,
+    is_online       BOOLEAN      NOT NULL,
     last_message_at TIMESTAMP WITHOUT TIME ZONE,
     total_messages  BIGINT,
     servers_joined  BIGINT,
@@ -149,17 +178,39 @@ CREATE TABLE users
     CONSTRAINT pk_users PRIMARY KEY (id)
 );
 
+ALTER TABLE channel_read_state
+    ADD CONSTRAINT pk_channelreadstate PRIMARY KEY (channel_id, user_id);
+
+ALTER TABLE roles
+    ADD CONSTRAINT uc_roles_name UNIQUE (name);
+
+ALTER TABLE server_invites
+    ADD CONSTRAINT uc_serverinvites_code UNIQUE (code);
+
 ALTER TABLE users
     ADD CONSTRAINT uc_users_email UNIQUE (email);
 
 ALTER TABLE users
     ADD CONSTRAINT uc_users_username UNIQUE (username);
 
+CREATE UNIQUE INDEX idx_server_invites_code ON server_invites (code);
+
+CREATE INDEX idx_type_related_entity ON notifications (type, related_entity_id);
+
 ALTER TABLE channel_members
     ADD CONSTRAINT FK_CHANNELMEMBERS_ON_CHANNEL FOREIGN KEY (channel_id) REFERENCES channel (id);
 
 ALTER TABLE channel_members
     ADD CONSTRAINT FK_CHANNELMEMBERS_ON_USER FOREIGN KEY (user_id) REFERENCES users (id);
+
+ALTER TABLE channel_read_state
+    ADD CONSTRAINT FK_CHANNELREADSTATE_ON_CHANNEL FOREIGN KEY (channel_id) REFERENCES channel (id);
+
+ALTER TABLE channel_read_state
+    ADD CONSTRAINT FK_CHANNELREADSTATE_ON_LASTREADMESSAGE FOREIGN KEY (last_read_message_id) REFERENCES message (id);
+
+ALTER TABLE channel_read_state
+    ADD CONSTRAINT FK_CHANNELREADSTATE_ON_USER FOREIGN KEY (user_id) REFERENCES users (id);
 
 ALTER TABLE channel
     ADD CONSTRAINT FK_CHANNEL_ON_SERVER FOREIGN KEY (server_id) REFERENCES server (id);
@@ -187,6 +238,9 @@ ALTER TABLE message
 
 ALTER TABLE notifications
     ADD CONSTRAINT FK_NOTIFICATIONS_ON_USER FOREIGN KEY (user_id) REFERENCES users (id);
+
+ALTER TABLE server_invites
+    ADD CONSTRAINT FK_SERVERINVITES_ON_SERVER FOREIGN KEY (server_id) REFERENCES server (id);
 
 ALTER TABLE server_members
     ADD CONSTRAINT FK_SERVER_MEMBERS_ON_ROLE FOREIGN KEY (role_id) REFERENCES roles (id);

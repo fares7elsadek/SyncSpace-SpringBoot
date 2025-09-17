@@ -1,110 +1,121 @@
 package com.fares7elsadek.syncspace.notification.eventshandler;
 
+import com.fares7elsadek.syncspace.channel.api.ChannelAccessService;
 import com.fares7elsadek.syncspace.messaging.shared.SendMessageEvent;
 import com.fares7elsadek.syncspace.notification.enums.NotificationType;
 import com.fares7elsadek.syncspace.notification.mapper.NotificationMapper;
 import com.fares7elsadek.syncspace.notification.model.Notifications;
 import com.fares7elsadek.syncspace.notification.repository.NotificationRepository;
 import com.fares7elsadek.syncspace.notification.services.NotificationService;
-import com.fares7elsadek.syncspace.user.api.UserValidationService;
+import com.fares7elsadek.syncspace.user.api.UserAccessService;
 import com.fares7elsadek.syncspace.user.model.User;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.event.EventListener;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.transaction.event.TransactionPhase;
-import org.springframework.transaction.event.TransactionalEventListener;
 
-import java.util.concurrent.CompletableFuture;
+import java.util.ArrayList;
+import java.util.List;
 
 @Component
 @RequiredArgsConstructor
 @Slf4j
 public class SendMessageNotificationHandler {
+
     private final NotificationRepository notificationRepository;
     private final NotificationMapper notificationMapper;
     private final NotificationService notificationService;
-    private final UserValidationService userValidationService;
-    @TransactionalEventListener(value = SendMessageEvent.class,
-            phase = TransactionPhase.AFTER_COMMIT)
-    @Async("syncspace-executor")
+    private final UserAccessService userAccessService;
+    private final ChannelAccessService channelAccessService;
+
+    @EventListener
+    @Transactional
     @Retryable(
             value = {Exception.class},
             maxAttempts = 3,
             backoff = @Backoff(delay = 1000, multiplier = 2)
     )
-    public CompletableFuture<Void> handleSendMessageNotification(SendMessageEvent event) {
-        return CompletableFuture.runAsync(() -> {
-            try {
-                log.info("Processing SendMessageEvent for channelId: {}, messageId: {}, recipientId: {}, isGroup: {}",
-                        event.getChannelId(), event.getMessageId(), event.getRecipientId(), event.isGroup());
+    public void handleSendMessageNotification(SendMessageEvent event) {
+        log.info("Processing SendMessageEvent for channelId: {}, messageId: {}, isGroup: {}",
+                event.getChannelId(), event.getMessageId(), event.isGroup());
 
-                processNotification(event);
-
-                log.debug("Successfully processed SendMessageEvent for messageId: {}", event.getMessageId());
-
-            } catch (Exception e) {
-                log.error("Failed to process SendMessageEvent for messageId: {} - Error: {}",
-                        event.getMessageId(), e.getMessage(), e);
-                throw new RuntimeException("Notification processing failed", e);
-            }
-        });
+        if (event.isGroup()) {
+            processGroupNotification(event);
+        } else {
+            processPrivateNotification(event);
+        }
     }
 
-    @Transactional
-    protected void processNotification(SendMessageEvent event) {
-        var recipient = userValidationService.getUserInfo(event.getRecipientId());
-        Notifications notification = createNotification(event, recipient);
-        var savedNotification = notificationRepository.save(notification);
+    private void processPrivateNotification(SendMessageEvent event) {
+        User recipient = userAccessService.getUserInfo(event.getRecipientId());
 
-        if(event.isGroup())
-            notificationService.sendRealTimeNotificationPublic(event.getChannelId(),
-                    notificationMapper.toNotificationDto(savedNotification));
-        else
-            notificationService.sendRealTimeNotificationPrivate(recipient.getId(),
-                    notificationMapper.toNotificationDto(savedNotification));
+        Notifications notification = createNotificationPrivate(event, recipient);
+        Notifications savedNotification = notificationRepository.save(notification);
 
-        log.info("Notification created with ID: {} for recipient: {}",
+        notificationService.sendRealTimeNotificationPrivate(
+                recipient.getId(),
+                notificationMapper.toNotificationDto(savedNotification)
+        );
+
+        log.info("Private notification created with ID: {} for recipient: {}",
                 savedNotification.getId(), recipient.getId());
     }
 
-    private Notifications createNotification(SendMessageEvent event, User recipient) {
-        String title = generateNotificationTitle(event);
-        String content = generateNotificationContent(event);
-        NotificationType type = determineNotificationType(event);
+    private void processGroupNotification(SendMessageEvent event) {
+        List<Notifications> notifications = createNotificationGroup(event);
+        List<Notifications> savedNotifications = notificationRepository.saveAll(notifications);
 
+        log.info("Group notifications created for channelId: {}, count: {}",
+                event.getChannelId(), savedNotifications.size());
+    }
+
+    private Notifications createNotificationPrivate(SendMessageEvent event, User recipient) {
         return Notifications.builder()
                 .user(recipient)
-                .type(type)
-                .title(title)
-                .content(content)
+                .type(determineNotificationType(event))
+                .title(generateNotificationTitle(event))
+                .content(generateNotificationContent(event))
                 .relatedEntityId(event.getMessageId())
                 .read(false)
                 .build();
     }
 
-    private String generateNotificationTitle(SendMessageEvent event) {
-        if (event.isGroup()) {
-            return "New Group Message";
-        } else {
-            return "New Direct Message";
+    private List<Notifications> createNotificationGroup(SendMessageEvent event) {
+        String title = generateNotificationTitle(event);
+        String content = generateNotificationContent(event);
+        NotificationType type = determineNotificationType(event);
+
+        var users = channelAccessService.getChannelMembers(event.getChannelId());
+        List<Notifications> notifications = new ArrayList<>();
+
+        for (var channelMember : users) {
+            Notifications notification = Notifications.builder()
+                    .user(channelMember.getUser())
+                    .type(type)
+                    .title(title)
+                    .content(content)
+                    .relatedEntityId(event.getMessageId())
+                    .read(false)
+                    .build();
+            notifications.add(notification);
         }
+        return notifications;
+    }
+
+    private String generateNotificationTitle(SendMessageEvent event) {
+        return event.isGroup() ? "New Group Message" : "New Direct Message";
     }
 
     private String generateNotificationContent(SendMessageEvent event) {
-        if (event.isGroup()) {
-            return "You have a new message in the group chat";
-        } else {
-            return "You have received a new direct message";
-        }
+        return event.isGroup()
+                ? "You have a new message in the group chat"
+                : "You have received a new direct message";
     }
 
     private NotificationType determineNotificationType(SendMessageEvent event) {
-        return NotificationType.FRIEND_REQUEST;
+        return event.isGroup() ? NotificationType.GROUP_MESSAGE : NotificationType.DIRECT_MESSAGE;
     }
-
-
 }

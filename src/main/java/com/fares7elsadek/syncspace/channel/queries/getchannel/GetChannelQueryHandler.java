@@ -6,7 +6,7 @@ import com.fares7elsadek.syncspace.channel.repository.ChannelMemberRepository;
 import com.fares7elsadek.syncspace.shared.api.ApiResponse;
 import com.fares7elsadek.syncspace.shared.cqrs.QueryHandler;
 import com.fares7elsadek.syncspace.shared.exceptions.ServerExceptions;
-import com.fares7elsadek.syncspace.user.api.UserValidationService;
+import com.fares7elsadek.syncspace.user.api.UserAccessService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,13 +16,13 @@ import org.springframework.transaction.annotation.Transactional;
 public class GetChannelQueryHandler
         implements QueryHandler<GetChannelQuery, ApiResponse<ChannelDto>> {
 
-    private final UserValidationService userValidationService;
+    private final UserAccessService userAccessService;
     private final ChannelMemberRepository channelMemberRepository;
 
     @Override
     @Transactional(readOnly = true)
     public ApiResponse<ChannelDto> handle(GetChannelQuery query) {
-        var user = userValidationService.getCurrentUserInfo();
+        var user = userAccessService.getCurrentUserInfo();
         var channelMember = channelMemberRepository
                 .findById(new ChannelUserId(query.channelId(), user.getId()))
                 .orElseThrow(() -> new ServerExceptions(String.format("You don't have access for channel %s", query.channelId())));

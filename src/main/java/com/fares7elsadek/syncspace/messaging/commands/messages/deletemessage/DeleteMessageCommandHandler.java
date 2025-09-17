@@ -8,7 +8,7 @@ import com.fares7elsadek.syncspace.shared.cqrs.CommandHandler;
 import com.fares7elsadek.syncspace.shared.events.SpringEventPublisher;
 import com.fares7elsadek.syncspace.shared.exceptions.AccessDeniedException;
 import com.fares7elsadek.syncspace.shared.exceptions.NotFoundException;
-import com.fares7elsadek.syncspace.user.api.UserValidationService;
+import com.fares7elsadek.syncspace.user.api.UserAccessService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -17,13 +17,13 @@ import org.springframework.stereotype.Component;
 public class DeleteMessageCommandHandler
         implements CommandHandler<DeleteMessageCommand, ApiResponse<String>> {
 
-    private final UserValidationService userValidationService;
+    private final UserAccessService userAccessService;
     private final MessageRepository messageRepository;
     private final SpringEventPublisher springEventPublisher;
 
     @Override
     public ApiResponse<String> handle(DeleteMessageCommand command) {
-        var user = userValidationService.getCurrentUserInfo();
+        var user = userAccessService.getCurrentUserInfo();
         var message = messageRepository.findById(command.messageId())
                 .orElseThrow(() -> new NotFoundException(String.format("Message not found %s", command.messageId())));
 

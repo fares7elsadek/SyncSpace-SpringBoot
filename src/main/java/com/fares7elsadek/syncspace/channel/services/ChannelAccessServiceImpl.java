@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -35,5 +36,10 @@ public class ChannelAccessServiceImpl implements ChannelAccessService {
     public void updateLastUpdatedTime(Channel channel) {
         channel.setUpdatedAt(LocalDateTime.now());
         channelRepository.save(channel);
+    }
+
+    @Override
+    public List<ChannelMembers> getChannelMembers(String channelId) {
+        return channelMemberRepository.findByChannelId(channelId);
     }
 }

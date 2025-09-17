@@ -11,4 +11,5 @@ public interface ServerAccessService {
     boolean hasRole(String serverId, String userId, ServerRoles... roles);
     Server getServer(String serverId);
     List<User> getServerMembers(String serverId);
+    List<String> getUserServers(String userId);
 }

@@ -15,11 +15,11 @@ public interface MessageRepository extends JpaRepository<Message, String> {
 
     @EntityGraph(attributePaths = {"attachments","channel","sender"})
     @Query("""
-            SELECT m FROM Message m
-               WHERE m.channel.id = :channelId
-                 AND (:cursor IS NULL OR m.createdAt < :cursor)
-               ORDER BY m.createdAt DESC
-           """)
+        SELECT m FROM Message m
+           WHERE m.channel.id = :channelId
+             AND m.createdAt < COALESCE(:cursor, CURRENT_TIMESTAMP)
+           ORDER BY m.createdAt DESC
+    """)
     List<Message> findMessagesByChannelIdWithCursor(
             String channelId,
             LocalDateTime cursor,

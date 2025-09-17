@@ -11,7 +11,7 @@ import com.fares7elsadek.syncspace.shared.api.ApiResponse;
 import com.fares7elsadek.syncspace.shared.cqrs.CommandHandler;
 import com.fares7elsadek.syncspace.shared.events.SpringEventPublisher;
 import com.fares7elsadek.syncspace.shared.exceptions.ServerExceptions;
-import com.fares7elsadek.syncspace.user.api.UserValidationService;
+import com.fares7elsadek.syncspace.user.api.UserAccessService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,7 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class InviteJoinCommandHandler implements
         CommandHandler<InviteJoinCommand, ApiResponse<String>> {
 
-    private final UserValidationService userValidationService;
+    private final UserAccessService userAccessService;
     private final ServerRepository serverRepository;
     private final ServerMemberRepository serverMemberRepository;
     private final SpringEventPublisher springEventPublisher;
@@ -29,7 +29,7 @@ public class InviteJoinCommandHandler implements
     @Transactional
     @Override
     public ApiResponse<String> handle(InviteJoinCommand command) {
-        var currentUser = userValidationService.getCurrentUserInfo();
+        var currentUser = userAccessService.getCurrentUserInfo();
 
         var invite = serverInvitesRepository.findByCode(command.code())
                 .orElseThrow(() -> new ServerExceptions(
@@ -58,9 +58,10 @@ public class InviteJoinCommandHandler implements
         serverInvitesRepository.save(invite);
 
         var newServerMember = ServerMember.builder()
+                .id(new ServerMemberId(server.getId(), currentUser.getId()))
                 .server(server)
                 .user(currentUser)
-                .role(userValidationService.getRoleByName(ServerRoles.USER.name()))
+                .role(userAccessService.getRoleByName(ServerRoles.USER.name()))
                 .build();
 
         serverMemberRepository.save(newServerMember);

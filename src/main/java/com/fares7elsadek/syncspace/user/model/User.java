@@ -2,6 +2,7 @@ package com.fares7elsadek.syncspace.user.model;
 
 
 import com.fares7elsadek.syncspace.channel.model.ChannelMembers;
+import com.fares7elsadek.syncspace.channel.model.ChannelReadState;
 import com.fares7elsadek.syncspace.friendship.model.Friendships;
 import com.fares7elsadek.syncspace.messaging.model.Message;
 import com.fares7elsadek.syncspace.messaging.model.MessageReactions;
@@ -22,9 +23,6 @@ import java.util.List;
 @Getter @Setter @AllArgsConstructor @Builder @NoArgsConstructor
 @EntityListeners(AuditingEntityListener.class)
 public class User {
-
-    private static final int LAST_ACTIVATE_INTERVAL = 3;
-
     @Id
     private String id;
 
@@ -46,12 +44,13 @@ public class User {
     private LocalDateTime createdAt;
 
     private LocalDateTime lastSeen;
-
+    private boolean isOnline = false;
 
     private LocalDateTime lastMessageAt;
     private Long totalMessages;
     private Long serversJoined;
     private Long friendsCount;
+    private String avatarUrl;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ServerMember> serverMemberships = new ArrayList<>();
@@ -74,10 +73,8 @@ public class User {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Notifications> notifications = new ArrayList<>();
 
-    @Transient
-    public boolean isUserOnline(){
-        return lastSeen != null && lastSeen.isAfter(LocalDateTime.now().minusMinutes(LAST_ACTIVATE_INTERVAL));
-    }
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ChannelReadState> channelReadStates = new ArrayList<>();
 
     @Transient
     public String displayName(){

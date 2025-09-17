@@ -10,7 +10,7 @@ import com.fares7elsadek.syncspace.shared.api.ApiResponse;
 import com.fares7elsadek.syncspace.shared.cqrs.CommandHandler;
 import com.fares7elsadek.syncspace.shared.events.SpringEventPublisher;
 import com.fares7elsadek.syncspace.shared.exceptions.ServerExceptions;
-import com.fares7elsadek.syncspace.user.api.UserValidationService;
+import com.fares7elsadek.syncspace.user.api.UserAccessService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,7 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class CreateChannelCommandHandler
         implements CommandHandler<CreateChannelCommand, ApiResponse<ChannelDto>>
 {
-    private final UserValidationService userValidationService;
+    private final UserAccessService userAccessService;
     private final ChannelRepository channelRepository;
     private final ServerAccessService serverAccessService;
     private final SpringEventPublisher springEventPublisher;
@@ -28,7 +28,7 @@ public class CreateChannelCommandHandler
     @Override
     @Transactional
     public ApiResponse<ChannelDto> handle(CreateChannelCommand command) {
-        var user = userValidationService.getCurrentUserInfo();
+        var user = userAccessService.getCurrentUserInfo();
 
         if (!serverAccessService.isMember(command.serverId(), user.getId())) {
             throw new ServerExceptions("You are not a member of this server.");

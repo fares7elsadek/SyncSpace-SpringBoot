@@ -4,6 +4,7 @@ import com.fares7elsadek.syncspace.server.model.ServerMember;
 import com.fares7elsadek.syncspace.server.model.ServerMemberId;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -16,4 +17,11 @@ public interface ServerMemberRepository extends JpaRepository<ServerMember, Serv
 
     @EntityGraph(attributePaths = {"user","role"})
     List<ServerMember> findByIdServerId(String serverId);
+    @EntityGraph(attributePaths = {"server"})
+    @Query("""
+           SELECT sm
+           FROM ServerMember sm
+           WHERE sm.id.userId = :userId
+           """)
+    List<ServerMember> findUserServers(String userId);
 }

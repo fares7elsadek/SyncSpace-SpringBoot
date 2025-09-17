@@ -9,11 +9,10 @@ import com.fares7elsadek.syncspace.messaging.shared.SendMessageEvent;
 import com.fares7elsadek.syncspace.messaging.ws.WebSocketMessageDestinations;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.event.EventListener;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.event.TransactionPhase;
-import org.springframework.transaction.event.TransactionalEventListener;
+import org.springframework.transaction.annotation.Transactional;
 
 @Component
 @RequiredArgsConstructor
@@ -24,10 +23,8 @@ public class SendMessageEventHandler {
     private final MessageRepository messageRepository;
     private final MessageMapper messageMapper;
 
-    @TransactionalEventListener(
-            value = SendMessageEvent.class
-            ,phase = TransactionPhase.AFTER_COMMIT)
-    @Async("syncspace-executor")
+    @EventListener
+    @Transactional
     public void handleSendMessageEvent(SendMessageEvent event) {
         log.info("Handling SendMessageEvent for channelId={} messageId={}"
                 , event.getChannelId(), event.getMessageId());

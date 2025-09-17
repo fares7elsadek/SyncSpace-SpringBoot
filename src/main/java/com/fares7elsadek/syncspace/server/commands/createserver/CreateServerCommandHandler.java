@@ -2,6 +2,7 @@ package com.fares7elsadek.syncspace.server.commands.createserver;
 
 import com.fares7elsadek.syncspace.server.model.Server;
 import com.fares7elsadek.syncspace.server.model.ServerMember;
+import com.fares7elsadek.syncspace.server.model.ServerMemberId;
 import com.fares7elsadek.syncspace.server.repository.ServerMemberRepository;
 import com.fares7elsadek.syncspace.server.repository.ServerRepository;
 import com.fares7elsadek.syncspace.server.shared.CreateServerEvent;
@@ -9,19 +10,19 @@ import com.fares7elsadek.syncspace.server.shared.ServerRoles;
 import com.fares7elsadek.syncspace.shared.api.ApiResponse;
 import com.fares7elsadek.syncspace.shared.cqrs.CommandHandler;
 import com.fares7elsadek.syncspace.shared.events.SpringEventPublisher;
-import com.fares7elsadek.syncspace.user.api.UserValidationService;
+import com.fares7elsadek.syncspace.user.api.UserAccessService;
 import com.fares7elsadek.syncspace.user.model.Roles;
 import com.fares7elsadek.syncspace.user.model.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-@Component
+@Component("createServerCommandHandler")
 @RequiredArgsConstructor
 public class CreateServerCommandHandler
         implements CommandHandler<CreateServerCommand, ApiResponse<String>> {
 
-    private final UserValidationService userValidationService;
+    private final UserAccessService userAccessService;
     private final ServerRepository serverRepository;
     private final ServerMemberRepository serverMemberRepository;
     private final SpringEventPublisher springEventPublisher;
@@ -31,8 +32,8 @@ public class CreateServerCommandHandler
     public ApiResponse<String> handle(CreateServerCommand command) {
 
         var server = serverRepository.save(createServerEntity(command));
-        var user = userValidationService.getCurrentUserInfo();
-        var role = userValidationService.getRoleByName(ServerRoles.OWNER.name());
+        var user = userAccessService.getCurrentUserInfo();
+        var role = userAccessService.getRoleByName(ServerRoles.OWNER.name());
         var serverMember = createServerMemberEntity(server, user, role);
         serverMemberRepository.save(serverMember);
 
@@ -41,7 +42,7 @@ public class CreateServerCommandHandler
                         , server.getName(),user.getId()));
 
         return ApiResponse
-                .success(String.format("Server created successfully with id %s ", server.getId()),null);
+                .success(String.format("Server created successfully with id %s", server.getId()),null);
     }
 
     private Server createServerEntity(CreateServerCommand command) {
@@ -53,6 +54,7 @@ public class CreateServerCommandHandler
 
     private ServerMember createServerMemberEntity(Server server, User user, Roles role) {
         return ServerMember.builder()
+                .id(new ServerMemberId(server.getId(), user.getId()))
                 .server(server)
                 .user(user)
                 .role(role).build();

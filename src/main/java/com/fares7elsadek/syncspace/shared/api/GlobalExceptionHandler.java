@@ -89,4 +89,12 @@ public class GlobalExceptionHandler {
                 .body(ApiResponse.error("Error while trying to remove your file",null));
     }
 
+    @ExceptionHandler(Exception.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ResponseEntity<ApiResponse<Object>> handleGlobalException(Exception ex) {
+        log.error("Exception : {}", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(ApiResponse.error(ex.getMessage(),null));
+    }
+
 }

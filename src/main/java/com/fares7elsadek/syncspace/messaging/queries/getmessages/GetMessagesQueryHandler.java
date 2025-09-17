@@ -9,7 +9,7 @@ import com.fares7elsadek.syncspace.messaging.model.dtos.PaginatedMessageResponse
 import com.fares7elsadek.syncspace.messaging.repository.MessageRepository;
 import com.fares7elsadek.syncspace.shared.api.ApiResponse;
 import com.fares7elsadek.syncspace.shared.cqrs.QueryHandler;
-import com.fares7elsadek.syncspace.user.api.UserValidationService;
+import com.fares7elsadek.syncspace.user.api.UserAccessService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -30,15 +30,15 @@ public class GetMessagesQueryHandler
     private final MessageRepository messageRepository;
     private final MessageMapper messageMapper;
     private final ChannelAccessService channelAccessService;
-    private final UserValidationService userValidationService;
+    private final UserAccessService userAccessService;
 
     @Override
     public ApiResponse<PaginatedMessageResponse> handle(GetMessagesQuery query) {
-        LocalDateTime cursor = query.cursor() != null ? decodeCursor(query.cursor()) : null;
+        LocalDateTime cursor = query.cursor() != null && !query.cursor().isBlank() ? decodeCursor(query.cursor()) : null;
         String channelId = query.channelId();
         int size = query.size();
 
-        var user = userValidationService.getCurrentUserInfo();
+        var user = userAccessService.getCurrentUserInfo();
         channelAccessService.getChannelMembers(channelId, user.getId());
 
         Pageable pageable = PageRequest.of(0, size + 1);

@@ -6,7 +6,7 @@ import com.fares7elsadek.syncspace.friendship.model.dtos.FriendShipDto;
 import com.fares7elsadek.syncspace.friendship.repository.FriendshipRepository;
 import com.fares7elsadek.syncspace.shared.api.ApiResponse;
 import com.fares7elsadek.syncspace.shared.cqrs.QueryHandler;
-import com.fares7elsadek.syncspace.user.api.UserValidationService;
+import com.fares7elsadek.syncspace.user.api.UserAccessService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -19,11 +19,11 @@ public class ListAllPendingRequestsQueryHandler
         implements QueryHandler<ListAllPendingRequestsQuery, ApiResponse<List<FriendShipDto>>> {
 
     private final FriendshipRepository friendshipRepository;
-    private final UserValidationService userValidationService;
+    private final UserAccessService userAccessService;
     private final FriendshipMapper friendshipMapper;
     @Override
     public ApiResponse<List<FriendShipDto>> handle(ListAllPendingRequestsQuery query) {
-        var userId = userValidationService.getCurrentUserInfo().getId();
+        var userId = userAccessService.getCurrentUserInfo().getId();
         var friendships = friendshipRepository.findFriendshipsByUserId(userId, FriendShipStatus.PENDING)
                 ;
 

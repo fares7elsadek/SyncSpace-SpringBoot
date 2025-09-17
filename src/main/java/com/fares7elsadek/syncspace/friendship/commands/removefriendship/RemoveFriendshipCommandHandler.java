@@ -6,7 +6,7 @@ import com.fares7elsadek.syncspace.shared.api.ApiResponse;
 import com.fares7elsadek.syncspace.shared.cqrs.CommandHandler;
 import com.fares7elsadek.syncspace.shared.events.SpringEventPublisher;
 import com.fares7elsadek.syncspace.shared.exceptions.FriendshipRequestException;
-import com.fares7elsadek.syncspace.user.api.UserValidationService;
+import com.fares7elsadek.syncspace.user.api.UserAccessService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,14 +18,14 @@ public class RemoveFriendshipCommandHandler
 
     private final FriendshipRepository friendshipRepository;
     private final SpringEventPublisher springEventPublisher;
-    private final UserValidationService userValidationService;
+    private final UserAccessService userAccessService;
 
     @Transactional
     @Override
     public ApiResponse<String> handle(RemoveFriendshipCommand command) {
 
-        var targetUser = userValidationService.getUserInfo(command.userId());
-        var currentUser = userValidationService.getCurrentUserInfo();
+        var targetUser = userAccessService.getUserInfo(command.userId());
+        var currentUser = userAccessService.getCurrentUserInfo();
 
         var request = friendshipRepository.findFriendshipBetweenUsers(currentUser.getId(),
                 targetUser.getId()).orElseThrow(
@@ -36,7 +36,7 @@ public class RemoveFriendshipCommandHandler
         friendshipRepository.delete(request);
 
         springEventPublisher.publish(
-                new RemoveFriendshipEvent(currentUser.getId(),request.getAddressee().getId())
+                new RemoveFriendshipEvent(currentUser.getId(),targetUser.getId())
         );
 
         return ApiResponse

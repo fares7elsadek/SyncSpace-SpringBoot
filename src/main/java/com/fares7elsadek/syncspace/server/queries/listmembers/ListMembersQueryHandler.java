@@ -8,7 +8,7 @@ import com.fares7elsadek.syncspace.server.repository.ServerMemberRepository;
 import com.fares7elsadek.syncspace.shared.api.ApiResponse;
 import com.fares7elsadek.syncspace.shared.cqrs.QueryHandler;
 import com.fares7elsadek.syncspace.shared.exceptions.ServerExceptions;
-import com.fares7elsadek.syncspace.user.api.UserValidationService;
+import com.fares7elsadek.syncspace.user.api.UserAccessService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -19,14 +19,14 @@ import java.util.List;
 public class ListMembersQueryHandler
         implements QueryHandler<ListMembersQuery, ApiResponse<List<ServerMemberDto>>> {
 
-    private final UserValidationService userValidationService;
+    private final UserAccessService userAccessService;
     private final ServerMapper serverMapper;
     private final ServerMemberRepository serverMemberRepository;
 
     @Override
     public ApiResponse<List<ServerMemberDto>> handle(ListMembersQuery query) {
 
-        var currentUser = userValidationService.getCurrentUserInfo();
+        var currentUser = userAccessService.getCurrentUserInfo();
 
         var serverMember = serverMemberRepository
                 .findById(new ServerMemberId(query.serverId(),currentUser.getId()))

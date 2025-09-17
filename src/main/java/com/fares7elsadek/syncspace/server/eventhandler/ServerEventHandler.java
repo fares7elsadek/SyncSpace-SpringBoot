@@ -5,8 +5,8 @@ import com.fares7elsadek.syncspace.server.shared.CreateServerEvent;
 import com.fares7elsadek.syncspace.shared.cqrs.CommandBus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.event.EventListener;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 @Component
 @RequiredArgsConstructor
@@ -14,12 +14,14 @@ public class ServerEventHandler {
 
     private final CommandBus commandBus;
 
-    @EventListener(CreateServerEvent.class)
-    @Async("syncspace-executor")
+    @EventListener
+    @Transactional
     public void handleServerCreationEvent(CreateServerEvent createServerEvent) {
+
         var command = new GenerateInviteCodeCommand(
-                createServerEvent.getId()
+                createServerEvent.getServerId()
         );
         commandBus.send(command);
+
     }
 }

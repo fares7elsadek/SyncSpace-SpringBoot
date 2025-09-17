@@ -4,11 +4,10 @@ import com.fares7elsadek.syncspace.messaging.shared.DeleteMessageEvent;
 import com.fares7elsadek.syncspace.messaging.ws.WebSocketMessageDestinations;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.event.EventListener;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.event.TransactionPhase;
-import org.springframework.transaction.event.TransactionalEventListener;
+import org.springframework.transaction.annotation.Transactional;
 
 @Component
 @RequiredArgsConstructor
@@ -17,9 +16,8 @@ public class DeleteMessageEventHandler {
 
     private final SimpMessagingTemplate messagingTemplate;
 
-    @TransactionalEventListener(value = DeleteMessageEvent.class,
-            phase = TransactionPhase.AFTER_COMMIT)
-    @Async("syncspace-executor")
+    @EventListener
+    @Transactional
     public void handleDeleteMessageEvent(DeleteMessageEvent event) {
         log.info("Handling DeleteMessageEvent for channelId={} messageId={}", event.getChannelId(), event.getMessageId());
 

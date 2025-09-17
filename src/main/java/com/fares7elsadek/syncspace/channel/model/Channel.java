@@ -35,4 +35,7 @@ public class Channel extends Auditable {
 
     @OneToMany(mappedBy = "channel", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Message> messages;
+
+    @OneToMany(mappedBy = "channel", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ChannelReadState>  channelReadStates;
 }

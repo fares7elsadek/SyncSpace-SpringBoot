@@ -20,11 +20,11 @@ public class KeyCloakAuthenticatoinConverter implements Converter<Jwt, AbstractA
     @Override
     public AbstractAuthenticationToken convert(Jwt source) {
         var authorites = extractAuthorities(source);
-        return new JwtAuthenticationToken(source,authorites,getPrincipalClaimName(source));
+        return new JwtAuthenticationToken(source,authorites,getUserId(source));
     }
 
-    private String getPrincipalClaimName(Jwt jwt) {
-        String claimName = jwt.getClaimAsString("preferred_username");
+    private String getUserId(Jwt jwt) {
+        String claimName = jwt.getClaimAsString("sub");
         return claimName != null ? claimName : jwt.getSubject();
     }
 

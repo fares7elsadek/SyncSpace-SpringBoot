@@ -12,7 +12,7 @@ import com.fares7elsadek.syncspace.shared.api.ApiResponse;
 import com.fares7elsadek.syncspace.shared.cqrs.CommandHandler;
 import com.fares7elsadek.syncspace.shared.events.SpringEventPublisher;
 import com.fares7elsadek.syncspace.shared.exceptions.ServerExceptions;
-import com.fares7elsadek.syncspace.user.api.UserValidationService;
+import com.fares7elsadek.syncspace.user.api.UserAccessService;
 import com.fares7elsadek.syncspace.user.model.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -24,14 +24,14 @@ import java.time.LocalDateTime;
 public class AddMemberCommandHandler
         implements CommandHandler<AddMemberCommand, ApiResponse<String>> {
 
-    private final UserValidationService userValidationService;
+    private final UserAccessService userAccessService;
     private final ChannelRepository channelRepository;
     private final ServerAccessService serverAccessService;
     private final SpringEventPublisher springEventPublisher;
     private final ChannelMemberRepository channelMemberRepository;
     @Override
     public ApiResponse<String> handle(AddMemberCommand command) {
-        var currentUser = userValidationService.getCurrentUserInfo();
+        var currentUser = userAccessService.getCurrentUserInfo();
 
         if (!serverAccessService.isMember(command.serverId(), currentUser.getId())) {
             throw new ServerExceptions("You are not a member of this server.");
@@ -49,7 +49,7 @@ public class AddMemberCommandHandler
             throw new ServerExceptions("Channel does not belong to this server.");
         }
 
-        User targetUser = userValidationService.getUserInfo(command.userId());
+        User targetUser = userAccessService.getUserInfo(command.userId());
 
         var membershipId = new ChannelUserId(channel.getId(), targetUser.getId());
         if (channelMemberRepository.existsById(membershipId)) {

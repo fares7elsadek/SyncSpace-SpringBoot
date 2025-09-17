@@ -6,19 +6,15 @@ import com.fares7elsadek.syncspace.notification.mapper.NotificationMapper;
 import com.fares7elsadek.syncspace.notification.model.Notifications;
 import com.fares7elsadek.syncspace.notification.repository.NotificationRepository;
 import com.fares7elsadek.syncspace.notification.services.NotificationService;
-import com.fares7elsadek.syncspace.user.api.UserValidationService;
+import com.fares7elsadek.syncspace.user.api.UserAccessService;
 import com.fares7elsadek.syncspace.user.model.User;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.event.EventListener;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.transaction.event.TransactionPhase;
-import org.springframework.transaction.event.TransactionalEventListener;
-
-import java.util.concurrent.CompletableFuture;
 
 @Component
 @RequiredArgsConstructor
@@ -27,32 +23,31 @@ public class AcceptFriendshipNotificationHandler {
     private final NotificationRepository notificationRepository;
     private final NotificationMapper notificationMapper;
     private final NotificationService notificationService;
-    private final UserValidationService userValidationService;
+    private final UserAccessService userAccessService;
 
-    @TransactionalEventListener(value = AcceptFriendRequestEvent.class,
-            phase = TransactionPhase.AFTER_COMMIT)
-    @Async("syncspace-executor")
+    @EventListener
+    @Transactional
     @Retryable(
             value = {Exception.class},
             maxAttempts = 3,
             backoff = @Backoff(delay = 1000, multiplier = 2)
     )
-    public CompletableFuture<Void> handleAcceptFriendship(AcceptFriendRequestEvent event) {
-        return CompletableFuture.runAsync(() -> {
-            try {
-                processNotification(event);
-                log.debug("Successfully processed AcceptFriendshipEvent for senderId: {}", event.getSenderUserId());
-            } catch (Exception e) {
-                log.error("Failed to process AcceptFriendshipEvent for senderId: {} - Error: {}",
-                        event.getSenderUserId(), e.getMessage(), e);
-                throw new RuntimeException("Notification processing failed", e);
-            }
-        });
+    public void handleAcceptFriendship(AcceptFriendRequestEvent event) {
+
+        try {
+            processNotification(event);
+            log.debug("Successfully processed AcceptFriendshipEvent for senderId: {}", event.getSenderUserId());
+        } catch (Exception e) {
+            log.error("Failed to process AcceptFriendshipEvent for senderId: {} - Error: {}",
+                    event.getSenderUserId(), e.getMessage(), e);
+            throw new RuntimeException("Notification processing failed", e);
+        }
+
     }
 
     @Transactional
     protected void processNotification(AcceptFriendRequestEvent event) {
-        User recipient = userValidationService.getUserInfo(event.getSenderUserId());
+        User recipient = userAccessService.getUserInfo(event.getSenderUserId());
 
         Notifications notification = createNotification(event, recipient);
         var savedNotification = notificationRepository.save(notification);
@@ -67,7 +62,7 @@ public class AcceptFriendshipNotificationHandler {
     }
 
     private Notifications createNotification(AcceptFriendRequestEvent event, User recipient) {
-        User accepter = userValidationService.getUserInfo(event.getTargetUserId());
+        User accepter = userAccessService.getUserInfo(event.getTargetUserId());
 
         String title = accepter.getUsername() + " accepted your friend request";
         String content = "You are now friends with " + accepter.getUsername();

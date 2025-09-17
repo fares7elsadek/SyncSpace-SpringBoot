@@ -8,18 +8,18 @@ import com.fares7elsadek.syncspace.shared.api.ApiResponse;
 import com.fares7elsadek.syncspace.shared.cqrs.CommandHandler;
 import com.fares7elsadek.syncspace.shared.events.SpringEventPublisher;
 import com.fares7elsadek.syncspace.shared.exceptions.FriendshipRequestException;
-import com.fares7elsadek.syncspace.user.api.UserValidationService;
+import com.fares7elsadek.syncspace.user.api.UserAccessService;
 import com.fares7elsadek.syncspace.user.model.User;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 @RequiredArgsConstructor
-@Component
+@Component("sendFriendRequestCommandHandler")
 public class SendFriendRequestHandler implements
         CommandHandler<SendFriendRequestCommand, ApiResponse<String>> {
 
-    private final UserValidationService userValidationService;
+    private final UserAccessService userAccessService;
     private final FriendshipRepository friendshipRepository;
     private final SpringEventPublisher springEventPublisher;
 
@@ -27,8 +27,8 @@ public class SendFriendRequestHandler implements
     @Override
     public ApiResponse<String> handle(SendFriendRequestCommand command) {
 
-        var targetUser = userValidationService.getUserInfo(command.userId());
-        var currentUser = userValidationService.getCurrentUserInfo();
+        var targetUser = userAccessService.getUserInfo(command.userId());
+        var currentUser = userAccessService.getCurrentUserInfo();
 
         if(targetUser.getId().equals(currentUser.getId())){
             throw new FriendshipRequestException("Cannot send friend request to yourself");

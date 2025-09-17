@@ -6,19 +6,19 @@ import com.fares7elsadek.syncspace.notification.mapper.NotificationMapper;
 import com.fares7elsadek.syncspace.notification.model.Notifications;
 import com.fares7elsadek.syncspace.notification.repository.NotificationRepository;
 import com.fares7elsadek.syncspace.notification.services.NotificationService;
-import com.fares7elsadek.syncspace.user.api.UserValidationService;
+import com.fares7elsadek.syncspace.user.api.UserAccessService;
 import com.fares7elsadek.syncspace.user.model.User;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.event.EventListener;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.event.TransactionPhase;
 import org.springframework.transaction.event.TransactionalEventListener;
-
-import java.util.concurrent.CompletableFuture;
 
 @Component
 @RequiredArgsConstructor
@@ -27,35 +27,34 @@ public class FriendRequestNotificationHandler {
     private final NotificationRepository notificationRepository;
     private final NotificationMapper notificationMapper;
     private final NotificationService notificationService;
-    private final UserValidationService userValidationService;
+    private final UserAccessService userAccessService;
 
-    @TransactionalEventListener(value = SendFriendRequestEvent.class,
-            phase = TransactionPhase.AFTER_COMMIT)
-    @Async("syncspace-executor")
+    @EventListener
+    @Transactional
     @Retryable(
             value = {Exception.class},
             maxAttempts = 3,
             backoff = @Backoff(delay = 1000, multiplier = 2)
     )
-    public CompletableFuture<Void> handleSendFriendRequest(SendFriendRequestEvent event) {
-        return CompletableFuture.runAsync(() -> {
-            try {
+    public void handleSendFriendRequest(SendFriendRequestEvent event) {
 
-                processNotification(event);
-                log.debug("Successfully processed SendMessageEvent for messageId: {}", event.getTargetUserId());
+        try {
 
-            } catch (Exception e) {
-                log.error("Failed to process SendMessageEvent for messageId: {} - Error: {}",
-                        event.getTargetUserId(), e.getMessage(), e);
-                throw new RuntimeException("Notification processing failed", e);
-            }
-        });
+            processNotification(event);
+            log.debug("Successfully processed SendMessageEvent for messageId: {}", event.getTargetUserId());
+
+        } catch (Exception e) {
+            log.error("Failed to process SendMessageEvent for messageId: {} - Error: {}",
+                    event.getTargetUserId(), e.getMessage(), e);
+            throw new RuntimeException("Notification processing failed", e);
+        }
+
     }
 
     @Transactional
     protected void processNotification(SendFriendRequestEvent event) {
-        var recipient = userValidationService.getUserInfo(event.getTargetUserId());
-        var sender = userValidationService.getUserInfo(event.getSenderUserId());
+        var recipient = userAccessService.getUserInfo(event.getTargetUserId());
+        var sender = userAccessService.getUserInfo(event.getSenderUserId());
         Notifications notification = createNotification(event, recipient,sender);
         var savedNotification = notificationRepository.save(notification);
 

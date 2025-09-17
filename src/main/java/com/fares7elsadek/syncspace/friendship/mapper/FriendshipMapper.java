@@ -10,7 +10,7 @@ public class FriendshipMapper {
         return  new FriendshipUserDto(
                 user.getId(),user.getUsername(),
                 user.getFirstName(),user.getLastName(),user.getEmail(),
-                user.getLastSeen(),user.getCreatedAt()
+                user.getLastSeen(),user.getCreatedAt(),user.isOnline()
         );
     }
 }

@@ -7,7 +7,7 @@ import com.fares7elsadek.syncspace.server.repository.ServerRepository;
 import com.fares7elsadek.syncspace.shared.api.ApiResponse;
 import com.fares7elsadek.syncspace.shared.cqrs.QueryHandler;
 import com.fares7elsadek.syncspace.shared.exceptions.ServerExceptions;
-import com.fares7elsadek.syncspace.user.api.UserValidationService;
+import com.fares7elsadek.syncspace.user.api.UserAccessService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -16,7 +16,7 @@ import org.springframework.stereotype.Component;
 public class GetServerQueryHandler implements
         QueryHandler<GetServerQuery, ApiResponse<ServerDto>> {
 
-    private final UserValidationService userValidationService;
+    private final UserAccessService userAccessService;
     private final ServerMemberRepository serverMemberRepository;
     private final ServerRepository serverRepository;
 
@@ -27,7 +27,7 @@ public class GetServerQueryHandler implements
                 .orElseThrow(() -> new ServerExceptions(String.format("Server with id %s not found", query.serverId())));
 
         if(!server.isPublic()){
-            var currentUser = userValidationService.getCurrentUserInfo();
+            var currentUser = userAccessService.getCurrentUserInfo();
             serverMemberRepository
                     .findById(new ServerMemberId(query.serverId(),currentUser.getId()))
                     .orElseThrow(() -> new ServerExceptions(String.format("You don't have access to get details for server id %s ", query.serverId())));

@@ -5,14 +5,15 @@ import com.fares7elsadek.syncspace.notification.enums.NotificationType;
 import com.fares7elsadek.syncspace.notification.repository.NotificationRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.event.EventListener;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.event.TransactionPhase;
 import org.springframework.transaction.event.TransactionalEventListener;
-
-import java.util.concurrent.CompletableFuture;
 
 @Component
 @RequiredArgsConstructor
@@ -20,38 +21,37 @@ import java.util.concurrent.CompletableFuture;
 public class RemoveMessageNotificationHandler {
     private final NotificationRepository notificationRepository;
 
-    @TransactionalEventListener(value = DeleteMessageEvent.class,
-            phase = TransactionPhase.AFTER_COMMIT)
-    @Async("syncspace-executor")
+    @EventListener
+    @Transactional
     @Retryable(
             value = {Exception.class},
             maxAttempts = 3,
             backoff = @Backoff(delay = 1000, multiplier = 2)
     )
-    public CompletableFuture<Void> handleRemoveMessageNotification(DeleteMessageEvent event) {
-        return CompletableFuture.runAsync(() -> {
-            try {
-                log.info("Processing DeleteMessageEvent for messageId: {}, channelId: {}, recipientId: {}, isGroup: {}",
-                        event.getMessageId(), event.getChannelId(), event.getRecipientId(), event.isGroup());
+    public void handleRemoveMessageNotification(DeleteMessageEvent event) {
 
-                NotificationType type = event.isGroup()
-                        ? NotificationType.GROUP_MESSAGE
-                        : NotificationType.DIRECT_MESSAGE;
+        try {
+            log.info("Processing DeleteMessageEvent for messageId: {}, channelId: {}, recipientId: {}, isGroup: {}",
+                    event.getMessageId(), event.getChannelId(), event.getRecipientId(), event.isGroup());
 
-                var notification = notificationRepository
-                        .findByRelatedEntityIdAndType(event.getMessageId(), type)
-                        .orElseThrow(() -> new RuntimeException("No notification found for related entity id " + event.getMessageId()));
+            NotificationType type = event.isGroup()
+                    ? NotificationType.GROUP_MESSAGE
+                    : NotificationType.DIRECT_MESSAGE;
 
-                notificationRepository.delete(notification);
+            var notification = notificationRepository
+                    .findByRelatedEntityIdAndType(event.getMessageId(), type)
+                    .orElseThrow(() -> new RuntimeException("No notification found for related entity id " + event.getMessageId()));
 
-                log.debug("Successfully removed notification for messageId: {}", event.getMessageId());
+            notificationRepository.delete(notification);
 
-            } catch (Exception e) {
-                log.error("Failed to process DeleteMessageEvent for messageId: {} - Error: {}",
-                        event.getMessageId(), e.getMessage(), e);
-                throw new RuntimeException("Notification removal failed", e);
-            }
-        });
+            log.debug("Successfully removed notification for messageId: {}", event.getMessageId());
+
+        } catch (Exception e) {
+            log.error("Failed to process DeleteMessageEvent for messageId: {} - Error: {}",
+                    event.getMessageId(), e.getMessage(), e);
+            throw new RuntimeException("Notification removal failed", e);
+        }
+
     }
 
 

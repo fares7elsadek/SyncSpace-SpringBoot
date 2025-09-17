@@ -41,7 +41,7 @@ services:
       KEYCLOAK_ADMIN: admin
       KEYCLOAK_ADMIN_PASSWORD: admin
     ports:
-      - "9090:8080"
+      - "8080:8080"
     depends_on:
       - postgres-keycloak
     networks:

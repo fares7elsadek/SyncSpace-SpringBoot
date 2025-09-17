@@ -13,16 +13,16 @@ import com.fares7elsadek.syncspace.friendship.shared.AcceptFriendRequestEvent;
 import com.fares7elsadek.syncspace.friendship.shared.RemoveFriendshipEvent;
 import com.fares7elsadek.syncspace.server.api.ServerAccessService;
 import com.fares7elsadek.syncspace.server.shared.CreateServerEvent;
+import com.fares7elsadek.syncspace.server.shared.InviteJoinEvent;
 import com.fares7elsadek.syncspace.shared.api.ApiResponse;
 import com.fares7elsadek.syncspace.shared.cqrs.CommandBus;
 import com.fares7elsadek.syncspace.shared.events.SpringEventPublisher;
-import com.fares7elsadek.syncspace.user.api.UserValidationService;
+import com.fares7elsadek.syncspace.user.api.UserAccessService;
 import com.fares7elsadek.syncspace.user.model.User;
 import lombok.RequiredArgsConstructor;
-import org.springframework.scheduling.annotation.Async;
+import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.event.TransactionPhase;
-import org.springframework.transaction.event.TransactionalEventListener;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -37,11 +37,10 @@ public class ChannelEventHandler {
     private final ServerAccessService serverAccessService;
     private final ChannelRepository channelRepository;
     private final ChannelMemberRepository channelMemberRepository;
-    private final UserValidationService userValidationService;
+    private final UserAccessService userAccessService;
 
-    @TransactionalEventListener(value = CreateServerEvent.class
-        , phase = TransactionPhase.AFTER_COMMIT)
-    @Async("syncspace-executor")
+    @EventListener
+    @Transactional
     public void handleServerCreationEvent(CreateServerEvent createServerEvent) {
         CreateChannelCommand command1 = new CreateChannelCommand(
                 "general",
@@ -65,9 +64,8 @@ public class ChannelEventHandler {
                 , createServerEvent.getOwnerId()));
     }
 
-    @TransactionalEventListener(value = CreateChannelEvent.class
-            , phase = TransactionPhase.AFTER_COMMIT)
-    @Async("syncspace-executor")
+    @EventListener
+    @Transactional
     public void handlePublicChannelCreated(CreateChannelEvent event) {
         if(!event.isGroup() || event.isPrivate() )
             return;
@@ -88,54 +86,61 @@ public class ChannelEventHandler {
         channelMemberRepository.saveAll(channelMembers);
     }
 
-    @TransactionalEventListener(value = AcceptFriendRequestEvent.class
-            , phase = TransactionPhase.AFTER_COMMIT)
-    @Async("syncspace-executor")
+    @EventListener
+    @Transactional
     public void handleFriendRequestAccept(AcceptFriendRequestEvent event) {
-        var user1 = userValidationService.getUserInfo(event.getSenderUserId());
-        var user2 = userValidationService.getUserInfo(event.getTargetUserId());
+        var user1 = userAccessService.getUserInfo(event.getSenderUserId());
+        var user2 = userAccessService.getUserInfo(event.getTargetUserId());
+
         var channel = Channel.builder()
                 .name("#Private-Chat")
                 .description("Private Chat")
                 .isPrivate(true)
                 .isGroup(false)
                 .build();
+
         var savedChannel = channelRepository.save(channel);
+
         var member1 = ChannelMembers.builder()
-                .id(new ChannelUserId(savedChannel.getId(),user1.getId()))
-                .channel(channel)
+                .id(new ChannelUserId(savedChannel.getId(), user1.getId()))
+                .channel(savedChannel)
                 .user(user1)
                 .joinedDate(LocalDateTime.now())
                 .build();
+
         var member2 = ChannelMembers.builder()
-                .id(new ChannelUserId(savedChannel.getId(),user2.getId()))
-                .channel(channel)
+                .id(new ChannelUserId(savedChannel.getId(), user2.getId()))
+                .channel(savedChannel)
                 .user(user2)
                 .joinedDate(LocalDateTime.now())
                 .build();
+
         channelMemberRepository.saveAll(List.of(member1, member2));
     }
 
-    @TransactionalEventListener(value = RemoveFriendshipEvent.class
-            , phase = TransactionPhase.AFTER_COMMIT)
-    @Async("syncspace-executor")
+
+    @EventListener
+    @Transactional
     public void handleRemoveFriendRequest(RemoveFriendshipEvent event) {
-        var allChannels = channelRepository.findByIsGroup(false);
-        for(var channel : allChannels) {
-            var members = channel.getMembers();
-            boolean user1 = false, user2 = false;
-            for(var member : members) {
-                if(member.getId().getUserId().equals(event.getSenderUserId())) {
-                    user1 = true;
-                }
-                if(member.getId().getUserId().equals(event.getTargetUserId())) {
-                    user2 = true;
-                }
-            }
-            if(user1 && user2){
-                channelRepository.delete(channel);
-                return;
-            }
-        }
+        channelRepository.findPrivateChannelByUsers(event.getSenderUserId(), event.getTargetUserId())
+                .ifPresent(channelRepository::delete);
+    }
+
+    @EventListener
+    @Transactional
+    public void handleServerJoin(InviteJoinEvent event) {
+        var channels = channelRepository.findAllPublicServerChannels(event.getServerId());
+        var user = userAccessService.getUserInfo(event.getUserId());
+        List<ChannelMembers> channelMembers = new ArrayList<>();
+        channels.forEach(channel -> {
+            var member = ChannelMembers.builder()
+                    .id(new ChannelUserId(channel.getId(), user.getId()))
+                    .channel(channel)
+                    .user(user)
+                    .joinedDate(LocalDateTime.now())
+                    .build();
+            channelMembers.add(member);
+        });
+        channelMemberRepository.saveAll(channelMembers);
     }
 }

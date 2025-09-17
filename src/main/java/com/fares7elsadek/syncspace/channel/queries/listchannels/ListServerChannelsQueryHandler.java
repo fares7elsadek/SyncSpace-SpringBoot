@@ -6,7 +6,7 @@ import com.fares7elsadek.syncspace.server.api.ServerAccessService;
 import com.fares7elsadek.syncspace.shared.api.ApiResponse;
 import com.fares7elsadek.syncspace.shared.cqrs.QueryHandler;
 import com.fares7elsadek.syncspace.shared.exceptions.ServerExceptions;
-import com.fares7elsadek.syncspace.user.api.UserValidationService;
+import com.fares7elsadek.syncspace.user.api.UserAccessService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -17,13 +17,13 @@ import java.util.List;
 public class ListServerChannelsQueryHandler
         implements QueryHandler<ListServerChannelsQuery, ApiResponse<List<ChannelDto>>> {
 
-    private final UserValidationService userValidationService;
+    private final UserAccessService userAccessService;
     private final ServerAccessService serverAccessService;
     private final ChannelRepository channelRepository;
     @Override
     public ApiResponse<List<ChannelDto>> handle(ListServerChannelsQuery query) {
 
-        var user = userValidationService.getCurrentUserInfo();
+        var user = userAccessService.getCurrentUserInfo();
 
         if (!serverAccessService.isMember(query.serverId(), user.getId())) {
             throw new ServerExceptions("You are not a member of this server.");
