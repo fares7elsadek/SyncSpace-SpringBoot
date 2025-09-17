@@ -1,6 +1,6 @@
 package com.fares7elsadek.syncspace.messaging.commands.messages.deletemessage;
 
-import com.fares7elsadek.syncspace.channel.model.Channel;
+import com.fares7elsadek.syncspace.channel.domain.model.Channel;
 import com.fares7elsadek.syncspace.messaging.repository.MessageRepository;
 import com.fares7elsadek.syncspace.messaging.shared.DeleteMessageEvent;
 import com.fares7elsadek.syncspace.shared.api.ApiResponse;

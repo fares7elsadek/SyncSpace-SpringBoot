@@ -1,7 +1,7 @@
 package com.fares7elsadek.syncspace.messaging.commands.messages.sendmessage;
 
-import com.fares7elsadek.syncspace.channel.api.ChannelAccessService;
-import com.fares7elsadek.syncspace.channel.model.Channel;
+import com.fares7elsadek.syncspace.channel.shared.ChannelAccessService;
+import com.fares7elsadek.syncspace.channel.domain.model.Channel;
 import com.fares7elsadek.syncspace.messaging.enums.MessageType;
 import com.fares7elsadek.syncspace.messaging.mapper.MessageMapper;
 import com.fares7elsadek.syncspace.messaging.model.Message;

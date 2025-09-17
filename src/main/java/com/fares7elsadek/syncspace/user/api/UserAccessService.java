@@ -1,6 +1,6 @@
 package com.fares7elsadek.syncspace.user.api;
 
-import com.fares7elsadek.syncspace.channel.model.Channel;
+import com.fares7elsadek.syncspace.channel.domain.model.Channel;
 import com.fares7elsadek.syncspace.user.model.Roles;
 import com.fares7elsadek.syncspace.user.model.User;
 import com.fares7elsadek.syncspace.user.model.dto.UserDto;

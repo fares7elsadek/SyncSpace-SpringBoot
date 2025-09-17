@@ -13,4 +13,8 @@ public class SpringEventPublisher implements EventPublisher{
     public void publish(DomainEvent event) {
         applicationEventPublisher.publishEvent(event);
     }
+    @Override
+    public void publishAsync(DomainEvent event) {
+        applicationEventPublisher.publishEvent(event);
+    }
 }

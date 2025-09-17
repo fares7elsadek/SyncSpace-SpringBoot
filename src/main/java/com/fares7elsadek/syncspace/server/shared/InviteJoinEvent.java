@@ -10,5 +10,4 @@ import lombok.RequiredArgsConstructor;
 public class InviteJoinEvent extends DomainEvent {
     private final String userId;
     private final String serverId;
-    private final ServerMemberId serverMemberId;
 }

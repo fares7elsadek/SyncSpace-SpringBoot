@@ -1,6 +1,6 @@
 package com.fares7elsadek.syncspace.server.model;
 
-import com.fares7elsadek.syncspace.channel.model.Channel;
+import com.fares7elsadek.syncspace.channel.domain.model.Channel;
 import com.fares7elsadek.syncspace.shared.model.Auditable;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;

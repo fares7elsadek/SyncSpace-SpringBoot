@@ -1,8 +1,8 @@
 package com.fares7elsadek.syncspace.user.model;
 
 
-import com.fares7elsadek.syncspace.channel.model.ChannelMembers;
-import com.fares7elsadek.syncspace.channel.model.ChannelReadState;
+import com.fares7elsadek.syncspace.channel.domain.model.ChannelMembers;
+import com.fares7elsadek.syncspace.channel.domain.model.ChannelReadState;
 import com.fares7elsadek.syncspace.friendship.model.Friendships;
 import com.fares7elsadek.syncspace.messaging.model.Message;
 import com.fares7elsadek.syncspace.messaging.model.MessageReactions;

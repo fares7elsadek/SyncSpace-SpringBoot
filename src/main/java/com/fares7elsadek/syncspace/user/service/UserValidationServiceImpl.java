@@ -1,7 +1,7 @@
 package com.fares7elsadek.syncspace.user.service;
 
-import com.fares7elsadek.syncspace.channel.model.Channel;
-import com.fares7elsadek.syncspace.channel.model.ChannelMembers;
+import com.fares7elsadek.syncspace.channel.domain.model.Channel;
+import com.fares7elsadek.syncspace.channel.domain.model.ChannelMembers;
 import com.fares7elsadek.syncspace.shared.exceptions.UserNotFoundException;
 import com.fares7elsadek.syncspace.user.api.UserAccessService;
 import com.fares7elsadek.syncspace.user.model.Roles;

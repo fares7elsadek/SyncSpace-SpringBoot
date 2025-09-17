@@ -1,6 +1,6 @@
 package com.fares7elsadek.syncspace.messaging.queries.getmessages;
 
-import com.fares7elsadek.syncspace.channel.api.ChannelAccessService;
+import com.fares7elsadek.syncspace.channel.shared.ChannelAccessService;
 import com.fares7elsadek.syncspace.messaging.mapper.MessageMapper;
 import com.fares7elsadek.syncspace.messaging.model.Message;
 import com.fares7elsadek.syncspace.messaging.model.MessageAttachments;

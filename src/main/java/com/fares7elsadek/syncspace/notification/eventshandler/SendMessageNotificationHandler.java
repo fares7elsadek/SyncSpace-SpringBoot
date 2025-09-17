@@ -1,6 +1,6 @@
 package com.fares7elsadek.syncspace.notification.eventshandler;
 
-import com.fares7elsadek.syncspace.channel.api.ChannelAccessService;
+import com.fares7elsadek.syncspace.channel.shared.ChannelAccessService;
 import com.fares7elsadek.syncspace.messaging.shared.SendMessageEvent;
 import com.fares7elsadek.syncspace.notification.enums.NotificationType;
 import com.fares7elsadek.syncspace.notification.mapper.NotificationMapper;

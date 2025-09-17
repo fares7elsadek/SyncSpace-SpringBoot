@@ -1,6 +1,6 @@
 package com.fares7elsadek.syncspace.messaging.eventshandler;
 
-import com.fares7elsadek.syncspace.channel.shared.GeneralChannelCreatedEvent;
+import com.fares7elsadek.syncspace.channel.domain.events.GeneralChannelCreatedEvent;
 import com.fares7elsadek.syncspace.messaging.commands.messages.sendmessage.SendMessageCommand;
 import com.fares7elsadek.syncspace.messaging.enums.MessageType;
 import com.fares7elsadek.syncspace.shared.cqrs.CommandBus;
