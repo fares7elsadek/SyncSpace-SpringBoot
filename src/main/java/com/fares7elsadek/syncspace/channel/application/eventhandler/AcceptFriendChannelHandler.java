@@ -5,7 +5,7 @@ import com.fares7elsadek.syncspace.channel.domain.model.ChannelMembers;
 import com.fares7elsadek.syncspace.channel.domain.model.ChannelUserId;
 import com.fares7elsadek.syncspace.channel.infrastructure.repository.ChannelMemberRepository;
 import com.fares7elsadek.syncspace.channel.infrastructure.repository.ChannelRepository;
-import com.fares7elsadek.syncspace.friendship.shared.AcceptFriendRequestEvent;
+import com.fares7elsadek.syncspace.friendship.domain.events.AcceptFriendRequestEvent;
 import com.fares7elsadek.syncspace.user.api.UserAccessService;
 import com.fares7elsadek.syncspace.user.model.User;
 import lombok.RequiredArgsConstructor;

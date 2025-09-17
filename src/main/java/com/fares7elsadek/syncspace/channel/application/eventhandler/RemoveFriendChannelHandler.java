@@ -1,7 +1,7 @@
 package com.fares7elsadek.syncspace.channel.application.eventhandler;
 
 import com.fares7elsadek.syncspace.channel.infrastructure.repository.ChannelRepository;
-import com.fares7elsadek.syncspace.friendship.shared.RemoveFriendshipEvent;
+import com.fares7elsadek.syncspace.friendship.domain.events.RemoveFriendshipEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Async;

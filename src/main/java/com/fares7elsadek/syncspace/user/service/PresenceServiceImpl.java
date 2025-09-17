@@ -1,6 +1,6 @@
 package com.fares7elsadek.syncspace.user.service;
 
-import com.fares7elsadek.syncspace.friendship.api.FriendshipAccessService;
+import com.fares7elsadek.syncspace.friendship.shared.FriendshipAccessService;
 import com.fares7elsadek.syncspace.server.api.ServerAccessService;
 import com.fares7elsadek.syncspace.shared.exceptions.UserNotFoundException;
 import com.fares7elsadek.syncspace.user.api.PresenceService;

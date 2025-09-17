@@ -1,6 +1,6 @@
 package com.fares7elsadek.syncspace.notification.eventshandler;
 
-import com.fares7elsadek.syncspace.friendship.shared.AcceptFriendRequestEvent;
+import com.fares7elsadek.syncspace.friendship.domain.events.AcceptFriendRequestEvent;
 import com.fares7elsadek.syncspace.notification.enums.NotificationType;
 import com.fares7elsadek.syncspace.notification.mapper.NotificationMapper;
 import com.fares7elsadek.syncspace.notification.model.Notifications;

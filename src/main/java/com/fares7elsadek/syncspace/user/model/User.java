@@ -3,7 +3,7 @@ package com.fares7elsadek.syncspace.user.model;
 
 import com.fares7elsadek.syncspace.channel.domain.model.ChannelMembers;
 import com.fares7elsadek.syncspace.channel.domain.model.ChannelReadState;
-import com.fares7elsadek.syncspace.friendship.model.Friendships;
+import com.fares7elsadek.syncspace.friendship.domain.model.Friendships;
 import com.fares7elsadek.syncspace.messaging.model.Message;
 import com.fares7elsadek.syncspace.messaging.model.MessageReactions;
 import com.fares7elsadek.syncspace.notification.model.Notifications;
