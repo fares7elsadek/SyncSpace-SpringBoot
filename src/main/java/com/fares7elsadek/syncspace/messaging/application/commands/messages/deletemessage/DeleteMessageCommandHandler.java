@@ -1,0 +1,57 @@
+package com.fares7elsadek.syncspace.messaging.application.commands.messages.deletemessage;
+
+import com.fares7elsadek.syncspace.channel.domain.model.Channel;
+import com.fares7elsadek.syncspace.messaging.infrastructure.repository.MessageRepository;
+import com.fares7elsadek.syncspace.messaging.domain.events.DeleteMessageEvent;
+import com.fares7elsadek.syncspace.shared.api.ApiResponse;
+import com.fares7elsadek.syncspace.shared.cqrs.CommandHandler;
+import com.fares7elsadek.syncspace.shared.events.SpringEventPublisher;
+import com.fares7elsadek.syncspace.shared.exceptions.AccessDeniedException;
+import com.fares7elsadek.syncspace.shared.exceptions.NotFoundException;
+import com.fares7elsadek.syncspace.user.shared.UserAccessService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
+
+@Component
+@RequiredArgsConstructor
+public class DeleteMessageCommandHandler
+        implements CommandHandler<DeleteMessageCommand, ApiResponse<String>> {
+
+    private final UserAccessService userAccessService;
+    private final MessageRepository messageRepository;
+    private final SpringEventPublisher springEventPublisher;
+
+    @Override
+    public ApiResponse<String> handle(DeleteMessageCommand command) {
+        var user = userAccessService.getCurrentUserInfo();
+        var message = messageRepository.findById(command.messageId())
+                .orElseThrow(() -> new NotFoundException(String.format("Message not found %s", command.messageId())));
+
+        if(!message.getCreatedBy().equals(user.getId()))
+            throw new AccessDeniedException("You don't have permission to perform this action");
+
+        var channel = message.getChannel();
+        String recipientId = "";
+
+        if(!channel.isGroup()){
+            recipientId = getRecipientId(channel,user.getId());
+        }
+
+        messageRepository.delete(message);
+        springEventPublisher
+                .publish(DeleteMessageEvent
+                        .toEvent(user.getId()
+                                ,message.getId(),channel.getId(),channel.isGroup(),recipientId));
+
+        return ApiResponse.success("Message deleted",null);
+    }
+
+    private String getRecipientId(Channel channel,String senderId){
+        return channel.getMembers().stream()
+                .map((c) -> c.getId().getUserId())
+                .filter(id -> !id.equals(senderId))
+                .findFirst()
+                .orElseThrow(() -> new IllegalStateException("Private chat has no recipient"));
+
+    }
+}

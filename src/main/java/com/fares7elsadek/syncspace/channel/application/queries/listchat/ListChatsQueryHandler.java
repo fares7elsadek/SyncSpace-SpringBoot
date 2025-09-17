@@ -6,7 +6,7 @@ import com.fares7elsadek.syncspace.channel.api.dtos.ChannelChatDto;
 import com.fares7elsadek.syncspace.channel.infrastructure.repository.ChannelRepository;
 import com.fares7elsadek.syncspace.shared.api.ApiResponse;
 import com.fares7elsadek.syncspace.shared.cqrs.QueryHandler;
-import com.fares7elsadek.syncspace.user.api.UserAccessService;
+import com.fares7elsadek.syncspace.user.shared.UserAccessService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 

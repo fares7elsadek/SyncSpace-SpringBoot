@@ -4,13 +4,14 @@ import com.fares7elsadek.syncspace.channel.application.commands.createchannel.Cr
 import com.fares7elsadek.syncspace.channel.domain.events.CreateChannelEvent;
 import com.fares7elsadek.syncspace.channel.domain.model.Channel;
 import com.fares7elsadek.syncspace.channel.infrastructure.repository.ChannelRepository;
-import com.fares7elsadek.syncspace.server.api.ServerAccessService;
-import com.fares7elsadek.syncspace.server.shared.CreateServerEvent;
+import com.fares7elsadek.syncspace.server.domain.events.CreateServerEvent;
+import com.fares7elsadek.syncspace.server.shared.ServerAccessService;
 import com.fares7elsadek.syncspace.shared.events.SpringEventPublisher;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.event.TransactionPhase;
 import org.springframework.transaction.event.TransactionalEventListener;
@@ -28,7 +29,7 @@ public class CreateServerChannelHandler {
 
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     @Async("syncspace-executor")
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void handleServerCreationEvent(CreateServerEvent event) {
 
         var generalChannel =

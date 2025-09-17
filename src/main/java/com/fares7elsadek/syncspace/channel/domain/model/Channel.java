@@ -1,7 +1,7 @@
 package com.fares7elsadek.syncspace.channel.domain.model;
 
-import com.fares7elsadek.syncspace.messaging.model.Message;
-import com.fares7elsadek.syncspace.server.model.Server;
+import com.fares7elsadek.syncspace.messaging.domain.model.Message;
+import com.fares7elsadek.syncspace.server.domain.model.Server;
 import com.fares7elsadek.syncspace.shared.model.Auditable;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;

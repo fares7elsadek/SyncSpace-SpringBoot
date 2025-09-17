@@ -6,7 +6,7 @@ import com.fares7elsadek.syncspace.friendship.api.dtos.FriendShipDto;
 import com.fares7elsadek.syncspace.friendship.infrastructure.repository.FriendshipRepository;
 import com.fares7elsadek.syncspace.shared.api.ApiResponse;
 import com.fares7elsadek.syncspace.shared.cqrs.QueryHandler;
-import com.fares7elsadek.syncspace.user.api.UserAccessService;
+import com.fares7elsadek.syncspace.user.shared.UserAccessService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 

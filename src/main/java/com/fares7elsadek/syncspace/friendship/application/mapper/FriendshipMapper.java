@@ -1,7 +1,7 @@
 package com.fares7elsadek.syncspace.friendship.application.mapper;
 
 import com.fares7elsadek.syncspace.friendship.api.dtos.FriendshipUserDto;
-import com.fares7elsadek.syncspace.user.model.User;
+import com.fares7elsadek.syncspace.user.domain.model.User;
 import org.springframework.stereotype.Service;
 
 @Service

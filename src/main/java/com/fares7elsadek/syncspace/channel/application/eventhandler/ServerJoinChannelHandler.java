@@ -5,13 +5,14 @@ import com.fares7elsadek.syncspace.channel.domain.model.ChannelMembers;
 import com.fares7elsadek.syncspace.channel.domain.model.ChannelUserId;
 import com.fares7elsadek.syncspace.channel.infrastructure.repository.ChannelMemberRepository;
 import com.fares7elsadek.syncspace.channel.infrastructure.repository.ChannelRepository;
-import com.fares7elsadek.syncspace.server.shared.InviteJoinEvent;
-import com.fares7elsadek.syncspace.user.api.UserAccessService;
-import com.fares7elsadek.syncspace.user.model.User;
+import com.fares7elsadek.syncspace.server.domain.events.InviteJoinEvent;
+import com.fares7elsadek.syncspace.user.domain.model.User;
+import com.fares7elsadek.syncspace.user.shared.UserAccessService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.event.TransactionPhase;
 import org.springframework.transaction.event.TransactionalEventListener;
@@ -31,7 +32,7 @@ public class ServerJoinChannelHandler {
 
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     @Async("syncspace-executor")
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void handleServerJoin(InviteJoinEvent event) {
         var channels = channelRepository.findAllPublicServerChannels(event.getServerId());
         var user = userAccessService.getUserInfo(event.getUserId());

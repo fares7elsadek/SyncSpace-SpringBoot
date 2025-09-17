@@ -5,7 +5,7 @@ import com.fares7elsadek.syncspace.channel.api.dtos.ChannelChatUserDto;
 import com.fares7elsadek.syncspace.channel.api.dtos.ChannelDto;
 import com.fares7elsadek.syncspace.channel.application.commands.addmember.AddMemberResponse;
 import com.fares7elsadek.syncspace.channel.domain.model.Channel;
-import com.fares7elsadek.syncspace.user.model.User;
+import com.fares7elsadek.syncspace.user.domain.model.User;
 import org.springframework.stereotype.Service;
 
 @Service

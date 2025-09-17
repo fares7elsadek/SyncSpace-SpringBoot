@@ -2,11 +2,11 @@ package com.fares7elsadek.syncspace.channel.application.queries.listchannels;
 
 import com.fares7elsadek.syncspace.channel.api.dtos.ChannelDto;
 import com.fares7elsadek.syncspace.channel.infrastructure.repository.ChannelRepository;
-import com.fares7elsadek.syncspace.server.api.ServerAccessService;
+import com.fares7elsadek.syncspace.server.shared.ServerAccessService;
 import com.fares7elsadek.syncspace.shared.api.ApiResponse;
 import com.fares7elsadek.syncspace.shared.cqrs.QueryHandler;
 import com.fares7elsadek.syncspace.shared.exceptions.ServerExceptions;
-import com.fares7elsadek.syncspace.user.api.UserAccessService;
+import com.fares7elsadek.syncspace.user.shared.UserAccessService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 

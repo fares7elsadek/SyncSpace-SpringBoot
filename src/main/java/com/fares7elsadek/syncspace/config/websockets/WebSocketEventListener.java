@@ -1,6 +1,6 @@
 package com.fares7elsadek.syncspace.config.websockets;
 
-import com.fares7elsadek.syncspace.user.api.PresenceService;
+import com.fares7elsadek.syncspace.user.shared.PresenceService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.event.EventListener;
