@@ -17,38 +17,37 @@ import java.security.Principal;
 public class WebSocketEventListener {
 
     private final PresenceService presenceService;
+
     @EventListener
     public void handleWebSocketConnect(SessionConnectedEvent event) {
         StompHeaderAccessor accessor = StompHeaderAccessor.wrap(event.getMessage());
         String sessionId = accessor.getSessionId();
         Principal user = accessor.getUser();
+
         if (user == null) {
-            throw new IllegalStateException("User is not authenticated");
+            log.warn("User is null, headers = {}", accessor.toNativeHeaderMap());
+            return;
         }
 
         String userId = user.getName();
-
-        log.info("WebSocket connection established - Session: {}, User: {}",
-                sessionId, userId);
-
-        presenceService.setOnline(userId,sessionId);
+        log.info("WebSocket connection established - Session: {}, User: {}", sessionId, userId);
+        presenceService.setOnline(userId, sessionId);
     }
 
     @EventListener
     public void handleWebSocketDisconnect(SessionDisconnectEvent event) {
         StompHeaderAccessor accessor = StompHeaderAccessor.wrap(event.getMessage());
         String sessionId = accessor.getSessionId();
-        Principal user = accessor.getUser();
+        Principal user = (Principal) accessor.getSessionAttributes().get("user");
+
         if (user == null) {
-            throw new IllegalStateException("User is not authenticated");
+            log.warn("User was not authenticated for disconnecting session: {}", sessionId);
+            return;
         }
 
         String userId = user.getName();
 
-        log.info("WebSocket connection disconnected - Session: {}, User: {}",
-                sessionId, userId);
-
-        presenceService.setOffline(userId,sessionId);
+        log.info("WebSocket connection disconnected - Session: {}, User: {}", sessionId, userId);
+        presenceService.setOffline(userId, sessionId);
     }
-
 }
