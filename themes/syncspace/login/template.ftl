@@ -39,12 +39,49 @@
     </head>
 
     <body class="syncspace-body ${bodyClass}">
-    <!-- Space background layers -->
+    <!-- Enhanced Space background layers -->
     <div class="space-bg">
+        <!-- Star field layers -->
         <div class="stars-layer-1"></div>
         <div class="stars-layer-2"></div>
         <div class="stars-layer-3"></div>
+
+        <!-- Earth element -->
+        <div class="earth-container">
+            <div class="earth">
+                <div class="earth-glow"></div>
+                <div class="earth-surface">
+                    <div class="continent continent-1"></div>
+                    <div class="continent continent-2"></div>
+                    <div class="continent continent-3"></div>
+                    <div class="continent continent-4"></div>
+                </div>
+                <div class="earth-atmosphere"></div>
+                <div class="earth-clouds"></div>
+            </div>
+        </div>
+
+        <!-- Nebula layers -->
         <div class="nebula-layer"></div>
+        <div class="nebula-layer-2"></div>
+
+        <!-- Floating cosmic particles -->
+        <div class="cosmic-dust">
+            <div class="dust-particle"></div>
+            <div class="dust-particle"></div>
+            <div class="dust-particle"></div>
+            <div class="dust-particle"></div>
+            <div class="dust-particle"></div>
+        </div>
+
+        <!-- Shooting stars -->
+        <div class="shooting-stars">
+            <div class="shooting-star"></div>
+            <div class="shooting-star"></div>
+            <div class="shooting-star"></div>
+        </div>
+
+        <!-- Interactive particle canvas -->
         <canvas id="particle-canvas"></canvas>
     </div>
 
@@ -115,7 +152,7 @@
 
         <!-- Footer -->
         <div class="auth-footer">
-            <p>&copy; 2024 SyncSpace. All rights reserved.</p>
+            <p>&copy; 2025 SyncSpace. All rights reserved.</p>
         </div>
     </div>
 
@@ -124,6 +161,12 @@
         <button id="toggle-animations" class="a11y-btn" aria-label="Toggle animations">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
+            </svg>
+        </button>
+        <button id="toggle-sound" class="a11y-btn" aria-label="Toggle sound effects">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
+                <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/>
             </svg>
         </button>
     </div>
