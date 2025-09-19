@@ -1,0 +1,24 @@
+<svg width="1920" height="1080" viewBox="0 0 1920 1080" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+        <radialGradient id="nebula1" cx="30%" cy="20%">
+            <stop offset="0%" style="stop-color:#7c3aed;stop-opacity:0.3" />
+            <stop offset="50%" style="stop-color:#a855f7;stop-opacity:0.1" />
+            <stop offset="100%" style="stop-color:#c084fc;stop-opacity:0" />
+        </radialGradient>
+
+        <radialGradient id="nebula2" cx="70%" cy="60%">
+            <stop offset="0%" style="stop-color:#3b82f6;stop-opacity:0.2" />
+            <stop offset="50%" style="stop-color:#60a5fa;stop-opacity:0.05" />
+            <stop offset="100%" style="stop-color:#93bbfc;stop-opacity:0" />
+        </radialGradient>
+
+        <filter id="blur" x="-50%" y="-50%" width="200%" height="200%">
+            <feGaussianBlur in="SourceGraphic" stdDeviation="50" />
+        </filter>
+    </defs>
+
+    <rect width="1920" height="1080" fill="#0d1117"/>
+
+    <ellipse cx="576" cy="216" rx="400" ry="300" fill="url(#nebula1)" filter="url(#blur)"/>
+    <ellipse cx="1344" cy="648" rx="500" ry="400" fill="url(#nebula2)" filter="url(#blur)"/>
+</svg>

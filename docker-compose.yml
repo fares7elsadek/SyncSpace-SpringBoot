@@ -48,6 +48,7 @@ services:
       - syncspace-net
     volumes:
       - ./providers:/opt/keycloak/providers
+      - ./themes:/opt/keycloak/themes
 
   mailhog:
     image: mailhog/mailhog
