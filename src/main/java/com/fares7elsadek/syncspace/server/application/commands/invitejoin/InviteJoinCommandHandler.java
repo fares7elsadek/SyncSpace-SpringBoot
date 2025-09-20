@@ -1,15 +1,15 @@
 package com.fares7elsadek.syncspace.server.application.commands.invitejoin;
 
+import com.fares7elsadek.syncspace.server.domain.enums.ServerRoles;
+import com.fares7elsadek.syncspace.server.domain.events.InviteJoinEvent;
 import com.fares7elsadek.syncspace.server.domain.model.ServerMember;
 import com.fares7elsadek.syncspace.server.domain.model.ServerMemberId;
 import com.fares7elsadek.syncspace.server.infrastructure.repository.ServerInvitesRepository;
 import com.fares7elsadek.syncspace.server.infrastructure.repository.ServerMemberRepository;
-import com.fares7elsadek.syncspace.server.infrastructure.repository.ServerRepository;
-import com.fares7elsadek.syncspace.server.domain.events.InviteJoinEvent;
-import com.fares7elsadek.syncspace.server.domain.enums.ServerRoles;
 import com.fares7elsadek.syncspace.shared.api.ApiResponse;
 import com.fares7elsadek.syncspace.shared.cqrs.CommandHandler;
 import com.fares7elsadek.syncspace.shared.events.SpringEventPublisher;
+import com.fares7elsadek.syncspace.shared.exceptions.NotFoundException;
 import com.fares7elsadek.syncspace.shared.exceptions.ServerExceptions;
 import com.fares7elsadek.syncspace.user.shared.UserAccessService;
 import lombok.RequiredArgsConstructor;
@@ -22,7 +22,6 @@ public class InviteJoinCommandHandler implements
         CommandHandler<InviteJoinCommand, ApiResponse<String>> {
 
     private final UserAccessService userAccessService;
-    private final ServerRepository serverRepository;
     private final ServerMemberRepository serverMemberRepository;
     private final SpringEventPublisher springEventPublisher;
     private final ServerInvitesRepository serverInvitesRepository;
@@ -32,7 +31,7 @@ public class InviteJoinCommandHandler implements
         var currentUser = userAccessService.getCurrentUserInfo();
 
         var invite = serverInvitesRepository.findByCode(command.code())
-                .orElseThrow(() -> new ServerExceptions(
+                .orElseThrow(() -> new NotFoundException(
                         String.format("Invite code not found for code %s", command.code()))
                 );
 

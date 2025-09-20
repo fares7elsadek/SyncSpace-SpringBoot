@@ -10,7 +10,7 @@ public class ServerMapper {
         return  new ServerUserDto(
                 user.getId(),user.getUsername(),
                 user.getFirstName(),user.getLastName(),user.getEmail(),
-                user.getLastSeen(),user.getCreatedAt()
+                user.getLastSeen(),user.getCreatedAt(),user.isOnline(),user.getAvatarUrl()
         );
     }
 }

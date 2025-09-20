@@ -14,7 +14,7 @@ public class ChannelMapper {
         return  new ChannelChatUserDto(
                 user.getId(),user.getUsername(),
                 user.getFirstName(),user.getLastName(),user.getEmail(),
-                user.getLastSeen(),user.getCreatedAt(),user.isOnline(),user.getAvatarUrl(),user.isOnline()
+                user.getLastSeen(),user.getCreatedAt(),user.getAvatarUrl(),user.isOnline()
         );
     }
 

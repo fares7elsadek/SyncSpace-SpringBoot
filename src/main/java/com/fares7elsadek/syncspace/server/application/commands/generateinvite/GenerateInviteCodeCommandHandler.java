@@ -1,16 +1,16 @@
 package com.fares7elsadek.syncspace.server.application.commands.generateinvite;
 
+import com.fares7elsadek.syncspace.server.api.dtos.InviteCodeDto;
+import com.fares7elsadek.syncspace.server.domain.enums.ServerRoles;
+import com.fares7elsadek.syncspace.server.domain.events.InviteCodeGeneratedEvent;
 import com.fares7elsadek.syncspace.server.domain.model.ServerInvites;
 import com.fares7elsadek.syncspace.server.domain.model.ServerMemberId;
-import com.fares7elsadek.syncspace.server.api.dtos.InviteCodeDto;
 import com.fares7elsadek.syncspace.server.infrastructure.repository.ServerInvitesRepository;
 import com.fares7elsadek.syncspace.server.infrastructure.repository.ServerMemberRepository;
-import com.fares7elsadek.syncspace.server.domain.events.InviteCodeGeneratedEvent;
-import com.fares7elsadek.syncspace.server.domain.enums.ServerRoles;
 import com.fares7elsadek.syncspace.shared.api.ApiResponse;
 import com.fares7elsadek.syncspace.shared.cqrs.CommandHandler;
 import com.fares7elsadek.syncspace.shared.events.SpringEventPublisher;
-import com.fares7elsadek.syncspace.shared.exceptions.ServerExceptions;
+import com.fares7elsadek.syncspace.shared.exceptions.UnauthorizedException;
 import com.fares7elsadek.syncspace.user.shared.UserAccessService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -37,12 +37,12 @@ public class GenerateInviteCodeCommandHandler
         var currentUser = userAccessService.getCurrentUserInfo();
         var serverMember = serverMemberRepository
                 .findById(new ServerMemberId(command.serverId(),currentUser.getId()))
-                .orElseThrow(() -> new ServerExceptions(String.format("You don't have access to generate invite code for server id %s", command.serverId())));
+                .orElseThrow(() -> new UnauthorizedException(String.format("You don't have access to generate invite code for server id %s", command.serverId())));
 
         var server = serverMember.getServer();
 
         if(serverMember.getRole().getName().equals(ServerRoles.USER.name()))
-            throw new ServerExceptions(String.format("Only 'Owners' and 'Admins' can generate invite code for server id %s ", command.serverId()));
+            throw new UnauthorizedException(String.format("Only 'Owners' and 'Admins' can generate invite code for server id %s ", command.serverId()));
 
         var invites = serverInvitesRepository.findByServer(server);
 
