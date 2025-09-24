@@ -10,7 +10,6 @@ import com.fares7elsadek.syncspace.user.shared.PresenceService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,51 +23,61 @@ public class PresenceServiceImpl implements PresenceService {
     private final UserRepository userRepository;
     private final SimpMessagingTemplate messagingTemplate;
     private final ServerAccessService serverAccessService;
-    private final FriendshipAccessService  friendshipAccessService;
+    private final FriendshipAccessService friendshipAccessService;
 
     @Override
     @Transactional
-    @Async
     public void setOnline(String userId, String sessionId) {
         var user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException(userId));
         user.setLastSeen(LocalDateTime.now());
-        log.info("Online session: {}", sessionId);
+        log.info("Setting user {} online with session: {}", userId, sessionId);
         user.setOnline(true);
         userRepository.save(user);
-        broadcastPresence(userId,OnlineStatus.ONLINE);
+        broadcastPresence(userId, OnlineStatus.ONLINE, sessionId);
     }
 
     @Override
     @Transactional
-    @Async
     public void setOffline(String userId, String sessionId) {
         var user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException(userId));
         user.setLastSeen(LocalDateTime.now());
-        log.info("Offline session ID: {}", sessionId);
+        log.info("Setting user {} offline with session: {}", userId, sessionId);
         user.setOnline(false);
         userRepository.save(user);
-        broadcastPresence(userId,OnlineStatus.OFFLINE);
+        broadcastPresence(userId, OnlineStatus.OFFLINE, sessionId);
     }
 
-    public void broadcastPresence(String userId, OnlineStatus status) {
-        var serverIds = serverAccessService.getUserServers(userId);
-        var userIds = friendshipAccessService.getUserFriends(userId);
+    public void broadcastPresence(String userId, OnlineStatus status, String sessionId) {
+        log.info("=== Broadcasting presence for user: {}, status: {}, session: {} ===", userId, status, sessionId);
 
-        for (String friendId : userIds) {
-            messagingTemplate.convertAndSendToUser(
-                    friendId,
-                    "/queue/presence",
-                    new PresenceMessage(userId, status.name().toUpperCase())
-            );
+        var serverIds = serverAccessService.getUserServers(userId);
+        var friends = friendshipAccessService.getUserFriends(userId);
+
+        log.info("Found {} friends and {} servers for user {}", friends.size(), serverIds.size(), userId);
+
+        PresenceMessage presenceMessage = new PresenceMessage(userId, status.name().toUpperCase());
+
+
+        for (var friend : friends) {
+            String destination = "/topic/user/" + friend.getId() + "/presence";
+            try {
+                messagingTemplate.convertAndSend(destination, presenceMessage);
+            } catch (Exception e) {
+                log.error("Failed to send presence message to friend {}: {}", friend.getId(), e.getMessage(), e);
+            }
         }
 
         for (String serverId : serverIds) {
-            messagingTemplate.convertAndSend(
-                    "/topic/server." + serverId + ".presence",
-                    new PresenceMessage(userId, status.name().toUpperCase())
-            );
+            String destination = "/topic/server." + serverId + ".presence";
+            try {
+                messagingTemplate.convertAndSend(destination, presenceMessage);
+            } catch (Exception e) {
+                log.error("Failed to send presence message to server {}: {}", serverId, e.getMessage(), e);
+            }
         }
+
+
     }
 }

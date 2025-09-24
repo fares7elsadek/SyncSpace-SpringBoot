@@ -1,5 +1,6 @@
 package com.fares7elsadek.syncspace.server.application.commands.createserver;
 
+import com.fares7elsadek.syncspace.server.application.services.ServerAvatarService;
 import com.fares7elsadek.syncspace.server.domain.model.Server;
 import com.fares7elsadek.syncspace.server.domain.model.ServerMember;
 import com.fares7elsadek.syncspace.server.domain.model.ServerMemberId;
@@ -17,6 +18,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.UUID;
+
 @Component("createServerCommandHandler")
 @RequiredArgsConstructor
 public class CreateServerCommandHandler
@@ -26,6 +29,7 @@ public class CreateServerCommandHandler
     private final ServerRepository serverRepository;
     private final ServerMemberRepository serverMemberRepository;
     private final SpringEventPublisher springEventPublisher;
+    private final ServerAvatarService serverAvatarService;
 
     @Override
     @Transactional
@@ -48,6 +52,7 @@ public class CreateServerCommandHandler
         return Server.builder()
                 .description(command.description())
                 .name(command.name())
+                .iconUrl(serverAvatarService.generateAvatarUrl(UUID.randomUUID().toString()))
                 .isPublic(command.isPublic()).build();
     }
 

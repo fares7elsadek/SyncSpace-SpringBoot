@@ -33,6 +33,7 @@ public class ListAllPendingRequestsQueryHandler
 
         List<FriendShipDto> dto =
                 friendships.stream()
+                        .filter(f -> !f.getRequester().getId().equals(userId))
                         .map(f -> {
                             var user = f.getAddressee().getId().equals(userId) ?
                                     f.getRequester() : f.getAddressee();

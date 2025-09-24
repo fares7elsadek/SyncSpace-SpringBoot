@@ -48,9 +48,12 @@ public class JwtChannelInterceptor implements ChannelInterceptor {
 
                         if (authentication != null) {
                             accessor.setUser(authentication);
-                            SecurityContextHolder.getContext().setAuthentication(authentication);
                             accessor.getSessionAttributes().put("user", authentication);
-                            log.info("WebSocket authentication successful for user: {}", authentication.getName());
+                            SecurityContextHolder.getContext().setAuthentication(authentication);
+
+                            log.info("WebSocket authentication successful for user: {} (Principal: {})",
+                                    authentication.getName(), authentication.getPrincipal());
+
                             return MessageBuilder.createMessage(message.getPayload(), accessor.getMessageHeaders());
                         } else {
                             log.warn("Authentication conversion failed for session: {}", accessor.getSessionId());
@@ -70,6 +73,14 @@ public class JwtChannelInterceptor implements ChannelInterceptor {
                 return null;
             }
         }
+
+        if (accessor.getUser() == null) {
+            Authentication auth = (Authentication) accessor.getSessionAttributes().get("user");
+            if (auth != null) {
+                accessor.setUser(auth);
+            }
+        }
+
         return message;
     }
 }

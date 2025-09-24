@@ -13,4 +13,5 @@ public interface UserAccessService {
     Roles getRoleByName(String name);
     List<Channel> getCurrentUserChatChannels();
     void saveUser(UserDto userDto);
+    User getByUsername(String username);
 }

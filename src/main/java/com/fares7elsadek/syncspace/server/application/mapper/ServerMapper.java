@@ -1,6 +1,8 @@
 package com.fares7elsadek.syncspace.server.application.mapper;
 
+import com.fares7elsadek.syncspace.server.api.dtos.ServerDto;
 import com.fares7elsadek.syncspace.server.api.dtos.ServerUserDto;
+import com.fares7elsadek.syncspace.server.domain.model.Server;
 import com.fares7elsadek.syncspace.user.domain.model.User;
 import org.springframework.stereotype.Service;
 
@@ -12,5 +14,9 @@ public class ServerMapper {
                 user.getFirstName(),user.getLastName(),user.getEmail(),
                 user.getLastSeen(),user.getCreatedAt(),user.isOnline(),user.getAvatarUrl()
         );
+    }
+
+    public ServerDto toServerDto(Server server) {
+        return new ServerDto(server.getId(),server.getName(),server.getIconUrl(),server.getDescription());
     }
 }

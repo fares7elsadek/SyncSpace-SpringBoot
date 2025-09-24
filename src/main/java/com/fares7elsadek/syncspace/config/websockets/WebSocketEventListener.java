@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.event.EventListener;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.messaging.SessionConnectedEvent;
 import org.springframework.web.socket.messaging.SessionDisconnectEvent;
@@ -25,12 +26,11 @@ public class WebSocketEventListener {
         Principal user = accessor.getUser();
 
         if (user == null) {
-            log.warn("User is null, headers = {}", accessor.toNativeHeaderMap());
+            log.warn("User is null for session {}, headers = {}", sessionId, accessor.toNativeHeaderMap());
             return;
         }
 
         String userId = user.getName();
-        log.info("WebSocket connection established - Session: {}, User: {}", sessionId, userId);
         presenceService.setOnline(userId, sessionId);
     }
 
@@ -38,7 +38,13 @@ public class WebSocketEventListener {
     public void handleWebSocketDisconnect(SessionDisconnectEvent event) {
         StompHeaderAccessor accessor = StompHeaderAccessor.wrap(event.getMessage());
         String sessionId = accessor.getSessionId();
-        Principal user = (Principal) accessor.getSessionAttributes().get("user");
+        Principal user = accessor.getUser();
+        if (user == null) {
+            Authentication auth = (Authentication) accessor.getSessionAttributes().get("user");
+            if (auth != null) {
+                user = auth;
+            }
+        }
 
         if (user == null) {
             log.warn("User was not authenticated for disconnecting session: {}", sessionId);
@@ -46,7 +52,6 @@ public class WebSocketEventListener {
         }
 
         String userId = user.getName();
-
         log.info("WebSocket connection disconnected - Session: {}, User: {}", sessionId, userId);
         presenceService.setOffline(userId, sessionId);
     }

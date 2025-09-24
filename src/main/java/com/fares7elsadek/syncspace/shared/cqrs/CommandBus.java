@@ -21,7 +21,8 @@ public class CommandBus {
             R result = handler.handle(command);
             return result;
         } catch(Exception e) {
-            throw new  RuntimeException(e);
+            log.warn(e.getMessage());
+            throw e;
         }
     }
 

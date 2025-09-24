@@ -27,7 +27,7 @@ public class SendFriendRequestHandler implements
     @Override
     public ApiResponse<String> handle(SendFriendRequestCommand command) {
 
-        var targetUser = userAccessService.getUserInfo(command.userId());
+        var targetUser = userAccessService.getByUsername(command.username());
         var currentUser = userAccessService.getCurrentUserInfo();
 
         if(targetUser.getId().equals(currentUser.getId())){

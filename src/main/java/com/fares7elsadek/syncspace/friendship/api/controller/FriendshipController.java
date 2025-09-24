@@ -27,13 +27,12 @@ public class FriendshipController {
     private final CommandBus commandBus;
     private final QueryBus queryBus;
 
-    @PostMapping("/user/{userId}")
+    @PostMapping("/user/{username}")
     public ResponseEntity<ApiResponse<String>> sendFriendRequest(
-            @NotBlank(message = "User ID cannot be blank")
-            @Pattern(regexp = "^[0-9a-fA-F-]{36}$", message = "User ID must be a valid UUID")
-            @PathVariable String userId
+            @NotBlank(message = "username cannot be blank")
+            @PathVariable String username
     ) {
-        return ResponseEntity.ok(commandBus.send(new SendFriendRequestCommand(userId)));
+        return ResponseEntity.ok(commandBus.send(new SendFriendRequestCommand(username)));
     }
 
     @DeleteMapping("/user/{userId}")

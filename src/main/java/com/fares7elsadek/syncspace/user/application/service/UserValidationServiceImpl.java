@@ -79,4 +79,10 @@ public class UserValidationServiceImpl implements UserAccessService {
                 .build();
         userRepository.save(user);
     }
+
+    @Override
+    public User getByUsername(String username) {
+        return userRepository.findByUsername(username)
+                .orElseThrow(() -> new UserNotFoundException(username));
+    }
 }

@@ -19,7 +19,8 @@ public class QueryBus {
             R result = handler.handle(query);
             return result;
         } catch(Exception e) {
-            throw new IllegalArgumentException(e.getMessage());
+            log.warn(e.getMessage());
+            throw e;
         }
     }
 }

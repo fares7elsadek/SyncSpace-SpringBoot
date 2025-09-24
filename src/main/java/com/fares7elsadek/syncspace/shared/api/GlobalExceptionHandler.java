@@ -171,6 +171,17 @@ public class GlobalExceptionHandler {
                 .body(ApiResponse.error(message, Map.of("errorId", errorId)));
     }
 
+    @ExceptionHandler(RuntimeException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ResponseEntity<ApiResponse<Object>> handleRuntime(RuntimeException ex) {
+        String errorId = generateErrorId();
+        log.error("Runtime error - Error ID: {} - Message: {}", errorId, ex.getMessage(), ex);
+
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(ApiResponse.error("A runtime error occurred", Map.of("errorId", errorId)));
+    }
+
+
     /**
      * Generates a unique error ID for tracking purposes
      */

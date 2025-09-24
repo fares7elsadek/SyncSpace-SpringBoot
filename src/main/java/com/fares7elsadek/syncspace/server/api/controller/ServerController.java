@@ -9,6 +9,7 @@ import com.fares7elsadek.syncspace.server.api.dtos.InviteCodeDto;
 import com.fares7elsadek.syncspace.server.api.dtos.ServerDto;
 import com.fares7elsadek.syncspace.server.api.dtos.ServerMemberDto;
 import com.fares7elsadek.syncspace.server.application.queries.getserver.GetServerQuery;
+import com.fares7elsadek.syncspace.server.application.queries.getservers.GetServersQuery;
 import com.fares7elsadek.syncspace.server.application.queries.listmembers.ListMembersQuery;
 import com.fares7elsadek.syncspace.shared.api.ApiResponse;
 import com.fares7elsadek.syncspace.shared.cqrs.CommandBus;
@@ -30,6 +31,12 @@ import java.util.List;
 public class ServerController {
     private final CommandBus commandBus;
     private final QueryBus queryBus;
+
+
+    @GetMapping
+    public ResponseEntity<ApiResponse<List<ServerDto>>> getUserServers(){
+        return ResponseEntity.ok(queryBus.send(new GetServersQuery()));
+    }
 
     @PostMapping
     public ResponseEntity<ApiResponse<String>> createServer(

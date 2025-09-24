@@ -19,9 +19,7 @@ public class ChannelMapper {
     }
 
     public ChannelChatDto  toChannelChatDto(Channel channel,User user){
-        return new ChannelChatDto(channel.getId(), channel.getName()
-                , channel.getDescription(),channel.isPrivate()
-                ,channel.isGroup(), toChannelChatUserDto(user));
+        return new ChannelChatDto(toChannelDto(channel), toChannelChatUserDto(user));
     }
 
     public ChannelDto toChannelDto(Channel channel){
