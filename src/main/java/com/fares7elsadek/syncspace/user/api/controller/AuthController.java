@@ -29,4 +29,10 @@ public class AuthController {
         var user = userMapper.toUserDto(userService.getCurrentUserInfo());
         return ResponseEntity.ok(ApiResponse.success("User info",user));
     }
+
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<ApiResponse<UserDto>> userInfo(@PathVariable String userId){
+        var user = userMapper.toUserDto(userService.getUserInfo(userId));
+        return ResponseEntity.ok(ApiResponse.success("User info",user));
+    }
 }

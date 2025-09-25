@@ -23,36 +23,51 @@ public class WebSocketEventListener {
     public void handleWebSocketConnect(SessionConnectedEvent event) {
         StompHeaderAccessor accessor = StompHeaderAccessor.wrap(event.getMessage());
         String sessionId = accessor.getSessionId();
-        Principal user = accessor.getUser();
 
-        if (user == null) {
-            log.warn("User is null for session {}, headers = {}", sessionId, accessor.toNativeHeaderMap());
+        Authentication authentication = getAuthentication(accessor);
+
+        if (authentication == null) {
+            log.warn("No authentication found for session {}, headers = {}", sessionId, accessor.toNativeHeaderMap());
             return;
         }
 
-        String userId = user.getName();
+        String userId = authentication.getName();
         presenceService.setOnline(userId, sessionId);
+        log.info("User {} connected with session {}", userId, sessionId);
     }
 
     @EventListener
     public void handleWebSocketDisconnect(SessionDisconnectEvent event) {
         StompHeaderAccessor accessor = StompHeaderAccessor.wrap(event.getMessage());
         String sessionId = accessor.getSessionId();
-        Principal user = accessor.getUser();
-        if (user == null) {
-            Authentication auth = (Authentication) accessor.getSessionAttributes().get("user");
-            if (auth != null) {
-                user = auth;
-            }
-        }
 
-        if (user == null) {
+        Authentication authentication = getAuthentication(accessor);
+
+        if (authentication == null) {
             log.warn("User was not authenticated for disconnecting session: {}", sessionId);
             return;
         }
 
-        String userId = user.getName();
+        String userId = authentication.getName();
         log.info("WebSocket connection disconnected - Session: {}, User: {}", sessionId, userId);
         presenceService.setOffline(userId, sessionId);
+    }
+
+    private Authentication getAuthentication(StompHeaderAccessor accessor) {
+
+        Principal user = accessor.getUser();
+        if (user instanceof Authentication) {
+            return (Authentication) user;
+        }
+
+
+        if (accessor.getSessionAttributes() != null) {
+            Authentication auth = (Authentication) accessor.getSessionAttributes().get("user");
+            if (auth != null) {
+                return auth;
+            }
+        }
+
+        return null;
     }
 }

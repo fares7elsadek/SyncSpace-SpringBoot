@@ -20,6 +20,12 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @SuperBuilder
+@Table(
+        name = "messages",
+        indexes = {
+                @Index(name = "idx_channel_createdat", columnList = "channel_id, created_at")
+        }
+)
 public class Message extends Auditable {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)

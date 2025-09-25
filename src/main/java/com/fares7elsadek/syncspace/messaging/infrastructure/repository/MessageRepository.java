@@ -25,4 +25,17 @@ public interface MessageRepository extends JpaRepository<Message, String> {
             LocalDateTime cursor,
             Pageable pageable
     );
+
+    @Query("""
+       SELECT COUNT(m) FROM Message m
+       WHERE m.channel.id = :channelId
+             AND m.createdAt > (
+                 SELECT l.createdAt FROM Message l WHERE l.id = :lastReadMessageId
+             )
+       """)
+    int getNumberOfUnreadMessages(String channelId, String lastReadMessageId);
+
+    @EntityGraph(attributePaths = {"attachments","channel","sender"})
+    Message findFirstByChannelIdOrderByCreatedAtDesc(String channelId);
+
 }

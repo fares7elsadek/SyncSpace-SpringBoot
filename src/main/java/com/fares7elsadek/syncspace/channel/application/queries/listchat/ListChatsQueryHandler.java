@@ -1,8 +1,8 @@
 package com.fares7elsadek.syncspace.channel.application.queries.listchat;
 
+import com.fares7elsadek.syncspace.channel.api.dtos.ChannelChatDto;
 import com.fares7elsadek.syncspace.channel.application.mapper.ChannelMapper;
 import com.fares7elsadek.syncspace.channel.domain.model.ChannelMembers;
-import com.fares7elsadek.syncspace.channel.api.dtos.ChannelChatDto;
 import com.fares7elsadek.syncspace.channel.infrastructure.repository.ChannelRepository;
 import com.fares7elsadek.syncspace.shared.api.ApiResponse;
 import com.fares7elsadek.syncspace.shared.cqrs.QueryHandler;

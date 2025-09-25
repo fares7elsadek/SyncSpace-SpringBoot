@@ -4,7 +4,6 @@ import com.fares7elsadek.syncspace.messaging.api.dtos.MessageDto;
 import com.fares7elsadek.syncspace.messaging.application.mapper.MessageMapper;
 import com.fares7elsadek.syncspace.messaging.domain.events.SendMessageEvent;
 import com.fares7elsadek.syncspace.messaging.domain.model.Message;
-import com.fares7elsadek.syncspace.messaging.domain.model.MessageAttachments;
 import com.fares7elsadek.syncspace.messaging.domain.ws.WebSocketMessageDestinations;
 import com.fares7elsadek.syncspace.messaging.infrastructure.repository.MessageRepository;
 import lombok.RequiredArgsConstructor;
@@ -36,15 +35,7 @@ public class SendMessageEventHandler {
         Message message = messageRepository.findById(event.getMessageId()).
                 orElseThrow(() -> new RuntimeException("Message not found"));
 
-        MessageDto dto = new MessageDto(
-                message.getId(),
-                event.getChannelId(),
-                message.getContent(),
-                messageMapper.toDto(message.getSender()),
-                message.getAttachments() == null
-                        ? java.util.List.of()
-                        : message.getAttachments().stream().map(MessageAttachments::getUrl).toList()
-        );
+        MessageDto dto = messageMapper.toMessageDto(message);
 
         if(event.isGroup()){
             // group channel

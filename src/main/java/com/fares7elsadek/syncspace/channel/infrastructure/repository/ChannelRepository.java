@@ -27,12 +27,15 @@ public interface ChannelRepository extends JpaRepository<Channel,String> {
     Optional<Channel> findPrivateChannelByUsers(@Param("user1") String user1, @Param("user2") String user2);
 
     @Query("""
-            SELECT DISTINCT c FROM Channel c
-              JOIN c.members m1
-              WHERE c.isGroup = false
-                AND m1.id.userId = :userId
-        """)
-    List<Channel> findUserPrivateChats(String userId);
+        SELECT c FROM Channel c
+        JOIN c.members m
+        WHERE c.isGroup = false
+          AND m.id.userId = :userId
+        ORDER BY COALESCE(c.updatedAt, c.createdAt) DESC
+    """)
+    List<Channel> findUserPrivateChats(@Param("userId") String userId);
+
+
     @Query("""
             SELECT c FROM Channel c 
             WHERE c.server.id = :serverId AND c.isGroup = true

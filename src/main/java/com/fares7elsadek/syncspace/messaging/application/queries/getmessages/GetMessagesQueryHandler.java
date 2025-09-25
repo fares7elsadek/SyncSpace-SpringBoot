@@ -1,11 +1,10 @@
 package com.fares7elsadek.syncspace.messaging.application.queries.getmessages;
 
 import com.fares7elsadek.syncspace.channel.shared.ChannelAccessService;
-import com.fares7elsadek.syncspace.messaging.application.mapper.MessageMapper;
-import com.fares7elsadek.syncspace.messaging.domain.model.Message;
-import com.fares7elsadek.syncspace.messaging.domain.model.MessageAttachments;
 import com.fares7elsadek.syncspace.messaging.api.dtos.MessageDto;
 import com.fares7elsadek.syncspace.messaging.api.dtos.PaginatedMessageResponse;
+import com.fares7elsadek.syncspace.messaging.application.mapper.MessageMapper;
+import com.fares7elsadek.syncspace.messaging.domain.model.Message;
 import com.fares7elsadek.syncspace.messaging.infrastructure.repository.MessageRepository;
 import com.fares7elsadek.syncspace.shared.api.ApiResponse;
 import com.fares7elsadek.syncspace.shared.cqrs.QueryHandler;
@@ -20,7 +19,6 @@ import java.time.LocalDateTime;
 import java.util.Base64;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
@@ -58,14 +56,12 @@ public class GetMessagesQueryHandler
         String nextCursor = encodeCursor(messages.get(messages.size() - 1).getCreatedAt());
 
         List<MessageDto> dtos = messages.stream()
-                .map(message -> new MessageDto(
-                        channelId,
-                        message.getId(),
-                        message.getContent(),
-                        messageMapper.toDto(message.getSender()),
-                        message.getAttachments().stream().map(MessageAttachments::getUrl).collect(Collectors.toList())
-                ))
+                .map(messageMapper::toMessageDto)
                 .toList();
+
+        channelAccessService
+                .updateChannelReadState(channelAccessService.getChannel(channelId),
+                user,messages.getLast());
 
         var dto = new PaginatedMessageResponse(nextCursor, hasMore, dtos);
 

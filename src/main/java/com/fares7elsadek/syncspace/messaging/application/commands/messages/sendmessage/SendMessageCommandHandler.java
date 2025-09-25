@@ -69,16 +69,7 @@ public class SendMessageCommandHandler implements CommandHandler<SendMessageComm
                         .toEvent(savedMessage
                                 ,channel.getId(),channel.isGroup(),recipientId));
 
-        var dto = new MessageDto(
-                command.channelId(),
-                savedMessage.getId(),
-                savedMessage.getContent(),
-                messageMapper.toDto(sender)
-                ,
-                savedMessage.getAttachments() == null
-                        ? List.of()
-                        : savedMessage.getAttachments().stream().map(MessageAttachments::getUrl).toList()
-        );
+        var dto = messageMapper.toMessageDto(savedMessage);
 
         return ApiResponse.success("Message sent", dto);
     }
