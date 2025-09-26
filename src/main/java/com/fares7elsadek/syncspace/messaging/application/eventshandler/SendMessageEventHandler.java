@@ -46,9 +46,8 @@ public class SendMessageEventHandler {
 
         }else{
             // private chat
-            messagingTemplate.convertAndSendToUser(
-                    event.getRecipientId(),
-                    WebSocketMessageDestinations.CHANNEL_MESSAGES_PRIVATE,
+            messagingTemplate.convertAndSend(
+                    WebSocketMessageDestinations.CHANNEL_MESSAGES_PRIVATE.replace("{userId}", event.getRecipientId()),
                     dto
             );
 

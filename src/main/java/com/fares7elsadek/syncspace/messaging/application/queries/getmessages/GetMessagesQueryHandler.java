@@ -32,7 +32,7 @@ public class GetMessagesQueryHandler
 
     @Override
     public ApiResponse<PaginatedMessageResponse> handle(GetMessagesQuery query) {
-        LocalDateTime cursor = query.cursor() != null && !query.cursor().isBlank() ? decodeCursor(query.cursor()) : null;
+        LocalDateTime cursor = validCursor(query) ? decodeCursor(query.cursor()) : null;
         String channelId = query.channelId();
         int size = query.size();
 
@@ -59,9 +59,12 @@ public class GetMessagesQueryHandler
                 .map(messageMapper::toMessageDto)
                 .toList();
 
-        channelAccessService
-                .updateChannelReadState(channelAccessService.getChannel(channelId),
-                user,messages.getLast());
+        if(!validCursor(query)){
+            channelAccessService
+                    .updateChannelReadState(channelAccessService.getChannel(channelId),
+                            user,messages.getLast());
+        }
+
 
         var dto = new PaginatedMessageResponse(nextCursor, hasMore, dtos);
 
@@ -75,5 +78,9 @@ public class GetMessagesQueryHandler
 
     private String encodeCursor(LocalDateTime cursor) {
         return Base64.getEncoder().encodeToString(cursor.toString().getBytes(StandardCharsets.UTF_8));
+    }
+
+    private boolean validCursor(GetMessagesQuery query){
+        return query.cursor() != null && !query.cursor().isBlank();
     }
 }

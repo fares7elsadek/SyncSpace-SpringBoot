@@ -21,7 +21,7 @@ public class PresenceWebSocketController {
     @SendTo("/topic/presence")
     public ChannelPresenceEvent startViewing(ChannelPresenceRequest channelPresenceRequest, Principal principal) {
         log.info("channel presence request received {} with userId {}", channelPresenceRequest, principal.getName());
-
+        System.out.println("here ===================================== ");
         channelPresenceService.setUserActive(channelPresenceRequest.channelId(), principal.getName());
 
         return new ChannelPresenceEvent(
@@ -30,8 +30,6 @@ public class PresenceWebSocketController {
                 true
         );
     }
-
-
 
     @MessageMapping("/channel/view/end")
     @SendTo("/topic/presence")

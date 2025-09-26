@@ -41,7 +41,7 @@ public class Message extends Auditable {
     @Column(nullable = false)
     private MessageType messageType;
 
-    @Column(nullable = false)
+    @Column(nullable = false,columnDefinition = "TEXT")
     private String content;
 
     @OneToMany(mappedBy = "message", cascade = CascadeType.ALL, orphanRemoval = true)
