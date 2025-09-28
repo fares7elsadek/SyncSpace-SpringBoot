@@ -36,15 +36,13 @@ public class SendMessageEventHandler {
                 orElseThrow(() -> new RuntimeException("Message not found"));
 
         MessageDto dto = messageMapper.toMessageDto(message);
+        // group channel
+        String destination = WebSocketMessageDestinations.CHANNEL_MESSAGES.replace("{channelId}",
+                event.getChannelId());
+        messagingTemplate.convertAndSend(destination, dto);
+        log.info("Group message broadcast to {}", destination);
 
-        if(event.isGroup()){
-            // group channel
-            String destination = WebSocketMessageDestinations.CHANNEL_MESSAGES.replace("{channelId}",
-                    event.getChannelId());
-            messagingTemplate.convertAndSend(destination, dto);
-            log.info("Group message broadcast to {}", destination);
-
-        }else{
+        if(!event.isGroup()){
             // private chat
             messagingTemplate.convertAndSend(
                     WebSocketMessageDestinations.CHANNEL_MESSAGES_PRIVATE.replace("{userId}", event.getRecipientId()),

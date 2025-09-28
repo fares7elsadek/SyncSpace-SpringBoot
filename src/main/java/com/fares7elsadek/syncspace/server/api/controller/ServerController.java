@@ -1,6 +1,7 @@
 package com.fares7elsadek.syncspace.server.api.controller;
 
 
+import com.fares7elsadek.syncspace.server.application.commands.addmember.AddServerMemberCommand;
 import com.fares7elsadek.syncspace.server.application.commands.createserver.CreateServerCommand;
 import com.fares7elsadek.syncspace.server.application.commands.deleteserver.DeleteServerCommand;
 import com.fares7elsadek.syncspace.server.application.commands.generateinvite.GenerateInviteCodeCommand;
@@ -76,6 +77,20 @@ public class ServerController {
             String code
     ){
         return ResponseEntity.ok(commandBus.send(new InviteJoinCommand(serverId, code)));
+    }
+
+    @PostMapping("/{serverId}/member/{username}")
+    public ResponseEntity<ApiResponse<String>> addMember(
+            @PathVariable
+            @NotBlank(message = "Server ID cannot be blank")
+            @Pattern(regexp = "^[0-9a-fA-F-]{36}$", message = "Server ID must be a valid UUID")
+            String serverId
+            ,
+            @PathVariable
+            @NotBlank(message = "Username can't be blank")
+            String username
+    ){
+        return ResponseEntity.ok(commandBus.send(new AddServerMemberCommand(serverId, username)));
     }
 
     @GetMapping("/{serverId}")

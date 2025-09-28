@@ -5,6 +5,7 @@ import com.fares7elsadek.syncspace.channel.domain.model.ChannelMembers;
 import com.fares7elsadek.syncspace.channel.domain.model.ChannelUserId;
 import com.fares7elsadek.syncspace.channel.infrastructure.repository.ChannelMemberRepository;
 import com.fares7elsadek.syncspace.channel.infrastructure.repository.ChannelRepository;
+import com.fares7elsadek.syncspace.server.domain.events.AddServerMemberEvent;
 import com.fares7elsadek.syncspace.server.domain.events.InviteJoinEvent;
 import com.fares7elsadek.syncspace.user.domain.model.User;
 import com.fares7elsadek.syncspace.user.shared.UserAccessService;
@@ -42,6 +43,22 @@ public class ServerJoinChannelHandler {
             channelMembers.add(member);
         });
         channelMemberRepository.saveAll(channelMembers);
+    }
+
+    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
+    @Async("syncspace-executor")
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    public void handleServerJoin(AddServerMemberEvent event) {
+
+        var channels = channelRepository.findAllPublicServerChannels(event.getServerId());
+        var user = userAccessService.getUserInfo(event.getUserId());
+        List<ChannelMembers> channelMembers = new ArrayList<>();
+        channels.forEach(channel -> {
+            var member = createMember(new ChannelUserId(channel.getId(),user.getId()),channel,user);
+            channelMembers.add(member);
+        });
+        channelMemberRepository.saveAll(channelMembers);
+
     }
 
     private ChannelMembers createMember(ChannelUserId id, Channel channel, User user){

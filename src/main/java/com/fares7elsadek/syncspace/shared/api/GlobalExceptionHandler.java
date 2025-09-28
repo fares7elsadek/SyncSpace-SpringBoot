@@ -115,13 +115,13 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(ServerExceptions.class)
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
     public ResponseEntity<ApiResponse<Object>> handleServerErrors(ServerExceptions ex) {
         String errorId = generateErrorId();
         log.error("Server error - Error ID: {} - Message: {}", errorId, ex.getMessage(), ex);
 
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(ApiResponse.error("Internal server error occurred", Map.of("errorId", errorId)));
+        return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                .body(ApiResponse.error(ex.getMessage(), Map.of("errorId", errorId)));
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
