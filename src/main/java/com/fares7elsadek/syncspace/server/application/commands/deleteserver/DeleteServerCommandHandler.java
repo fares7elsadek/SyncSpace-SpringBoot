@@ -41,7 +41,8 @@ public class DeleteServerCommandHandler
         if(!serverMember.getRole().getName().equals(ServerRoles.OWNER.name()))
             throw new UnauthorizedException(String.format("You don't have access to delete this server", server.getId()));
 
-        serverMemberRepository.delete(serverMember);
+
+        serverRepository.delete(server);
         springEventPublisher
                 .publish(DeleteServerEvent.toEvent(server));
 

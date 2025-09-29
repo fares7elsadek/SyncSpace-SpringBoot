@@ -21,12 +21,15 @@ public class NotificationMapper {
     }
 
     public NotificationDto toNotificationDto(Notifications notification){
+        PrettyTime p = new PrettyTime();
+        String createdAt = p.format(notification.getCreatedAt());
         return new  NotificationDto(
                 notification.getId(),
                 notification.getType().name(),
                 notification.getTitle(),
                 notification.getContent(),
-                notification.getRelatedEntityId()
+                notification.getRelatedEntityId(),
+                createdAt, notification.isRead()
         );
     }
 }

@@ -30,6 +30,7 @@ public class Server extends Auditable {
     private String iconUrl;
     private boolean isPublic;
     private int maxMembers =  MAX_SERVER_MEMBERS;
+    private int membersNumber = 0;
 
     @OneToMany(mappedBy = "server", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ServerMember> members = new ArrayList<>();

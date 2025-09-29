@@ -7,17 +7,19 @@ import lombok.Getter;
 
 @Getter
 public class AcceptFriendRequestEvent extends DomainEvent {
+    private final String friendshipId;
     private final String senderUserId;
     private final String targetUserId;
 
-    public AcceptFriendRequestEvent(String eventOwnerId, String senderUserId, String targetUserId) {
+    public AcceptFriendRequestEvent(String eventOwnerId,String friendshipId ,String senderUserId, String targetUserId) {
         super("acceptFriend", eventOwnerId);
         this.senderUserId = senderUserId;
         this.targetUserId = targetUserId;
+        this.friendshipId = friendshipId;
     }
 
     public static AcceptFriendRequestEvent toEntity(Friendships friendships) {
-        return new AcceptFriendRequestEvent(friendships.getCreatedBy(),friendships.getRequester().getId(),
+        return new AcceptFriendRequestEvent(friendships.getCreatedBy(), friendships.getId(), friendships.getRequester().getId(),
                 friendships.getAddressee().getId());
     }
 }

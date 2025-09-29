@@ -5,6 +5,7 @@ import com.fares7elsadek.syncspace.friendship.application.commands.rejectrequest
 import com.fares7elsadek.syncspace.friendship.application.commands.removefriendship.RemoveFriendshipCommand;
 import com.fares7elsadek.syncspace.friendship.application.commands.sendrequest.SendFriendRequestCommand;
 import com.fares7elsadek.syncspace.friendship.api.dtos.FriendShipDto;
+import com.fares7elsadek.syncspace.friendship.application.queries.getrequest.GetFriendshipRequestQuery;
 import com.fares7elsadek.syncspace.friendship.application.queries.listall.ListAllFriendsQuery;
 import com.fares7elsadek.syncspace.friendship.application.queries.listpending.ListAllPendingRequestsQuery;
 import com.fares7elsadek.syncspace.shared.api.ApiResponse;
@@ -70,5 +71,14 @@ public class FriendshipController {
     @GetMapping("/pending")
     public ResponseEntity<ApiResponse<List<FriendShipDto>>> listAllPendingFriends(){
         return ResponseEntity.ok(queryBus.send(new ListAllPendingRequestsQuery()));
+    }
+
+    @GetMapping("/{friendId}")
+    public ResponseEntity<ApiResponse<FriendShipDto>> getFriendship(
+            @NotBlank(message = "Request ID cannot be blank")
+            @Pattern(regexp = "^[0-9a-fA-F-]{36}$", message = "Request ID must be a valid UUID")
+            @PathVariable String friendId
+    ){
+        return ResponseEntity.ok(queryBus.send(new GetFriendshipRequestQuery(friendId)));
     }
 }

@@ -36,7 +36,7 @@ public class ListAllFriendsQueryHandler
                         .map(f -> {
                             var user = f.getAddressee().getId().equals(userId) ?
                                     f.getRequester() : f.getAddressee();
-                            return new  FriendShipDto(f.getId(),friendshipMapper.toFriendshipUserDto(user));
+                            return friendshipMapper.toFriendshipDto(f, user);
                         }).collect(Collectors.toList());
 
         return ApiResponse.success("All friendships", dto);

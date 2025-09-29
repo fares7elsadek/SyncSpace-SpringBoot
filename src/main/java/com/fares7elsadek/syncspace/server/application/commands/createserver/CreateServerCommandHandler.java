@@ -53,7 +53,8 @@ public class CreateServerCommandHandler
                 .description(command.description())
                 .name(command.name())
                 .iconUrl(serverAvatarService.generateAvatarUrl(UUID.randomUUID().toString()))
-                .isPublic(true).build();
+                .isPublic(true)
+                .membersNumber(1).build();
     }
 
     private ServerMember createServerMemberEntity(Server server, User user, Roles role) {

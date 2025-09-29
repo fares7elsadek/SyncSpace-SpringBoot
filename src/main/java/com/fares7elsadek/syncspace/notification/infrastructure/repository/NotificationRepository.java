@@ -2,6 +2,8 @@ package com.fares7elsadek.syncspace.notification.infrastructure.repository;
 
 import com.fares7elsadek.syncspace.notification.domain.enums.NotificationType;
 import com.fares7elsadek.syncspace.notification.domain.model.Notifications;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -22,11 +24,13 @@ public interface NotificationRepository extends JpaRepository<Notifications, Str
             SELECT n FROM Notifications n 
             WHERE n.read = :read AND n.user.id = :userId
            """)
-    List<Notifications> findByUserAndRead(String userId,boolean read);
+    List<Notifications> findByUserAndRead(String userId, boolean read);
 
     @Query("""
-            SELECT n FROM Notifications n 
-            WHERE n.user.id = :userId
-           """)
-    List<Notifications> findByUser(String userId);
+        SELECT n FROM Notifications n 
+        WHERE n.user.id = :userId 
+        ORDER BY n.createdAt DESC
+    """)
+    Page<Notifications> findByUser(String userId, Pageable pageable);
+
 }

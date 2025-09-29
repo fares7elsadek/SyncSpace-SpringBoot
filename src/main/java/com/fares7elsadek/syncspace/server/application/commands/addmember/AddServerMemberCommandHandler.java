@@ -43,6 +43,10 @@ public class AddServerMemberCommandHandler implements CommandHandler<AddServerMe
                     throw new ServerExceptions("Server is already member");
                 });
 
+        if(server.getMembersNumber() == server.getMaxMembers()){
+            throw new ServerExceptions("Server has reached it's maximum number of members");
+        }
+
         var newServerMember = ServerMember.builder()
                 .id(new ServerMemberId(server.getId(), user.getId()))
                 .server(server)
@@ -50,7 +54,10 @@ public class AddServerMemberCommandHandler implements CommandHandler<AddServerMe
                 .role(userAccessService.getRoleByName(ServerRoles.USER.name()))
                 .build();
 
+        server.setMembersNumber(server.getMembersNumber() + 1);
+
         serverMemberRepository.save(newServerMember);
+        serverRepository.save(server);
 
         springEventPublisher.publish(AddServerMemberEvent.toEvent(currentUser.getId(), user.getId(),server.getId()));
 

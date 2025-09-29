@@ -1,7 +1,8 @@
 package com.fares7elsadek.syncspace.server.application.queries.getserver;
 
-import com.fares7elsadek.syncspace.server.domain.model.ServerMemberId;
 import com.fares7elsadek.syncspace.server.api.dtos.ServerDto;
+import com.fares7elsadek.syncspace.server.application.mapper.ServerMapper;
+import com.fares7elsadek.syncspace.server.domain.model.ServerMemberId;
 import com.fares7elsadek.syncspace.server.infrastructure.repository.ServerMemberRepository;
 import com.fares7elsadek.syncspace.server.infrastructure.repository.ServerRepository;
 import com.fares7elsadek.syncspace.shared.api.ApiResponse;
@@ -19,6 +20,7 @@ public class GetServerQueryHandler implements
     private final UserAccessService userAccessService;
     private final ServerMemberRepository serverMemberRepository;
     private final ServerRepository serverRepository;
+    private final ServerMapper serverMapper;
 
     @Override
     public ApiResponse<ServerDto> handle(GetServerQuery query) {
@@ -35,7 +37,7 @@ public class GetServerQueryHandler implements
 
         return ApiResponse
                 .success("Server details",
-                        new ServerDto(server.getId()
-                                ,server.getName(),server.getIconUrl(),server.getDescription()));
+                        serverMapper.toServerDto(server)
+                        );
     }
 }

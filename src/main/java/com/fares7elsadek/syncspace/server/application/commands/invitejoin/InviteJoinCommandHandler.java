@@ -6,6 +6,7 @@ import com.fares7elsadek.syncspace.server.domain.model.ServerMember;
 import com.fares7elsadek.syncspace.server.domain.model.ServerMemberId;
 import com.fares7elsadek.syncspace.server.infrastructure.repository.ServerInvitesRepository;
 import com.fares7elsadek.syncspace.server.infrastructure.repository.ServerMemberRepository;
+import com.fares7elsadek.syncspace.server.infrastructure.repository.ServerRepository;
 import com.fares7elsadek.syncspace.shared.api.ApiResponse;
 import com.fares7elsadek.syncspace.shared.cqrs.CommandHandler;
 import com.fares7elsadek.syncspace.shared.events.SpringEventPublisher;
@@ -25,6 +26,7 @@ public class InviteJoinCommandHandler implements
     private final ServerMemberRepository serverMemberRepository;
     private final SpringEventPublisher springEventPublisher;
     private final ServerInvitesRepository serverInvitesRepository;
+    private final ServerRepository serverRepository;
     @Transactional
     @Override
     public ApiResponse<String> handle(InviteJoinCommand command) {
@@ -52,6 +54,10 @@ public class InviteJoinCommandHandler implements
                     );
                 });
 
+        if(server.getMembersNumber() == server.getMaxMembers()){
+            throw new ServerExceptions("Server has reached it's maximum number of members");
+        }
+
         // increment uses, not maxUses
         invite.setUses(invite.getUses() + 1);
         serverInvitesRepository.save(invite);
@@ -63,7 +69,10 @@ public class InviteJoinCommandHandler implements
                 .role(userAccessService.getRoleByName(ServerRoles.USER.name()))
                 .build();
 
+        server.setMembersNumber(server.getMembersNumber() + 1);
+
         serverMemberRepository.save(newServerMember);
+        serverRepository.save(server);
 
         springEventPublisher.publish(InviteJoinEvent.toEvent(
                 currentUser.getId(), currentUser.getId(), command.serverId()

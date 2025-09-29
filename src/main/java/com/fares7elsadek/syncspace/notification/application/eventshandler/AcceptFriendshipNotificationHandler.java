@@ -76,7 +76,7 @@ public class AcceptFriendshipNotificationHandler {
                 .type(NotificationType.FRIEND_ACCEPTED)
                 .title(title)
                 .content(content)
-                .relatedEntityId(accepter.getId())
+                .relatedEntityId(event.getFriendshipId())
                 .read(false)
                 .build();
     }

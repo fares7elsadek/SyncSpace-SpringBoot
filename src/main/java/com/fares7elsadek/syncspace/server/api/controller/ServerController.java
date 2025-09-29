@@ -9,6 +9,7 @@ import com.fares7elsadek.syncspace.server.application.commands.invitejoin.Invite
 import com.fares7elsadek.syncspace.server.api.dtos.InviteCodeDto;
 import com.fares7elsadek.syncspace.server.api.dtos.ServerDto;
 import com.fares7elsadek.syncspace.server.api.dtos.ServerMemberDto;
+import com.fares7elsadek.syncspace.server.application.queries.getmember.GetServerMember;
 import com.fares7elsadek.syncspace.server.application.queries.getserver.GetServerQuery;
 import com.fares7elsadek.syncspace.server.application.queries.getservers.GetServersQuery;
 import com.fares7elsadek.syncspace.server.application.queries.listmembers.ListMembersQuery;
@@ -111,6 +112,16 @@ public class ServerController {
             String serverId
     ){
         return ResponseEntity.ok(queryBus.send(new ListMembersQuery(serverId)));
+    }
+
+    @GetMapping("/{serverId}/member")
+    public ResponseEntity<ApiResponse<ServerMemberDto>> getServerMember(
+            @PathVariable
+            @NotBlank(message = "Server ID cannot be blank")
+            @Pattern(regexp = "^[0-9a-fA-F-]{36}$", message = "Server ID must be a valid UUID")
+            String serverId
+    ){
+        return ResponseEntity.ok(queryBus.send(new GetServerMember(serverId)));
     }
 
 }

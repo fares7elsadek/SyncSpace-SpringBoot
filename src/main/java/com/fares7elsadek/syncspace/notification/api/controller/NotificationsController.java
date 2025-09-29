@@ -10,6 +10,8 @@ import com.fares7elsadek.syncspace.shared.api.ApiResponse;
 import com.fares7elsadek.syncspace.shared.cqrs.CommandBus;
 import com.fares7elsadek.syncspace.shared.cqrs.QueryBus;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import lombok.RequiredArgsConstructor;
@@ -50,8 +52,16 @@ public class NotificationsController {
     }
 
     @GetMapping
-    public ResponseEntity<ApiResponse<List<NotificationDto>>> getAll(){
-        return ResponseEntity.ok(queryBus.send(new GetAllNotificationsQuery()));
+    public ResponseEntity<ApiResponse<List<NotificationDto>>> getAll(
+            @RequestParam(defaultValue = "1")
+            @Min(value = 1, message = "Page must be at least 1")
+           int page,
+           @RequestParam(defaultValue = "10")
+           @Min(value = 1, message = "Size must be at least 1")
+           @Max(value = 100, message = "Size must not exceed 100")
+            int size
+    ){
+        return ResponseEntity.ok(queryBus.send(new GetAllNotificationsQuery(page, size)));
     }
 
     @GetMapping("/unread")

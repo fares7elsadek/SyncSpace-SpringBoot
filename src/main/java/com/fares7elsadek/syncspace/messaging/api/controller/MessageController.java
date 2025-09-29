@@ -7,6 +7,7 @@ import com.fares7elsadek.syncspace.messaging.application.commands.messages.sendm
 import com.fares7elsadek.syncspace.messaging.api.dtos.AttachmentDto;
 import com.fares7elsadek.syncspace.messaging.api.dtos.MessageDto;
 import com.fares7elsadek.syncspace.messaging.api.dtos.PaginatedMessageResponse;
+import com.fares7elsadek.syncspace.messaging.application.queries.getmessage.GetMessageQuery;
 import com.fares7elsadek.syncspace.messaging.application.queries.getmessages.GetMessagesQuery;
 import com.fares7elsadek.syncspace.shared.api.ApiResponse;
 import com.fares7elsadek.syncspace.shared.cqrs.CommandBus;
@@ -74,4 +75,10 @@ public class MessageController {
         return ResponseEntity.ok(queryBus.send(new GetMessagesQuery(channelId, cursor, size)));
     }
 
+    @GetMapping("/{messageId}")
+    public ResponseEntity<ApiResponse<MessageDto>> getMessage(
+            @PathVariable @NotBlank(message = "Message ID is required") String messageId
+    ){
+        return ResponseEntity.ok(queryBus.send(new GetMessageQuery(messageId)));
+    }
 }

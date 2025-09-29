@@ -7,6 +7,9 @@ import com.fares7elsadek.syncspace.shared.cqrs.Query;
 
 import java.util.List;
 
-public record GetAllNotificationsQuery()
+public record GetAllNotificationsQuery(
+        int page,
+        int size
+)
         implements Query<ApiResponse<List<NotificationDto>>> {
 }

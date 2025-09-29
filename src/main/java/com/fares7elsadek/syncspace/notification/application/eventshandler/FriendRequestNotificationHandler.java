@@ -76,7 +76,7 @@ public class FriendRequestNotificationHandler {
                 .type(type)
                 .title(title)
                 .content(content)
-                .relatedEntityId(event.getSenderUserId())
+                .relatedEntityId(event.getFriendshipId())
                 .read(false)
                 .build();
     }

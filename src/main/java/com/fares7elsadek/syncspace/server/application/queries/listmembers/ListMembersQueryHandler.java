@@ -35,11 +35,7 @@ public class ListMembersQueryHandler
         List<ServerMember> serverMemberList = serverMemberRepository.findByIdServerId(query.serverId());
 
         List<ServerMemberDto> serverMemberDtoList = serverMemberList
-                .stream().map(member ->
-                        new ServerMemberDto(member.getNickname()
-                                ,member.getRole().getName()
-                                ,serverMapper.toServerMemberDto(member.getUser()))).toList();
-
+                .stream().map(serverMapper::toServerMemberDto).toList();
 
         return ApiResponse.success("List of server members", serverMemberDtoList);
     }
