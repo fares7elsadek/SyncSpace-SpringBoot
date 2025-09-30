@@ -33,4 +33,10 @@ public interface NotificationRepository extends JpaRepository<Notifications, Str
     """)
     Page<Notifications> findByUser(String userId, Pageable pageable);
 
+
+    @Query("""
+        SELECT COUNT(n) FROM Notifications n 
+        WHERE n.user.id = :userId 
+    """)
+    int findCountByUser(String userId);
 }

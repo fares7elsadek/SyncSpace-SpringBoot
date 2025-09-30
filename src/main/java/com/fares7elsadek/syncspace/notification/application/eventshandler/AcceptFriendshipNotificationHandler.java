@@ -49,7 +49,6 @@ public class AcceptFriendshipNotificationHandler {
 
     }
 
-    @Transactional
     protected void processNotification(AcceptFriendRequestEvent event) {
         User recipient = userAccessService.getUserInfo(event.getSenderUserId());
 

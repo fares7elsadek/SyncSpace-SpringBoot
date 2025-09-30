@@ -30,6 +30,7 @@ public class GetAllNotificationsQueryHandler implements QueryHandler<GetAllNotif
         notifications.forEach(notification -> {
             notificationDtos.add(notificationMapper.toNotificationDto(notification));
         });
-        return ApiResponse.success("All notifications",notificationDtos);
+        var count = notificationRepository.findCountByUser(user.getId());
+        return ApiResponse.success(String.format("%s",count),notificationDtos);
     }
 }

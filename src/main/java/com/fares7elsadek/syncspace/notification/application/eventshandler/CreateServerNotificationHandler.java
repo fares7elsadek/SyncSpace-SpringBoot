@@ -54,7 +54,6 @@ public class CreateServerNotificationHandler {
 
     }
 
-    @Transactional
     protected void processNotification(CreateServerEvent event) {
         log.debug("Fetching recipient info for ownerId: {}", event.getOwnerId());
         var recipient = userAccessService.getUserInfo(event.getOwnerId());

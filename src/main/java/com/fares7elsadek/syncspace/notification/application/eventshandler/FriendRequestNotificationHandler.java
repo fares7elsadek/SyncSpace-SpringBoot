@@ -51,7 +51,6 @@ public class FriendRequestNotificationHandler {
 
     }
 
-    @Transactional
     protected void processNotification(SendFriendRequestEvent event) {
         var recipient = userAccessService.getUserInfo(event.getTargetUserId());
         var sender = userAccessService.getUserInfo(event.getSenderUserId());

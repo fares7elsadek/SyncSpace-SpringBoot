@@ -23,6 +23,6 @@ public class FriendshipMapper {
     public FriendShipDto toFriendshipDto(Friendships friendship,User user){
         PrettyTime p = new PrettyTime();
         String createdAt = p.format(friendship.getCreatedAt());
-        return new  FriendShipDto(friendship.getId(),toFriendshipUserDto(user),createdAt);
+        return new  FriendShipDto(friendship.getId(),toFriendshipUserDto(user),createdAt,friendship.getFriendShipStatus().name());
     }
 }

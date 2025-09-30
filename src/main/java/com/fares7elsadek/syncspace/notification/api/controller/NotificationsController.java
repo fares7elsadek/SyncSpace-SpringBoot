@@ -53,8 +53,8 @@ public class NotificationsController {
 
     @GetMapping
     public ResponseEntity<ApiResponse<List<NotificationDto>>> getAll(
-            @RequestParam(defaultValue = "1")
-            @Min(value = 1, message = "Page must be at least 1")
+            @RequestParam(defaultValue = "0")
+            @Min(value = 0, message = "Page must be at least 0")
            int page,
            @RequestParam(defaultValue = "10")
            @Min(value = 1, message = "Size must be at least 1")

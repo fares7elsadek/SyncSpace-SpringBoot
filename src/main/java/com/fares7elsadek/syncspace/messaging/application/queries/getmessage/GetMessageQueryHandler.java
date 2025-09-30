@@ -17,10 +17,8 @@ public class GetMessageQueryHandler implements QueryHandler<GetMessageQuery, Api
     private final MessageRepository messageRepository;
     @Override
     public ApiResponse<MessageDto> handle(GetMessageQuery query) {
-
         var message = messageRepository.findById(query.id())
                 .orElseThrow(() -> new NotFoundException("Message not found"));
-
 
         return ApiResponse.success("Message found",messageMapper.toMessageDto(message));
     }
