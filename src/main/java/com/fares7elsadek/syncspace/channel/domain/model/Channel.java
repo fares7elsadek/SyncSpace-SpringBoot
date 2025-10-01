@@ -1,5 +1,6 @@
 package com.fares7elsadek.syncspace.channel.domain.model;
 
+import com.fares7elsadek.syncspace.channel.domain.enums.ChannelType;
 import com.fares7elsadek.syncspace.messaging.domain.model.Message;
 import com.fares7elsadek.syncspace.server.domain.model.Server;
 import com.fares7elsadek.syncspace.shared.model.Auditable;
@@ -29,6 +30,12 @@ public class Channel extends Auditable {
     private String description;
     private boolean isPrivate;
     private boolean isGroup = false;
+    @Enumerated(EnumType.STRING)
+    private ChannelType channelType;
+
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL , orphanRemoval = true)
+    @JoinColumn(name = "room_state_id", referencedColumnName = "id")
+    private RoomState roomState;
 
     @OneToMany(mappedBy = "channel", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ChannelMembers> members;

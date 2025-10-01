@@ -1,13 +1,16 @@
 package com.fares7elsadek.syncspace.channel.api.controller;
 
+import com.fares7elsadek.syncspace.channel.api.dtos.ChannelChatDto;
+import com.fares7elsadek.syncspace.channel.api.dtos.ChannelDto;
+import com.fares7elsadek.syncspace.channel.api.dtos.RoomStateDto;
 import com.fares7elsadek.syncspace.channel.application.commands.addmember.AddMemberCommand;
 import com.fares7elsadek.syncspace.channel.application.commands.addmember.AddMemberResponse;
+import com.fares7elsadek.syncspace.channel.application.commands.controlroom.ControlRoomCommand;
 import com.fares7elsadek.syncspace.channel.application.commands.createchannel.CreateChannelCommand;
 import com.fares7elsadek.syncspace.channel.application.commands.deletechannel.DeleteChannelCommand;
 import com.fares7elsadek.syncspace.channel.application.commands.removemember.RemoveMemberCommand;
-import com.fares7elsadek.syncspace.channel.api.dtos.ChannelChatDto;
-import com.fares7elsadek.syncspace.channel.api.dtos.ChannelDto;
 import com.fares7elsadek.syncspace.channel.application.queries.getchannel.GetChannelQuery;
+import com.fares7elsadek.syncspace.channel.application.queries.getroom.GetRoomQuery;
 import com.fares7elsadek.syncspace.channel.application.queries.listchannels.ListServerChannelsQuery;
 import com.fares7elsadek.syncspace.channel.application.queries.listchat.ListChatsQuery;
 import com.fares7elsadek.syncspace.shared.api.ApiResponse;
@@ -103,6 +106,20 @@ public class ChannelController {
     @GetMapping("/user/chats")
     public ResponseEntity<ApiResponse<List<ChannelChatDto>>> listUserChats(){
         return ResponseEntity.ok(queryBus.send(new ListChatsQuery()));
+    }
+
+    @GetMapping("/room/{channelId}")
+    public ResponseEntity<ApiResponse<RoomStateDto>> getRoomState(
+            @PathVariable
+            @Pattern(regexp = "^[0-9a-fA-F-]{36}$", message = "Channel ID must be a valid UUID")
+            String channelId
+    ){
+        return ResponseEntity.ok(queryBus.send(new GetRoomQuery(channelId)));
+    }
+
+    @PostMapping("/room/control")
+    public ResponseEntity<ApiResponse<Void>> updateRoomState(@RequestBody @Valid ControlRoomCommand command){
+        return ResponseEntity.ok(commandBus.send(command));
     }
 
 }

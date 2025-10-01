@@ -4,6 +4,7 @@ import com.fares7elsadek.syncspace.channel.api.dtos.*;
 import com.fares7elsadek.syncspace.channel.application.commands.addmember.AddMemberResponse;
 import com.fares7elsadek.syncspace.channel.domain.model.Channel;
 import com.fares7elsadek.syncspace.channel.domain.model.ChannelUserId;
+import com.fares7elsadek.syncspace.channel.domain.model.RoomState;
 import com.fares7elsadek.syncspace.channel.infrastructure.repository.ChannelReadStateRepository;
 import com.fares7elsadek.syncspace.messaging.domain.model.Message;
 import com.fares7elsadek.syncspace.messaging.shared.MessageAccessService;
@@ -83,5 +84,10 @@ public class ChannelMapper {
 
     public AddMemberResponse toAddMemberResponse(Channel channel,User user){
         return new AddMemberResponse(toChannelDto(channel), toChannelChatUserDto(user));
+    }
+
+    public RoomStateDto toRoomStateDto(RoomState roomState){
+        return new RoomStateDto(roomState.getId(),roomState.getVideoUrl(),roomState.getCurrentTimestamp(),
+                roomState.getIsPlaying(),roomState.getLastUpdatedAt(),roomState.getPlaybackRate(),toChannelDto(roomState.getChannel()));
     }
 }
