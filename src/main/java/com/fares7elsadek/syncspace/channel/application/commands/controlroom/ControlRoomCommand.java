@@ -16,10 +16,6 @@ public record ControlRoomCommand(
         Double timestamp,
 
         @NotBlank(message = "videoUrl is required")
-        @Pattern(
-                regexp = "^(https?|ftp)://[^\\s/$.?#].[^\\s]*$",
-                message = "videoUrl must be a valid URL"
-        )
         String videoUrl,
 
         @NotBlank(message = "userId is required")

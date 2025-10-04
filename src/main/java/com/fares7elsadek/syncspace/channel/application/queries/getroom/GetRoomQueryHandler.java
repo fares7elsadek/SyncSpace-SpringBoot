@@ -16,6 +16,6 @@ public class GetRoomQueryHandler implements QueryHandler<GetRoomQuery,ApiRespons
     @Override
     public ApiResponse<RoomStateDto> handle(GetRoomQuery query) {
         var room = roomStateService.getRoomState(query.channelId());
-        return ApiResponse.success("Room state",channelMapper.toRoomStateDto(room));
+        return ApiResponse.success("Room state",room);
     }
 }

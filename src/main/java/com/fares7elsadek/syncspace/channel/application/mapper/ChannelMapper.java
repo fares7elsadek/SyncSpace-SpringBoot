@@ -23,6 +23,8 @@ public class ChannelMapper {
     private final UserAccessService userAccessService;
 
     public ChannelChatUserDto toChannelChatUserDto(User user){
+        if(user == null)
+            return null;
         PrettyTime p = new PrettyTime();
         String lastSeen = p.format(user.getLastSeen());
         String createdAt = p.format(user.getCreatedAt());
@@ -79,7 +81,7 @@ public class ChannelMapper {
         return new  ChannelDto(channel.getId(),channel.getName()
                 ,channel.getDescription()
                 ,channel.isPrivate()
-                ,channel.isGroup());
+                ,channel.isGroup(),channel.getChannelType().name());
     }
 
     public AddMemberResponse toAddMemberResponse(Channel channel,User user){
@@ -88,6 +90,7 @@ public class ChannelMapper {
 
     public RoomStateDto toRoomStateDto(RoomState roomState){
         return new RoomStateDto(roomState.getId(),roomState.getVideoUrl(),roomState.getCurrentTimestamp(),
-                roomState.getIsPlaying(),roomState.getLastUpdatedAt(),roomState.getPlaybackRate(),toChannelDto(roomState.getChannel()));
+                roomState.getIsPlaying(),roomState.getLastUpdatedAt(),roomState.getPlaybackRate(),toChannelDto(roomState.getChannel()),
+                toChannelChatUserDto(roomState.getHostUser()));
     }
 }

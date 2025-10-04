@@ -1,6 +1,7 @@
 package com.fares7elsadek.syncspace.channel.application.queries.listchannels;
 
 import com.fares7elsadek.syncspace.channel.api.dtos.ChannelDto;
+import com.fares7elsadek.syncspace.channel.application.mapper.ChannelMapper;
 import com.fares7elsadek.syncspace.channel.infrastructure.repository.ChannelRepository;
 import com.fares7elsadek.syncspace.server.shared.ServerAccessService;
 import com.fares7elsadek.syncspace.shared.api.ApiResponse;
@@ -20,6 +21,7 @@ public class ListServerChannelsQueryHandler
     private final UserAccessService userAccessService;
     private final ServerAccessService serverAccessService;
     private final ChannelRepository channelRepository;
+    private final ChannelMapper channelMapper;
     @Override
     public ApiResponse<List<ChannelDto>> handle(ListServerChannelsQuery query) {
 
@@ -33,13 +35,7 @@ public class ListServerChannelsQueryHandler
         var channels = channelRepository.findUserChannelsByServerId(user.getId(), server.getId());
 
         var channelDtos = channels.stream()
-                .map(channel -> new ChannelDto(
-                        channel.getId(),
-                        channel.getName(),
-                        channel.getDescription(),
-                        channel.isPrivate(),
-                        channel.isGroup()
-                ))
+                .map(channelMapper::toChannelDto)
                 .toList();
 
         return ApiResponse.success("channels", channelDtos);

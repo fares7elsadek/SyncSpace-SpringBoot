@@ -1,5 +1,7 @@
 package com.fares7elsadek.syncspace.channel.api.dtos;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import java.time.LocalDateTime;
 
 public record RoomStateDto(
@@ -7,8 +9,10 @@ public record RoomStateDto(
         String videoUrl,
         double currentTimestamp,
         boolean isPlaying,
+        @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
         LocalDateTime lastUpdatedAt,
         Double playbackRate,
-        ChannelDto channel
+        ChannelDto channel,
+        ChannelChatUserDto hoster
 ) {
 }

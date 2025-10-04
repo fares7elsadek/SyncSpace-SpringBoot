@@ -2,19 +2,21 @@ package com.fares7elsadek.syncspace.channel.application.commands.createchannel;
 
 import com.fares7elsadek.syncspace.channel.api.dtos.ChannelDto;
 import com.fares7elsadek.syncspace.channel.application.mapper.ChannelMapper;
+import com.fares7elsadek.syncspace.channel.domain.enums.ChannelType;
 import com.fares7elsadek.syncspace.channel.domain.events.CreateChannelEvent;
 import com.fares7elsadek.syncspace.channel.domain.model.Channel;
 import com.fares7elsadek.syncspace.channel.infrastructure.repository.ChannelRepository;
-import com.fares7elsadek.syncspace.server.shared.ServerAccessService;
+import com.fares7elsadek.syncspace.channel.infrastructure.repository.RoomStateRepository;
 import com.fares7elsadek.syncspace.server.domain.enums.ServerRoles;
+import com.fares7elsadek.syncspace.server.shared.ServerAccessService;
 import com.fares7elsadek.syncspace.shared.api.ApiResponse;
 import com.fares7elsadek.syncspace.shared.cqrs.CommandHandler;
 import com.fares7elsadek.syncspace.shared.events.SpringEventPublisher;
 import com.fares7elsadek.syncspace.shared.exceptions.ConflictException;
 import com.fares7elsadek.syncspace.shared.exceptions.InsufficientPermissionsException;
 import com.fares7elsadek.syncspace.shared.exceptions.UnauthorizedException;
-import com.fares7elsadek.syncspace.user.shared.UserAccessService;
 import com.fares7elsadek.syncspace.user.domain.model.User;
+import com.fares7elsadek.syncspace.user.shared.UserAccessService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -31,6 +33,7 @@ public class CreateChannelCommandHandler
     private final ServerAccessService serverAccessService;
     private final SpringEventPublisher springEventPublisher;
     private final ChannelMapper channelMapper;
+    private final RoomStateRepository roomStateRepository;
     private final String CHANNEL_PREFIX = "#";
     @Override
     @Transactional
@@ -88,8 +91,16 @@ public class CreateChannelCommandHandler
                 .description(command.description() != null ? command.description().trim() : null)
                 .isPrivate(command.isPrivate())
                 .isGroup(true)
+                .channelType(getChannelType(command.type()))
                 .server(serverAccessService.getServer(command.serverId()))
                 .build();
+    }
+
+    private ChannelType getChannelType(String type){
+        return switch (type) {
+            case "STREAMING" -> ChannelType.STREAMING;
+            default -> ChannelType.TEXT;
+        };
     }
 
 

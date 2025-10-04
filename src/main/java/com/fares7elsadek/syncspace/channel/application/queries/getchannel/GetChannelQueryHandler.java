@@ -1,5 +1,6 @@
 package com.fares7elsadek.syncspace.channel.application.queries.getchannel;
 
+import com.fares7elsadek.syncspace.channel.application.mapper.ChannelMapper;
 import com.fares7elsadek.syncspace.channel.domain.model.ChannelUserId;
 import com.fares7elsadek.syncspace.channel.api.dtos.ChannelDto;
 import com.fares7elsadek.syncspace.channel.infrastructure.repository.ChannelMemberRepository;
@@ -18,6 +19,7 @@ public class GetChannelQueryHandler
 
     private final UserAccessService userAccessService;
     private final ChannelMemberRepository channelMemberRepository;
+    private final ChannelMapper channelMapper;
 
     @Override
     @Transactional(readOnly = true)
@@ -28,7 +30,7 @@ public class GetChannelQueryHandler
                 .orElseThrow(() -> new ServerExceptions(String.format("You don't have access for channel %s", query.channelId())));
 
         var channel = channelMember.getChannel();
-        var dto = new ChannelDto(channel.getId(),channel.getName(),channel.getDescription(),channel.isPrivate(),channel.isGroup());
+        var dto = channelMapper.toChannelDto(channel);
 
         return ApiResponse.success("Channel details",dto);
     }

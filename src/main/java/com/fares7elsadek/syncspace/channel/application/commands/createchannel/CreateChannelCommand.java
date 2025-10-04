@@ -12,6 +12,7 @@ public record CreateChannelCommand(
         String serverId,
         @Size(max = 255, message = "Description must not exceed 255 characters")
         String description,
-        boolean isPrivate
+        boolean isPrivate,
+        String type
 
 ) implements Command { }

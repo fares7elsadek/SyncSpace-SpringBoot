@@ -33,7 +33,7 @@ public class Channel extends Auditable {
     @Enumerated(EnumType.STRING)
     private ChannelType channelType;
 
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL , orphanRemoval = true)
+    @OneToOne( cascade = CascadeType.ALL , orphanRemoval = true)
     @JoinColumn(name = "room_state_id", referencedColumnName = "id")
     private RoomState roomState;
 

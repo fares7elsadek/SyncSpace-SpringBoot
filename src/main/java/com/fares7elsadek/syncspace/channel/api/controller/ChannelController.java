@@ -9,6 +9,7 @@ import com.fares7elsadek.syncspace.channel.application.commands.controlroom.Cont
 import com.fares7elsadek.syncspace.channel.application.commands.createchannel.CreateChannelCommand;
 import com.fares7elsadek.syncspace.channel.application.commands.deletechannel.DeleteChannelCommand;
 import com.fares7elsadek.syncspace.channel.application.commands.removemember.RemoveMemberCommand;
+import com.fares7elsadek.syncspace.channel.application.commands.resetroom.ResetRoomCommand;
 import com.fares7elsadek.syncspace.channel.application.queries.getchannel.GetChannelQuery;
 import com.fares7elsadek.syncspace.channel.application.queries.getroom.GetRoomQuery;
 import com.fares7elsadek.syncspace.channel.application.queries.listchannels.ListServerChannelsQuery;
@@ -120,6 +121,15 @@ public class ChannelController {
     @PostMapping("/room/control")
     public ResponseEntity<ApiResponse<Void>> updateRoomState(@RequestBody @Valid ControlRoomCommand command){
         return ResponseEntity.ok(commandBus.send(command));
+    }
+
+    @PostMapping("/room/{roomId}/reset")
+    public ResponseEntity<ApiResponse<Void>> resetRoomState(
+            @PathVariable
+            @Pattern(regexp = "^[0-9a-fA-F-]{36}$", message = "Channel ID must be a valid UUID")
+            String roomId
+    ){
+        return ResponseEntity.ok(commandBus.send(new ResetRoomCommand(roomId)));
     }
 
 }

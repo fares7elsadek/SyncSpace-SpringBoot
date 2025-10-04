@@ -1,6 +1,7 @@
 package com.fares7elsadek.syncspace.channel.application.eventhandler;
 
 import com.fares7elsadek.syncspace.channel.application.commands.createchannel.CreateChannelCommand;
+import com.fares7elsadek.syncspace.channel.domain.enums.ChannelType;
 import com.fares7elsadek.syncspace.channel.domain.events.CreateChannelEvent;
 import com.fares7elsadek.syncspace.channel.domain.model.Channel;
 import com.fares7elsadek.syncspace.channel.infrastructure.repository.ChannelRepository;
@@ -35,11 +36,11 @@ public class CreateServerChannelHandler {
         var generalChannel =
                 createChannel(new CreateChannelCommand(
                         "general",event.getServerId(),
-                        "General channel",false),event);
+                        "General channel",false,"TEXT"),event);
 
         var announcementChannel = createChannel(new CreateChannelCommand(
                 "announcement",event.getServerId(),
-                "Announcement channel",false),event);
+                "Announcement channel",false,"TEXT"),event);
 
         channelRepository.saveAll(List.of(generalChannel,announcementChannel));
 
@@ -61,10 +62,18 @@ public class CreateServerChannelHandler {
                 .description(command.description() != null ? command.description().trim() : null)
                 .isPrivate(command.isPrivate())
                 .isGroup(true)
+                .channelType(getChannelType(command.type()))
                 .server(serverAccessService.getServer(command.serverId()))
                 .createdBy(event.getOwnerId())
                 .build();
 
+    }
+
+    private ChannelType getChannelType(String type){
+        return switch (type) {
+            case "STREAMING" -> ChannelType.STREAMING;
+            default -> ChannelType.TEXT;
+        };
     }
 
 }
