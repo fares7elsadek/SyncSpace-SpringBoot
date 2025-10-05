@@ -3,6 +3,7 @@ package com.fares7elsadek.syncspace.channel.api.dtos;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 public record RoomStateDto(
         String roomId,
@@ -13,6 +14,9 @@ public record RoomStateDto(
         LocalDateTime lastUpdatedAt,
         Double playbackRate,
         ChannelDto channel,
-        ChannelChatUserDto hoster
+        ChannelChatUserDto hoster,
+        String videoTitle,
+        String thumbnail,
+        List<RoomViewerDto> viewers
 ) {
 }

@@ -19,6 +19,7 @@ public record ControlRoomCommand(
         String videoUrl,
 
         @NotBlank(message = "userId is required")
-        String userId
+        String userId,
+        String videoTitle
 
 ) implements Command { }

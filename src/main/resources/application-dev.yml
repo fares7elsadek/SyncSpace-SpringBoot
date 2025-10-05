@@ -39,5 +39,7 @@ server:
   port: 9090
 
 
-
+youtube:
+  api:
+    key: "AIzaSyDlYWWdCoOTgS2N4TPT7L4X8URiM2ANghU"
 

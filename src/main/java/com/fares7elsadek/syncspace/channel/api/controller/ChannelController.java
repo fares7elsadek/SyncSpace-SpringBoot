@@ -3,17 +3,22 @@ package com.fares7elsadek.syncspace.channel.api.controller;
 import com.fares7elsadek.syncspace.channel.api.dtos.ChannelChatDto;
 import com.fares7elsadek.syncspace.channel.api.dtos.ChannelDto;
 import com.fares7elsadek.syncspace.channel.api.dtos.RoomStateDto;
+import com.fares7elsadek.syncspace.channel.api.dtos.RoomViewerDto;
 import com.fares7elsadek.syncspace.channel.application.commands.addmember.AddMemberCommand;
 import com.fares7elsadek.syncspace.channel.application.commands.addmember.AddMemberResponse;
+import com.fares7elsadek.syncspace.channel.application.commands.connectviewer.ConnectViewerCommand;
 import com.fares7elsadek.syncspace.channel.application.commands.controlroom.ControlRoomCommand;
 import com.fares7elsadek.syncspace.channel.application.commands.createchannel.CreateChannelCommand;
 import com.fares7elsadek.syncspace.channel.application.commands.deletechannel.DeleteChannelCommand;
+import com.fares7elsadek.syncspace.channel.application.commands.disconnectviewer.DisconnectViewerCommand;
 import com.fares7elsadek.syncspace.channel.application.commands.removemember.RemoveMemberCommand;
 import com.fares7elsadek.syncspace.channel.application.commands.resetroom.ResetRoomCommand;
 import com.fares7elsadek.syncspace.channel.application.queries.getchannel.GetChannelQuery;
 import com.fares7elsadek.syncspace.channel.application.queries.getroom.GetRoomQuery;
+import com.fares7elsadek.syncspace.channel.application.queries.getviewers.GetViewerQuery;
 import com.fares7elsadek.syncspace.channel.application.queries.listchannels.ListServerChannelsQuery;
 import com.fares7elsadek.syncspace.channel.application.queries.listchat.ListChatsQuery;
+import com.fares7elsadek.syncspace.channel.application.queries.useractivity.GetUserActivityQuery;
 import com.fares7elsadek.syncspace.shared.api.ApiResponse;
 import com.fares7elsadek.syncspace.shared.cqrs.CommandBus;
 import com.fares7elsadek.syncspace.shared.cqrs.QueryBus;
@@ -130,6 +135,37 @@ public class ChannelController {
             String roomId
     ){
         return ResponseEntity.ok(commandBus.send(new ResetRoomCommand(roomId)));
+    }
+
+    @PostMapping("/room/{roomId}/connect")
+    public ResponseEntity<ApiResponse<Void>> connectToRoom(
+            @PathVariable
+            @Pattern(regexp = "^[0-9a-fA-F-]{36}$", message = "Channel ID must be a valid UUID")
+            String roomId
+    ){
+        return ResponseEntity.ok(commandBus.send(new ConnectViewerCommand(roomId)));
+    }
+
+    @PostMapping("/room/{roomId}/disconnect")
+    public ResponseEntity<ApiResponse<Void>> disconnectToRoom(
+            @PathVariable
+            @Pattern(regexp = "^[0-9a-fA-F-]{36}$", message = "Channel ID must be a valid UUID")
+            String roomId
+    ){
+        return ResponseEntity.ok(commandBus.send(new DisconnectViewerCommand(roomId)));
+    }
+    @GetMapping("/{channelId}/viewers")
+    public ResponseEntity<ApiResponse<List<RoomViewerDto>>> getRoomViewer(
+            @PathVariable
+            @Pattern(regexp = "^[0-9a-fA-F-]{36}$", message = "Channel ID must be a valid UUID")
+            String channelId
+    ){
+        return ResponseEntity.ok(queryBus.send(new GetViewerQuery(channelId)));
+    }
+
+    @GetMapping("/user/activity")
+    public ResponseEntity<ApiResponse<List<RoomStateDto>>> getUserActivities(){
+        return ResponseEntity.ok(queryBus.send(new GetUserActivityQuery()));
     }
 
 }

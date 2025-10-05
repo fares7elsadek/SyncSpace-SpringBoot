@@ -40,6 +40,8 @@ public class RoomStateService {
                         .currentTimestamp(0.0)
                         .isPlaying(false)
                         .playbackRate(1.0)
+                        .videoTitle("")
+                        .thumbnail("")
                         .build());
 
                 channel.setRoomState(room);
@@ -66,8 +68,11 @@ public class RoomStateService {
             room.setCurrentTimestamp(state.getCurrentTimestamp());
             room.setIsPlaying(state.getIsPlaying());
             room.setHostUser(state.getHostUser());
+            room.setThumbnail(state.getThumbnail());
+            room.setVideoTitle(state.getVideoTitle());
             room.setLastUpdatedAt(state.getLastUpdatedAt());
             room.setPlaybackRate(state.getPlaybackRate());
+            room.setViewers(state.getViewers());
             roomStateRepository.save(room);
         });
     }

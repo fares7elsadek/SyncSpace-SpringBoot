@@ -10,6 +10,7 @@ import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Getter
@@ -33,4 +34,10 @@ public class RoomState extends Auditable {
     private Double playbackRate;
     @ManyToOne(fetch = FetchType.LAZY)
     private User hostUser;
+    private String videoTitle;
+    private String thumbnail;
+
+    @OneToMany(mappedBy = "roomState", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<RoomViewer> viewers;
+
 }

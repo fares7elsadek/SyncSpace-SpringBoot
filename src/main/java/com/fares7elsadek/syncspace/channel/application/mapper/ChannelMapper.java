@@ -5,6 +5,7 @@ import com.fares7elsadek.syncspace.channel.application.commands.addmember.AddMem
 import com.fares7elsadek.syncspace.channel.domain.model.Channel;
 import com.fares7elsadek.syncspace.channel.domain.model.ChannelUserId;
 import com.fares7elsadek.syncspace.channel.domain.model.RoomState;
+import com.fares7elsadek.syncspace.channel.domain.model.RoomViewer;
 import com.fares7elsadek.syncspace.channel.infrastructure.repository.ChannelReadStateRepository;
 import com.fares7elsadek.syncspace.messaging.domain.model.Message;
 import com.fares7elsadek.syncspace.messaging.shared.MessageAccessService;
@@ -91,6 +92,13 @@ public class ChannelMapper {
     public RoomStateDto toRoomStateDto(RoomState roomState){
         return new RoomStateDto(roomState.getId(),roomState.getVideoUrl(),roomState.getCurrentTimestamp(),
                 roomState.getIsPlaying(),roomState.getLastUpdatedAt(),roomState.getPlaybackRate(),toChannelDto(roomState.getChannel()),
-                toChannelChatUserDto(roomState.getHostUser()));
+                toChannelChatUserDto(roomState.getHostUser()),roomState.getVideoTitle(),roomState.getThumbnail()
+        ,roomState.getViewers().stream().map(this::toRoomViewerDto).toList());
     }
+
+    public RoomViewerDto toRoomViewerDto(RoomViewer roomViewer){
+        return new RoomViewerDto(roomViewer.getId(),toChannelChatUserDto(roomViewer.getUser()),
+                roomViewer.getConnectedAt());
+    }
+
 }

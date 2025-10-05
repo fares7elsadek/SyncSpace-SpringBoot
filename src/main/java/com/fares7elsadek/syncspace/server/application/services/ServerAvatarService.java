@@ -8,7 +8,7 @@ import java.util.Random;
 public class ServerAvatarService {
     private static final String DICEBEAR_API = "https://api.dicebear.com/9.x";
     private static final String[] STYLES = {
-            "fun-emoji", "adventurer", "bottts", "croodles","pixel-art","micah","personas","avataaars"
+            "fun-emoji", "adventurer", "bottts", "croodles"
     };
 
     private final Random random = new Random();

@@ -2,6 +2,7 @@ package com.fares7elsadek.syncspace.channel.application.commands.controlroom;
 
 import com.fares7elsadek.syncspace.channel.application.mapper.ChannelMapper;
 import com.fares7elsadek.syncspace.channel.application.services.RoomStateService;
+import com.fares7elsadek.syncspace.channel.application.services.YoutubeService;
 import com.fares7elsadek.syncspace.channel.domain.events.VideoControlEvent;
 import com.fares7elsadek.syncspace.channel.domain.model.RoomState;
 import com.fares7elsadek.syncspace.channel.infrastructure.repository.RoomStateRepository;
@@ -24,6 +25,7 @@ public class ControlRoomCommandHandler implements CommandHandler<ControlRoomComm
     private final RoomStateRepository roomStateRepository;
     private final UserAccessService userAccessService;
     private final ChannelMapper channelMapper;
+    private final YoutubeService youtubeService;
 
     @Override
     public ApiResponse<Void> handle(ControlRoomCommand command) {
@@ -55,11 +57,13 @@ public class ControlRoomCommandHandler implements CommandHandler<ControlRoomComm
                 currentState.setCurrentTimestamp(0.0);
                 currentState.setIsPlaying(false);
                 currentState.setHostUser(hoster);
+                var data = youtubeService.getVideoInfo(command.videoUrl());
+                currentState.setVideoTitle(data.get("title") != null ? data.get("title").toString() : "Unknown");
+                currentState.setThumbnail(data.get("thumbnail") != null ? data.get("thumbnail").toString() : "Unknown");
                 break;
         }
 
         roomStateService.updateRoomState(command.channelId(),currentState);
-        System.out.println("/topic/room/" + command.channelId());
         messagingTemplate.convertAndSend(
                 "/topic/room/" + currentState.getId(),
                 new VideoControlEvent(command.channelId(), command.action()
