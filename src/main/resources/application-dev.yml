@@ -32,7 +32,7 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: ${KEYCLOAK_ISSUER_URI:http://keycloak:8080/realms/syncspace_realm}
+          issuer-uri: ${KEYCLOAK_ISSUER_URI:http://localhost:8080/realms/syncspace_realm}
           jwk-set-uri: ${KEYCLOAK_JWK_SET_URI:http://keycloak:8080/realms/syncspace_realm/protocol/openid-connect/certs}
 
 server:

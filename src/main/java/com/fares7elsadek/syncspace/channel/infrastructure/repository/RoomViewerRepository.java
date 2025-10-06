@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -16,4 +17,10 @@ public interface RoomViewerRepository extends JpaRepository<RoomViewer, String> 
            AND rv.user.id = :userId
            """)
     Optional<RoomViewer> findByChannelIdAndUserId(String channelId, String userId);
+
+    @Query("""
+           SELECT rv FROM RoomViewer rv
+           WHERE rv.roomState.channel.id = :channelId
+           """)
+    List<RoomViewer> findByChannelId(String channelId);
 }
