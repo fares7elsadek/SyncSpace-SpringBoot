@@ -26,6 +26,7 @@ public class RoomConnectionEventHanlder {
     public void handleSendFriendRequest(RoomConnectionEvent event) {
        var members = channelMemberRepository.findByChannelId(event.getChannelId());
        members.forEach(mem ->{
+           System.out.println("/topic/user/"+mem.getUser().getId()+"/activity/notify");
            messagingTemplate.convertAndSend(
                    "/topic/user/"+mem.getUser().getId()+"/activity/notify",
                    mem.getUser().getId()

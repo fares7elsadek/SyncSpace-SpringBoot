@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface RoomStateRepository extends JpaRepository<RoomState, String> {
     @Query("""
@@ -16,4 +17,10 @@ public interface RoomStateRepository extends JpaRepository<RoomState, String> {
        AND s.isPlaying = true ORDER BY s.lastUpdatedAt DESC 
        """)
     List<RoomState> findRoomStatesForUser(String userId);
+
+    @Query("""
+            SELECT r FROM RoomState r 
+            WHERE r.channel.id = :channelId
+           """)
+    Optional<RoomState> findByChannelId(String channelId);
 }

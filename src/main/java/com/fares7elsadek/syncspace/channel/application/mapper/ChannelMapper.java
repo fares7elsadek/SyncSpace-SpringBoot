@@ -15,6 +15,9 @@ import lombok.RequiredArgsConstructor;
 import org.ocpsoft.prettytime.PrettyTime;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class ChannelMapper {
@@ -90,10 +93,14 @@ public class ChannelMapper {
     }
 
     public RoomStateDto toRoomStateDto(RoomState roomState){
+        List<RoomViewerDto> viewersList = new ArrayList<>();
+        if(roomState.getViewers()!=null){
+            viewersList = roomState.getViewers().stream().map(this::toRoomViewerDto).toList();
+        }
         return new RoomStateDto(roomState.getId(),roomState.getVideoUrl(),roomState.getCurrentTimestamp(),
                 roomState.getIsPlaying(),roomState.getLastUpdatedAt(),roomState.getPlaybackRate(),toChannelDto(roomState.getChannel()),
                 toChannelChatUserDto(roomState.getHostUser()),roomState.getVideoTitle(),roomState.getThumbnail()
-        ,roomState.getViewers().stream().map(this::toRoomViewerDto).toList());
+        ,viewersList);
     }
 
     public RoomViewerDto toRoomViewerDto(RoomViewer roomViewer){

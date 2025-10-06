@@ -8,6 +8,7 @@ import com.fares7elsadek.syncspace.channel.infrastructure.repository.RoomViewerR
 import com.fares7elsadek.syncspace.shared.api.ApiResponse;
 import com.fares7elsadek.syncspace.shared.cqrs.CommandHandler;
 import com.fares7elsadek.syncspace.shared.events.SpringEventPublisher;
+import com.fares7elsadek.syncspace.shared.exceptions.NotFoundException;
 import com.fares7elsadek.syncspace.user.shared.UserAccessService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -28,35 +29,37 @@ public class ConnectViewerCommandHanlder implements CommandHandler<ConnectViewer
 
     @Override
     public ApiResponse<Void> handle(ConnectViewerCommand command) {
-        var room = roomStateRepository.findById(command.roomId())
-                .orElseThrow(() -> new RuntimeException("Room Not Found"));
-
         var currentUser = userAccessService.getCurrentUserInfo();
-        var viewers = room.getViewers();
-        boolean isExist = viewers.stream().anyMatch(viewer -> viewer.getUser().getId().equals(currentUser.getId()));
-        if(isExist) {
+        var viewer = roomViewerRepository.findByChannelIdAndUserId(command.channelId(), currentUser.getId())
+                ;
+
+        if(viewer.isPresent()) {
             return ApiResponse.success("Already exist",null);
+        }else{
+            var room = roomStateRepository.findByChannelId(command.channelId())
+                    .orElseThrow(() -> new NotFoundException("Room Not Found"));
+            var newViewer = RoomViewer.builder()
+                    .connectedAt(LocalDateTime.now())
+                    .roomState(room)
+                    .user(currentUser)
+                    .build();
+            roomViewerRepository.save(newViewer);
+            var viewersList = room.getViewers();
+            viewersList.add(newViewer);
+            room.setViewers(viewersList);
+            roomStateService.updateRoomState(command.channelId(),room);
+
+            messagingTemplate.convertAndSend(
+                    "/topic/room/" + room.getChannel().getId() + "/connect",
+                    currentUser.getId()
+            );
+
+            springEventPublisher.publish(new RoomConnectionEvent(
+                    "RoomConnection"
+                    ,currentUser.getId(),room.getChannel().getId()));
+
+            return ApiResponse.success("Connected successfully",null);
         }
 
-        var newViewer = RoomViewer.builder()
-                .connectedAt(LocalDateTime.now())
-                .roomState(room)
-                .user(currentUser)
-                .build();
-        roomViewerRepository.save(newViewer);
-        viewers.add(newViewer);
-        room.setViewers(viewers);
-        roomStateService.updateRoomState(room.getChannel().getId(),room);
-        System.out.println("connect id is " + command.roomId());
-        messagingTemplate.convertAndSend(
-                "/topic/room/" + room.getChannel().getId() + "/connect",
-                currentUser.getId()
-        );
-
-        springEventPublisher.publish(new RoomConnectionEvent(
-                "RoomConnection"
-                ,currentUser.getId(),room.getChannel().getId()));
-
-        return ApiResponse.success("Connected successfully",null);
     }
 }
