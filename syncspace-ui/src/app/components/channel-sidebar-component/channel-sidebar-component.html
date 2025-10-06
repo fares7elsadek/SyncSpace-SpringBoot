@@ -1,0 +1,330 @@
+<!-- Channels Sidebar -->
+<div id="channels-sidebar" 
+     class="w-60 bg-discord-sidebar flex flex-col md:relative fixed left-0 top-0 h-full z-50 transform -translate-x-full md:translate-x-0 transition-transform duration-300 ease-out shadow-discord">
+    
+    <!-- Server Header -->
+    <div class="h-12 border-b border-discord-darkest/60 px-4 flex items-center justify-between shadow-sm relative">
+        <span class="font-semibold text-white">{{server()?.name ? server()?.name : 'Anonymous'}}</span>
+        <div class="relative">
+            <button (click)="toggleServerMenu()" class="p-1.5 hover:bg-discord-light rounded btn-hover">
+                <svg class="w-4 h-4 text-discord-text" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M7 10l5 5 5-5z"/>
+                </svg>
+            </button>
+            <ng-container *ngIf="isAdmin()">
+               <!-- Server Options Dropdown -->
+            <div *ngIf="showServerMenu()" 
+                 class="absolute right-0 top-full mt-1 w-48 bg-discord-darkest rounded-lg shadow-xl border border-discord-light/20 py-2 z-50 animate-fadeIn">
+                
+                <button (click)="openAddMemberModal()" 
+                        class="w-full text-left px-3 py-2 text-sm text-discord-text hover:bg-discord-light/30 hover:text-white transition-colors flex items-center">
+                    <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                        <path d="M18 10v2h2v-2h-2zm0-4v2h2V6h-2z"/>
+                    </svg>
+                    Add Member
+                </button>
+                
+                <button (click)="generateInviteCode()" 
+                        class="w-full text-left px-3 py-2 text-sm text-discord-text hover:bg-discord-light/30 hover:text-white transition-colors flex items-center">
+                    <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92s2.92-1.31 2.92-2.92-1.31-2.92-2.92-2.92z"/>
+                    </svg>
+                    Generate Invite Code
+                </button>
+                
+                <hr class="my-1 border-discord-light/20">
+                
+                <button (click)="openDeleteServerModal()" 
+                        class="w-full text-left px-3 py-2 text-sm text-red-400 hover:bg-red-500/20 hover:text-red-300 transition-colors flex items-center">
+                    <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                    </svg>
+                    Delete Server
+                </button>
+            </div>
+            </ng-container>
+           
+        </div>
+    </div>
+
+    <!-- Channel Categories -->
+    <div class="flex-1 overflow-y-auto p-2 custom-scrollbar">
+        <!-- Text Channels -->
+        <div class="mb-4">
+            <div class="flex items-center justify-between px-2 py-1 mx-2 text-xs font-semibold text-discord-text-dark uppercase tracking-wide hover:text-discord-text cursor-pointer group">
+                <div class="flex items-center">
+                    <svg class="w-3 h-3 mr-1 transition-transform duration-150" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M7 14l5-5 5 5z"/>
+                    </svg>
+                    Text Channels
+                </div>
+                <ng-container *ngIf="isAdmin()">
+                   <button (click)="openCreateChannelModal('TEXT')" class="p-1 hover:text-discord-text opacity-0 group-hover:opacity-100 transition-opacity">
+                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
+                    </svg>
+                </button>
+                </ng-container>
+            </div>
+
+            <div class="space-y-0.5 px-2">
+                <ng-container *ngFor="let channel of textChannels()">
+                    <div 
+                        [routerLink]="`/app/server/${serverId}/channel/${channel.id}`"  
+                        class="flex items-center px-2 py-2.5 rounded-lg cursor-pointer hover:bg-discord-light/30 transition-colors duration-150 group">
+                        <svg class="w-5 h-5 mr-2 text-discord-text-muted" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M5.503 4.627L5.5 6.75v10.504a3.25 3.25 0 003.25 3.25h8.616a2.251 2.251 0 01-2.122 1.5H8.75A4.75 4.75 0 014 17.254V6.75c0-.98.627-1.815 1.503-2.123z"/>
+                            <path d="M17.75 2A2.25 2.25 0 0120 4.25v13a2.25 2.25 0 01-2.25 2.25h-9.5A2.25 2.25 0 016 17.25v-13A2.25 2.25 0 018.25 2h9.5z"/>
+                        </svg>
+                        <span class="text-sm" 
+                              [ngClass]="isActive(`/app/server/${serverId}/channel/${channel.id}`)
+                                ? 'text-white' 
+                                : 'text-discord-text-muted group-hover:text-white'">
+                              {{channel.name}}
+                        </span>
+                    </div>
+                </ng-container>
+            </div>
+        </div>
+
+        <!-- Streaming channels -->
+         <div class="mb-4">
+              <div class="flex items-center justify-between px-2 py-1 mx-2 text-xs font-semibold text-discord-text-dark uppercase tracking-wide hover:text-discord-text cursor-pointer group">
+                <div class="flex items-center">
+                    <svg class="w-3 h-3 mr-1 transition-transform duration-150" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M7 14l5-5 5 5z"/>
+                    </svg>
+                    Streaming channels 
+                </div>
+                <ng-container *ngIf="isAdmin()">
+                   <button (click)="openCreateChannelModal('STREAMING')" class="p-1 hover:text-discord-text opacity-0 group-hover:opacity-100 transition-opacity">
+                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
+                    </svg>
+                </button>
+                </ng-container>
+            </div>
+
+            <div class="space-y-0.5 px-2">
+                <ng-container *ngFor="let channel of streamingChannels()">
+                    <!-- Channel Link -->
+                    <div 
+                        [routerLink]="`/app/server/${serverId}/channel/room/${channel.id}`"  
+                        class="flex items-center px-2 py-2.5 rounded-lg cursor-pointer hover:bg-discord-light/30 transition-colors duration-150 group">
+                        <svg class="w-5 h-5 mr-2 text-discord-text-muted" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M8 5v14l11-7z"/>
+                        </svg>
+                        <span class="text-sm" 
+                              [ngClass]="isActive(`/app/server/${serverId}/channel/room/${channel.id}`)
+                                ? 'text-white' 
+                                : 'text-discord-text-muted group-hover:text-white'">
+                              {{channel.name}}
+                        </span>
+                    </div>
+
+                    <!-- Viewers List -->
+                    <div *ngIf="channel.viewers && channel.viewers.length > 0" 
+                         class="ml-7 space-y-1 mb-2">
+                        <ng-container *ngFor="let viewer of channel.viewers">
+                            <div class="flex items-center px-2 py-1.5 rounded hover:bg-discord-light/20 cursor-pointer group/viewer">
+                                <!-- Avatar -->
+                                <div class="relative mr-2">
+                                    <img 
+                                        [src]="viewer.user.avatarUrl || 'assets/default-avatar.png'" 
+                                        [alt]="viewer.user.username"
+                                        class="w-6 h-6 rounded-full object-cover"
+                                    />
+                                    <!-- Online status indicator -->
+                                    <div *ngIf="viewer.user.isOnline" 
+                                         class="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 bg-green-500 rounded-full border-2 border-discord-sidebar">
+                                    </div>
+                                </div>
+                                
+                                <!-- Username -->
+                                <span class="text-xs text-discord-text-muted group-hover/viewer:text-white transition-colors truncate">
+                                    {{ viewer.user.displayName || viewer.user.username }}
+                                </span>
+                            </div>
+                        </ng-container>
+                    </div>
+                </ng-container>
+            </div>
+         </div>
+    </div>
+
+    <app-user-area-component></app-user-area-component>
+    
+</div>
+
+<!-- Create Channel Modal -->
+<div 
+  *ngIf="showCreateChannelModal()"
+  class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm"
+>
+  <div class="bg-discord-darkest rounded-2xl shadow-xl w-full max-w-md p-6 animate-fadeIn">
+    <!-- Header -->
+    <div class="flex justify-between items-center mb-4">
+      <h2 class="text-lg font-bold text-white">
+        Create {{ channelTypeToCreate === 'TEXT' ? 'Text' : 'Streaming' }} Channel
+      </h2>
+      <button (click)="closeModal()" class="text-gray-400 hover:text-white">&times;</button>
+    </div>
+
+    <!-- Form -->
+    <form (ngSubmit)="createChannel()" class="space-y-4">
+      <div>
+        <label class="block text-sm text-gray-300 mb-1">Name</label>
+        <input (focus)="errorMessage.set('')" [(ngModel)]="newChannel.name" name="name" required
+          class="w-full rounded-lg bg-discord-darker border border-gray-600 px-3 py-2 text-white placeholder-gray-400 focus:ring-2 focus:ring-discord-green focus:outline-none"
+          placeholder="Enter channel name" />
+      </div>
+
+      <div>
+        <label class="block text-sm text-gray-300 mb-1">Description</label>
+        <input (focus)="errorMessage.set('')" [(ngModel)]="newChannel.description" name="description" required
+          class="w-full rounded-lg bg-discord-darker border border-gray-600 px-3 py-2 text-white placeholder-gray-400 focus:ring-2 focus:ring-discord-green focus:outline-none"
+          placeholder="Enter description" />
+      </div>
+
+      <!-- Feedback Message -->
+      <div *ngIf="errorMessage()" 
+           class="p-3 rounded-lg bg-red-500/10 border border-red-500 text-red-400 text-sm">
+        {{ errorMessage() }}
+      </div>
+
+      <!-- Buttons -->
+      <div class="flex justify-end gap-2 mt-6">
+        <button type="button" (click)="closeModal()" 
+          class="px-4 py-2 rounded-lg bg-gray-700 text-gray-300 hover:bg-gray-600 transition">
+          Cancel
+        </button>
+        <button type="submit" [disabled]="isCreatingChannel()"
+          class="px-4 py-2 rounded-lg bg-discord-green text-white hover:bg-green-600 transition">
+          {{ isCreatingChannel() ? 'Creating...' : 'Create' }}
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Add Member Modal -->
+<div 
+  *ngIf="showAddMemberModal()"
+  class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm"
+>
+  <div class="bg-discord-darkest rounded-2xl shadow-xl w-full max-w-md p-6 animate-fadeIn">
+    <div class="flex justify-between items-center mb-4">
+      <h2 class="text-lg font-bold text-white">Add Member</h2>
+      <button (click)="closeAddMemberModal()" class="text-gray-400 hover:text-white">&times;</button>
+    </div>
+
+    <form (ngSubmit)="addMember()" class="space-y-4">
+      <div>
+        <label class="block text-sm text-gray-300 mb-1">Username</label>
+        <input (focus)="errorMessage.set('')" [(ngModel)]="memberToAdd" name="memberToAdd" required
+          class="w-full rounded-lg bg-discord-darker border border-gray-600 px-3 py-2 text-white placeholder-gray-400 focus:ring-2 focus:ring-discord-green focus:outline-none"
+          placeholder="Enter username" />
+      </div>
+
+      <!-- Feedback Message -->
+      <div *ngIf="errorMessage()" 
+           class="p-3 rounded-lg bg-red-500/10 border border-red-500 text-red-400 text-sm">
+        {{ errorMessage() }}
+      </div>
+
+      <div class="flex justify-end gap-2 mt-6">
+        <button type="button" (click)="closeAddMemberModal()" 
+          class="px-4 py-2 rounded-lg bg-gray-700 text-gray-300 hover:bg-gray-600 transition">
+          Cancel
+        </button>
+        <button type="submit"
+          class="px-4 py-2 rounded-lg bg-discord-green text-white hover:bg-green-600 transition">
+          {{ isAddingMember() ? 'Adding...' : 'Add member' }}
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Generate Invite Modal -->
+<div 
+  *ngIf="showInviteModal()"
+  class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm"
+>
+  <div class="bg-discord-darkest rounded-2xl shadow-xl w-full max-w-md p-6 animate-fadeIn">
+    <div class="flex justify-between items-center mb-4">
+      <h2 class="text-lg font-bold text-white">Server Invite</h2>
+      <button (click)="closeInviteModal()" class="text-gray-400 hover:text-white">&times;</button>
+    </div>
+
+    <div class="space-y-4">
+      <div>
+        <label class="block text-sm text-gray-300 mb-1">Invite Code</label>
+        <div class="flex gap-2">
+          <input [value]="inviteCodeUrl()" readonly
+            class="flex-1 rounded-lg bg-discord-darker border border-gray-600 px-3 py-2 text-white"
+            placeholder="Generating..." />
+          <button (click)="copyInviteCode()" 
+            class="px-3 py-2 rounded-lg bg-discord-green text-white hover:bg-green-600 transition">
+            Copy
+          </button>
+        </div>
+      </div>
+
+      <div class="flex justify-end gap-2 mt-6">
+        <button (click)="closeInviteModal()" 
+          class="px-4 py-2 rounded-lg bg-gray-700 text-gray-300 hover:bg-gray-600 transition">
+          Close
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Delete Server Confirmation Modal -->
+<div 
+  *ngIf="showDeleteModal()"
+  class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm"
+>
+  <div class="bg-discord-darkest rounded-2xl shadow-xl w-full max-w-md p-6 animate-fadeIn">
+    <div class="flex justify-between items-center mb-4">
+      <h2 class="text-lg font-bold text-red-400">Delete Server</h2>
+      <button (click)="closeDeleteModal()" class="text-gray-400 hover:text-white">&times;</button>
+    </div>
+
+    <div class="space-y-4">
+      <p class="text-gray-300">
+        Are you sure you want to delete <strong class="text-white">{{server()?.name}}</strong>? 
+        This action cannot be undone.
+      </p>
+
+      <div>
+        <label class="block text-sm text-gray-300 mb-1">Type the server name to confirm</label>
+        <input [(ngModel)]="deleteConfirmation" 
+          class="w-full rounded-lg bg-discord-darker border border-gray-600 px-3 py-2 text-white placeholder-gray-400 focus:ring-2 focus:ring-red-500 focus:outline-none"
+          placeholder="Enter server name" />
+      </div>
+
+      <div class="flex justify-end gap-2 mt-6">
+        <button (click)="closeDeleteModal()" 
+          class="px-4 py-2 rounded-lg bg-gray-700 text-gray-300 hover:bg-gray-600 transition">
+          Cancel
+        </button>
+        <button (click)="deleteServer()" 
+                [disabled]="deleteConfirmation !== server()?.name"
+                [class.opacity-50]="deleteConfirmation !== server()?.name"
+                [class.cursor-not-allowed]="deleteConfirmation !== server()?.name"
+          class="px-4 py-2 rounded-lg bg-red-600 text-white hover:bg-red-700 transition">
+          Delete Server
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Click Outside Handler -->
+<div *ngIf="showServerMenu()" 
+     (click)="closeServerMenu()" 
+     class="fixed inset-0 z-40">
+</div>

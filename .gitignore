@@ -31,3 +31,44 @@ build/
 
 ### VS Code ###
 .vscode/
+
+# Compiled output
+/syncspace-ui/dist
+/syncspace-ui/tmp
+/syncspace-ui/out-tsc
+/syncspace-ui/bazel-out
+
+# Node
+/syncspace-ui/node_modules
+/syncspace-ui/npm-debug.log
+/syncspace-ui/yarn-error.log
+
+# IDEs and editors
+/syncspace-ui/.idea/
+/syncspace-ui/.project
+/syncspace-ui/.classpath
+/syncspace-ui/.c9/
+/syncspace-ui/*.launch
+/syncspace-ui/.settings/
+/syncspace-ui/*.sublime-workspace
+
+# Visual Studio Code
+/syncspace-ui/.vscode/*
+/syncspace-ui/!.vscode/settings.json
+/syncspace-ui/!.vscode/tasks.json
+/syncspace-ui/!.vscode/launch.json
+/syncspace-ui/!.vscode/extensions.json
+/syncspace-ui/.history/*
+
+# Miscellaneous
+/syncspace-ui/.angular/cache
+/syncspace-ui/.sass-cache/
+/syncspace-ui/connect.lock
+/syncspace-ui/coverage
+/syncspace-ui/libpeerconnection.log
+/syncspace-ui/testem.log
+/syncspace-ui/typings
+
+# System files
+.DS_Store
+Thumbs.db

@@ -1,0 +1,11 @@
+<!-- Mobile overlay -->
+<div id="mobile-overlay" class="md:hidden fixed inset-0 bg-black/50 z-40 hidden" onclick="closeMobileMenus()"></div>
+
+<!-- Main Layout -->
+<div class="flex h-full">
+    <app-server-list-component></app-server-list-component>
+    <router-outlet></router-outlet>
+</div>
+
+<app-app-global-modal></app-app-global-modal>
+

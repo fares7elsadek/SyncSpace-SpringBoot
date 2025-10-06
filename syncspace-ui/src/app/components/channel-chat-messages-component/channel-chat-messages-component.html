@@ -1,0 +1,88 @@
+<!-- Fixed Channel Chat Component Template -->
+<div class="flex-1 flex flex-col bg-discord-bg relative">
+    
+    <!-- Messages Container - CRITICAL: Added #scrollContainer reference -->
+    <div #scrollContainer class="flex-1 overflow-y-auto px-4 py-4 discord-scrollbar-enhanced relative messages-container">
+        
+        <!-- Enhanced Loading Indicator at Top -->
+        <div *ngIf="isLoadingMessages() && messages().messages.length" 
+             class="loading-indicator-top">
+            <div class="loading-pill">
+                <div class="loading-spinner-enhanced"></div>
+                <span class="loading-text">Loading older messages...</span>
+            </div>
+        </div>
+
+        <!-- Initial Loading State with Better Animation -->
+        <div *ngIf="isLoadingMessages() && !messages().messages.length" 
+             class="initial-loading-state">
+            <div class="loading-content-center">
+                <div class="main-spinner"></div>
+                <span class="loading-main-text">Loading messages...</span>
+            </div>
+        </div>
+
+        <!-- Messages with Enhanced Styling -->
+        <div class="messages-list" *ngIf="messages().messages.length > 0">
+            <div *ngFor="let message of messages().messages; trackBy: trackByMessageId" 
+                 class="message-row">
+                <div class="message-avatar-container">
+                    <img 
+                        *ngIf="message.sender.avatarUrl; else messageSenderFallback"
+                        [src]="message.sender.avatarUrl" 
+                        alt="User Avatar" 
+                        class="message-avatar"
+                    />
+                    <ng-template #messageSenderFallback>
+                        <span class="message-avatar-text">
+                            {{ message.sender.username || '?' }}
+                        </span>
+                    </ng-template>
+                </div>
+                <div class="message-content-container">
+                    <div class="message-header">
+                        <span class="message-username">{{message.sender.username}}</span>
+                        <span class="message-timestamp">{{message.sentAt}}</span>
+                    </div>
+                    <div class="message-text">   
+                        {{ message.content }}
+                    </div>
+                </div>
+                
+                <!-- Enhanced Message Actions -->
+                <div class="message-actions-container">
+                    <button class="message-action-btn" title="Add Reaction">
+                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zM8.5 11c.83 0 1.5-.67 1.5-1.5S9.33 8 8.5 8 7 8.67 7 9.5s.67 1.5 1.5 1.5zm7 0c.83 0 1.5-.67 1.5-1.5S16.33 8 15.5 8 14 8.67 14 9.5s.67 1.5 1.5 1.5zm-4 4c2.33 0 4.31-1.46 5.11-3.5H6.89c.8 2.04 2.78 3.5 5.11 3.5z"/>
+                        </svg>
+                    </button>
+                    <button class="message-action-btn" title="More Actions">
+                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Enhanced Message Skeletons -->
+        <div class="skeleton-messages" *ngIf="isLoadingMessages() && !messages().messages.length">
+            <div *ngFor="let i of [1,2,3,4,5]" class="skeleton-message" [style.animation-delay.ms]="i * 100">
+                <div class="skeleton-avatar"></div>
+                <div class="skeleton-content">
+                    <div class="skeleton-header">
+                        <div class="skeleton-username" [style.width.px]="80 + (i * 15)"></div>
+                        <div class="skeleton-timestamp"></div>
+                    </div>
+                    <div class="skeleton-text-lines">
+                        <div class="skeleton-text-line full"></div>
+                        <div class="skeleton-text-line" [style.width.%]="60 + (i * 8)"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Message Composer at the bottom -->
+    <app-message-composer [channelId]="chatState.channelId"></app-message-composer>
+</div>

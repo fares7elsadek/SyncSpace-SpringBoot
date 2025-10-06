@@ -1,0 +1,108 @@
+<div class="activity-container">
+  <!-- Header -->
+  <div class="activity-header">
+    <h3 class="activity-title">Activity</h3>
+  </div>
+  
+  <!-- Scrollable content -->
+  <div class="activity-content custom-scrollbar">
+    <!-- Loading State -->
+    <div *ngIf="loading" class="loading-container">
+      <div class="loading-spinner"></div>
+    </div>
+
+    <!-- Empty State -->
+    <div *ngIf="!loading && activities().length === 0" class="empty-state">
+      <div class="empty-text">No one is streaming right now</div>
+    </div>
+
+    <!-- Activity Cards -->
+    <div *ngIf="!loading && activities().length > 0" class="activity-list">
+      <div *ngFor="let activity of activities()" class="activity-card" (click)="onActivityClick(activity)">
+        
+        <!-- User Info Header -->
+        <div class="activity-header-row">
+          <div class="user-avatar" *ngIf="!activity.hoster?.avatarUrl" [ngClass]="getAvatarColor(activity.hoster?.username || '')">
+            <span>{{getInitials(activity.hoster?.username || '')}}</span>
+          </div>
+          <img 
+            *ngIf="activity.hoster?.avatarUrl" 
+            [src]="activity.hoster?.avatarUrl" 
+            [alt]="activity.hoster?.username"
+            class="user-avatar-img"
+          />
+          <div class="user-info">
+            <div class="username">{{activity.hoster?.displayName || activity.hoster?.username}}</div>
+            <div class="activity-status">Streaming {{activity.channel?.name}}</div>
+          </div>
+        </div>
+
+        <!-- Video Content -->
+        <div class="activity-body">
+          <div class="video-thumbnail">
+            <img 
+              [src]="activity.thumbnail || 'https://images.unsplash.com/photo-1574267432644-f74f8ec55464?w=400&h=225&fit=crop'" 
+              [alt]="activity.videoTitle || 'Video thumbnail'"
+              class="thumbnail-img"
+              loading="lazy"
+            />
+            <!-- Live Badge -->
+            <div class="live-badge" *ngIf="activity.isPlaying">
+              <span class="live-dot"></span>
+              LIVE
+            </div>
+          </div>
+          
+          <div class="video-details">
+            <div class="video-title">{{activity.videoTitle || 'Untitled Video'}}</div>
+            
+            <!-- Viewers Row -->
+            <div class="viewers-row">
+              <div class="viewers-avatars" *ngIf="activity.viewers && activity.viewers.length > 0">
+                <div 
+                  *ngFor="let viewer of getVisibleViewers(activity); let i = index" 
+                  class="viewer-avatar-small"
+                  [style.z-index]="10 - i"
+                  [title]="viewer.user.displayName || viewer.user.username"
+                >
+                  <div 
+                    *ngIf="!viewer.user.avatarUrl" 
+                    class="avatar-small"
+                    [ngClass]="getAvatarColor(viewer.user.username)"
+                  >
+                    {{getInitials(viewer.user.username)}}
+                  </div>
+                  <img 
+                    *ngIf="viewer.user.avatarUrl" 
+                    [src]="viewer.user.avatarUrl" 
+                    [alt]="viewer.user.username"
+                    class="avatar-img-small"
+                  />
+                </div>
+                
+                <!-- Extra count -->
+                <div 
+                  *ngIf="getExtraViewersCount(activity) > 0" 
+                  class="viewer-avatar-small extra"
+                  [title]="'+' + getExtraViewersCount(activity) + ' more'"
+                >
+                  <div class="avatar-small extra-count">
+                    +{{getExtraViewersCount(activity)}}
+                  </div>
+                </div>
+              </div>
+              
+              <div class="video-info">
+                <svg class="eye-icon" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/>
+                </svg>
+                <span class="viewer-count">{{activity.viewers?.length || 0}} watching</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>

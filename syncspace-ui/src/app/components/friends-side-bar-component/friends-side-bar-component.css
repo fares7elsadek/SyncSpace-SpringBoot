@@ -1,0 +1,46 @@
+.brand-font {
+    font-family: 'Ginto', 'Whitney', sans-serif;
+}
+
+/* Custom scrollbar */
+.custom-scrollbar::-webkit-scrollbar {
+    width: 8px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+    background: #1a1d21;
+    border-radius: 4px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: #2e3338;
+}
+
+/* Button hover animations */
+.btn-hover {
+    transition: all 0.15s ease;
+}
+
+.btn-hover:hover {
+    background-color: rgba(116, 127, 141, 0.1);
+}
+
+.btn-hover:active {
+    transform: scale(0.96);
+}
+
+/* Status indicators */
+.status-online { background-color: #23a55a; }
+.status-idle { background-color: #f0b232; }
+.status-dnd { background-color: #f23f42; }
+.status-offline { background-color: #80848e; }
+
+
+
+
+
+

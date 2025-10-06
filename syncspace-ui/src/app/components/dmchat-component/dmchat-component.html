@@ -1,0 +1,230 @@
+<app-friends-side-bar-component></app-friends-side-bar-component>
+
+<!-- Main Chat Area -->
+<div class="flex-1 flex flex-col bg-discord-bg relative">
+    <!-- Top Bar with Enhanced Styling -->
+    <div class="h-12 bg-discord-bg border-b border-discord-darkest/30 px-4 flex items-center shadow-sm z-10 backdrop-blur-sm">
+        <!-- Mobile sidebar toggle -->
+        <button class="md:hidden mr-3 p-1.5 hover:bg-discord-light rounded btn-hover-enhanced" onclick="toggleDMSidebar()">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+            </svg>
+        </button>
+
+        <!-- User Info with Enhanced Loading -->
+        <div class="flex items-center flex-1 space-x-3">
+            <div class="w-8 h-8 rounded-full overflow-hidden bg-gradient-to-br from-purple-500 to-indigo-600 flex items-center justify-center relative avatar-container">
+                <img 
+                    *ngIf="user()?.avatarUrl && !isLoadingUser(); else avatarFallback"
+                    [src]="user()?.avatarUrl" 
+                    alt="User Avatar" 
+                    class="w-8 h-8 rounded-full object-cover avatar-smooth"
+                />
+                <ng-template #avatarFallback>
+                    <span class="text-white font-semibold text-sm avatar-text">
+                        {{ user()?.username?.charAt(0) || '?' }}
+                    </span>
+                </ng-template>
+                
+                <!-- Smooth Loading Overlay -->
+                <div *ngIf="isLoadingUser()" class="absolute inset-0 bg-discord-light rounded-full loading-overlay-smooth flex items-center justify-center">
+                    <div class="spinner-smooth"></div>
+                </div>
+            </div>
+            <div class="flex flex-col leading-tight user-info-container">
+                <span class="font-semibold text-white brand-font text-sm">
+                    <span *ngIf="!isLoadingUser(); else usernameSkeleton" class="username-text">
+                        {{ user()?.username || 'Unknown User' }}
+                    </span>
+                    <ng-template #usernameSkeleton>
+                        <div class="skeleton-text w-20 h-4"></div>
+                    </ng-template>
+                </span>
+                <span class="text-xs text-discord-text-muted flex items-center status-indicator" 
+                      [class.fade-out]="isLoadingUser()">
+                    <span class="w-2 h-2 rounded-full mr-1 status-dot" [ngClass]="'status-' + chatStatus( user()?.isOnline || false )"  ></span>
+                    {{user()?.isOnline || false ? 'Online' : user()?.lastSeen || 'Offline'}}
+                </span>
+            </div>
+        </div>
+
+        <!-- Enhanced Action Buttons -->
+        <div class="flex items-center space-x-1">
+            <button class="p-2 hover:bg-discord-light rounded btn-hover-enhanced transition-all duration-200" title="Start Voice Call">
+                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/>
+                </svg>
+            </button>
+            <button class="p-2 hover:bg-discord-light rounded btn-hover-enhanced transition-all duration-200" title="Start Video Call">
+                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M17 10.5V7c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1v10c0 .55.45 1 1 1h12c.55 0 1-.45 1-1v-3.5l4 4v-11l-4 4z"/>
+                </svg>
+            </button>
+            <button class="p-2 hover:bg-discord-light rounded btn-hover-enhanced transition-all duration-200" title="Pinned Messages">
+                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M16 12V4c0-.55-.45-1-1-1s-1 .45-1 1v8.17l-1.59-1.59c-.39-.39-1.02-.39-1.41 0s-.39 1.02 0 1.41L15.17 16c.39.39 1.02.39 1.41 0l4.17-4.17c.39-.39.39-1.02 0-1.41s-1.02-.39-1.41 0L16 12z"/>
+                </svg>
+            </button>
+            <button class="p-2 hover:bg-discord-light rounded btn-hover-enhanced transition-all duration-200" title="Add Friends to DM">
+                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M16 4c0-1.11.89-2 2-2s2 .89 2 2-.89 2-2 2-2-.89-2-2zm4 18v-6h2.5l-2.54-7.63A1.5 1.5 0 0018.54 8H17.5c-.83 0-1.54.5-1.84 1.22L14.5 12.5l1.41 1.41L17.31 12c.06-.13.19-.21.33-.21s.27.08.33.21L19.5 18H22zM12.5 11.5c.83 0 1.5-.67 1.5-1.5s-.67-1.5-1.5-1.5S11 9.17 11 10s.67 1.5 1.5 1.5zM5.5 6c1.11 0 2-.89 2-2s-.89-2-2-2-2 .89-2 2 .89 2 2 2zm2 16v-7H9v-2c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1v2h1.5v7H7z"/>
+                </svg>
+            </button>
+            <div class="w-px h-6 bg-discord-light separator-line"></div>
+            <button class="p-2 hover:bg-discord-light rounded btn-hover-enhanced transition-all duration-200" title="Inbox">
+                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 14l-5-5h3V8h4v4h3l-5 5z"/>
+                </svg>
+            </button>
+            <button class="p-2 hover:bg-discord-light rounded btn-hover-enhanced transition-all duration-200" title="Help">
+                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17h-2v-2h2v2zm2.07-7.75l-.9.92C13.45 12.9 13 13.5 13 15h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H8c0-2.21 1.79-4 4-4s4 1.79 4 4c0 .88-.36 1.68-.93 2.25z"/>
+                </svg>
+            </button>
+        </div>
+    </div>
+
+    <!-- Messages Area with Smooth UI -->
+    <div #scrollContainer class="flex-1 overflow-y-auto px-4 py-4 discord-scrollbar-enhanced relative messages-container">
+        
+        <!-- Enhanced Loading Indicator at Top -->
+        <div *ngIf="isLoadingMessages() && messages().messages.length" 
+             class="loading-indicator-top">
+            <div class="loading-pill">
+                <div class="loading-spinner-enhanced"></div>
+                <span class="loading-text">Loading older messages...</span>
+            </div>
+        </div>
+
+        <!-- Initial Loading State with Better Animation -->
+        <div *ngIf="isLoadingMessages() && !messages().messages.length" 
+             class="initial-loading-state">
+            <div class="loading-content-center">
+                <div class="main-spinner"></div>
+                <span class="loading-main-text">Loading messages...</span>
+            </div>
+        </div>
+        
+        <!-- Conversation Start Banner with Enhanced Animation -->
+        <div class="conversation-start-banner" 
+             *ngIf="!isLoadingUser() && !messages()?.hasMore && messages().messages.length > 0">
+            <div class="conversation-avatar-container">
+                <img 
+                    *ngIf="user()?.avatarUrl; else initialsFallback"
+                    [src]="user()?.avatarUrl"
+                    [alt]="user()?.username + ' Avatar'"
+                    class="conversation-avatar"
+                />
+                <ng-template #initialsFallback>
+                    <span class="conversation-initials">
+                        {{ user()?.username?.charAt(0) || '?' }}
+                    </span>
+                </ng-template>
+            </div>
+            <h3 class="conversation-title">{{ user()?.username }}</h3>
+            <p class="conversation-subtitle">
+                This is the beginning of your direct message history with 
+                <span class="username-highlight">{{ user()?.username }}</span>.
+            </p>
+        </div>
+
+        <!-- Messages with Enhanced Styling -->
+        <div class="messages-list" *ngIf="messages().messages.length > 0">
+            <div *ngFor="let message of messages().messages; trackBy: trackByMessageId" 
+                 class="message-row">
+                <div class="message-avatar-container">
+                    <img 
+                        *ngIf="message.sender.avatarUrl; else messageSenderFallback"
+                        [src]="message.sender.avatarUrl" 
+                        alt="User Avatar" 
+                        class="message-avatar"
+                    />
+                    <ng-template #messageSenderFallback>
+                        <span class="message-avatar-text">
+                            {{ message.sender.username || '?' }}
+                        </span>
+                    </ng-template>
+                </div>
+                <div class="message-content-container">
+                    <div class="message-header">
+                        <span class="message-username">{{message.sender.username}}</span>
+                        <span class="message-timestamp">{{message.sentAt}}</span>
+                    </div>
+                    <div class="message-text">   
+                            
+                                {{ message.content }}
+                    </div>
+
+                </div>
+                
+                <!-- Enhanced Message Actions -->
+                <div class="message-actions-container">
+                    <button class="message-action-btn" title="Add Reaction">
+                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zM8.5 11c.83 0 1.5-.67 1.5-1.5S9.33 8 8.5 8 7 8.67 7 9.5s.67 1.5 1.5 1.5zm7 0c.83 0 1.5-.67 1.5-1.5S16.33 8 15.5 8 14 8.67 14 9.5s.67 1.5 1.5 1.5zm-4 4c2.33 0 4.31-1.46 5.11-3.5H6.89c.8 2.04 2.78 3.5 5.11 3.5z"/>
+                        </svg>
+                    </button>
+                    <button class="message-action-btn" title="More Actions">
+                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Enhanced Message Skeletons -->
+        <div class="skeleton-messages" *ngIf="isLoadingMessages() && !messages().messages.length">
+            <div *ngFor="let i of [1,2,3,4,5]" class="skeleton-message" [style.animation-delay.ms]="i * 100">
+                <div class="skeleton-avatar"></div>
+                <div class="skeleton-content">
+                    <div class="skeleton-header">
+                        <div class="skeleton-username" [style.width.px]="80 + (i * 15)"></div>
+                        <div class="skeleton-timestamp"></div>
+                    </div>
+                    <div class="skeleton-text-lines">
+                        <div class="skeleton-text-line full"></div>
+                        <div class="skeleton-text-line" [style.width.%]="60 + (i * 8)"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Enhanced Empty State -->
+        <div *ngIf="!isLoadingMessages() && !isLoadingUser() && messages().messages.length === 0" 
+             class="empty-state-container">
+            <div class="empty-state-icon">
+                <svg class="w-12 h-12" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M20 2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h4l4 4 4-4h4c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-2 12H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z"/>
+                </svg>
+            </div>
+            <div class="empty-state-title">No messages yet</div>
+            <div class="empty-state-subtitle">Start a conversation with {{ user()?.username }}</div>
+        </div>
+
+        <!-- Enhanced Typing Indicator -->
+        <div id="typing-indicator" class="typing-indicator-container">
+            <div class="typing-avatar">
+                {{ user()?.username || '?' }}
+            </div>
+            <div class="typing-content">
+                <div class="typing-text-container">
+                    <span class="typing-username">{{ user()?.username }}</span>
+                    <span class="typing-label">is typing</span>
+                    <div class="typing-dots">
+                        <div class="typing-dot dot-1"></div>
+                        <div class="typing-dot dot-2"></div>
+                        <div class="typing-dot dot-3"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+    </div>
+
+    <!-- Message Composer -->
+    <app-message-composer [channelId]="chatState.channelId" [userId]="chatState.userId" ></app-message-composer>
+    
+</div>
+
+

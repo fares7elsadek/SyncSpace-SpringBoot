@@ -1,0 +1,5 @@
+/* Status indicators */
+.status-online { background-color: #23a55a; }
+.status-idle { background-color: #f0b232; }
+.status-dnd { background-color: #f23f42; }
+.status-offline { background-color: #80848e; }

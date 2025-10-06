@@ -1,0 +1,139 @@
+/* Define CSS variables - add these to your main styles.css or here */
+:root {
+  --bg-secondary: #2f3136;
+  --bg-tertiary: #36393f;
+  --border-color: #3e4146;
+  --text-primary: #ffffff;
+  --text-secondary: #b9bbbe;
+  --text-muted: #72767d;
+  --green-online: #43b581;
+  --hover-bg: #40444b;
+  --shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* Right Sidebar - User Panel */
+.sidebar-right {
+    width: 300px;
+    background: var(--bg-secondary);
+    border-left: 1px solid var(--border-color);
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.3s ease;
+    height: 100%;
+    overflow-y: auto;
+}
+
+.user-panel-header {
+    padding: 20px;
+    text-align: center;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.user-panel-avatar {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 32px;
+    color: white;
+    margin: 0 auto 16px;
+    box-shadow: var(--shadow);
+}
+
+.user-panel-name {
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 4px;
+    color: var(--text-primary);
+}
+
+.user-panel-status {
+    font-size: 14px;
+    color: var(--green-online);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+}
+
+.user-panel-status::before {
+    content: "";
+    width: 8px;
+    height: 8px;
+    background: var(--green-online);
+    border-radius: 50%;
+}
+
+.user-panel-content {
+    flex: 1;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.user-section {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.section-title {
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    letter-spacing: 0.5px;
+}
+
+.section-content {
+    color: var(--text-secondary);
+    font-size: 14px;
+    line-height: 1.4;
+}
+
+.status-available {
+    color: var(--green-online) !important;
+}
+
+.user-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.user-action-btn {
+    flex: 1;
+    padding: 12px;
+    border: none;
+    background: var(--bg-tertiary);
+    color: var(--text-primary);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.user-action-btn:hover {
+    background: var(--hover-bg);
+}
+
+.user-action-btn::before {
+    font-size: 16px;
+}
+
+.user-action-btn.message::before { 
+    content: "💬"; 
+}
+
+.user-action-btn.call::before { 
+    content: "📞"; 
+}

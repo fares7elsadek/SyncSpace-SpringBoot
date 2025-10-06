@@ -1,0 +1,19 @@
+<app-channel-sidebar-component></app-channel-sidebar-component>
+
+<!-- Main Content Area -->
+<div class="flex-1 flex flex-col">
+  <app-top-bar-component/>
+  
+  <!-- Chat Messages Area - Add the new class -->
+  <div class="flex-1 flex chat-messages-area">
+    <!-- Messages - Add the new class -->
+    <div class="flex-1 flex flex-col messages-container-wrapper">
+      <router-outlet></router-outlet>
+    </div>
+    
+    <!-- Members List -->
+    <div id="members-list" class="w-60 bg-discord-gray border-l border-discord-light flex-col hidden md:flex">
+      <app-members-list-component></app-members-list-component>
+    </div>
+  </div>
+</div>

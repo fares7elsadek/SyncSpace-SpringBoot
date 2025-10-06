@@ -1,0 +1,26 @@
+<div id="add-friend-modal" class="hidden fixed inset-0 bg-black/50 flex items-center justify-center z-50" onclick="hideAddFriend(event)">
+        <div class="bg-discord-gray rounded-lg p-6 max-w-md w-full mx-4" onclick="event.stopPropagation()">
+            <h3 class="text-xl font-bold text-white mb-4">Add Friend</h3>
+            <p class="text-discord-text mb-4">
+                You can add friends with their SyncSpace username.
+            </p>
+            
+            <div class="mb-6">
+                <input 
+                    type="text" 
+                    id="friend-username"
+                    placeholder="Enter a Username#0000"
+                    class="w-full bg-discord-light border border-discord-light rounded px-3 py-3 text-discord-text focus:outline-none focus:border-discord-blurple focus:ring-1 focus:ring-discord-blurple"
+                >
+            </div>
+
+            <div class="flex justify-end space-x-3">
+                <button class="px-4 py-2 text-discord-text hover:underline" onclick="hideAddFriend()">
+                    Cancel
+                </button>
+                <button id="send-request" class="bg-discord-blurple hover:bg-discord-blurple/80 px-6 py-2 rounded font-medium text-white transition-colors disabled:opacity-50" disabled onclick="sendFriendRequest()">
+                    Send Friend Request
+                </button>
+            </div>
+        </div>
+    </div>

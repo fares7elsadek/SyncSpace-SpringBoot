@@ -1,0 +1,404 @@
+/* Enhanced Discord-style animations and effects */
+
+/* Modal animations */
+@keyframes modalSlideIn {
+  from { 
+    opacity: 0; 
+    transform: translateY(20px) scale(0.95); 
+  }
+  to { 
+    opacity: 1; 
+    transform: translateY(0) scale(1); 
+  }
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  75% { transform: translateX(5px); }
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+@keyframes slideDown {
+  from { 
+    opacity: 0; 
+    transform: translateY(-10px); 
+  }
+  to { 
+    opacity: 1; 
+    transform: translateY(0); 
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes bounceIn {
+  0% { transform: scale(0.8); opacity: 0; }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+/* Apply animations */
+.animate-modalSlideIn {
+  animation: modalSlideIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.animate-shake {
+  animation: shake 0.5s ease-in-out;
+}
+
+.animate-pulse {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+.animate-slideDown {
+  animation: slideDown 0.2s ease-out;
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.2s ease-out;
+}
+
+.animate-bounceIn {
+  animation: bounceIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* Enhanced button hover effects */
+.btn-hover {
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-hover::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  transition: width 0.3s ease, height 0.3s ease;
+  z-index: -1;
+}
+
+.btn-hover:hover::before {
+  width: 100%;
+  height: 100%;
+}
+
+/* Tab button enhancements */
+.tab-button {
+  position: relative;
+  overflow: hidden;
+  backdrop-filter: blur(8px);
+}
+
+.tab-button.active {
+  box-shadow: 0 4px 12px rgba(88, 196, 152, 0.3);
+}
+
+.tab-button:not(.active)::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  width: 0;
+  height: 2px;
+  background: #58c498;
+  transform: translateX(-50%);
+  transition: width 0.3s ease;
+}
+
+.tab-button:not(.active):hover::after {
+  width: 70%;
+}
+
+/* Notification item hover effects */
+.notification-item {
+  cursor: pointer;
+  transform: translateX(0);
+  transition: all 0.2s ease;
+}
+
+.notification-item:hover {
+  transform: translateX(2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+/* Professional scrollbar - vertical only */
+.overflow-y-auto {
+  overflow-x: hidden; /* Force hide horizontal scroll */
+}
+
+.overflow-y-auto::-webkit-scrollbar {
+  width: 8px;
+}
+
+.overflow-y-auto::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+  margin: 8px 0;
+}
+
+.overflow-y-auto::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, rgba(88, 196, 152, 0.6), rgba(88, 196, 152, 0.3));
+  border-radius: 12px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+
+.overflow-y-auto::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, rgba(88, 196, 152, 0.8), rgba(88, 196, 152, 0.5));
+}
+
+.overflow-y-auto::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+/* Firefox scrollbar */
+.overflow-y-auto {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(88, 196, 152, 0.6) rgba(255, 255, 255, 0.05);
+}
+
+/* Glassmorphism effects */
+.backdrop-blur-sm {
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+
+/* Enhanced gradient backgrounds */
+.bg-gradient-to-br {
+  background: linear-gradient(135deg, var(--tw-gradient-stops));
+}
+
+.bg-gradient-to-r {
+  background: linear-gradient(90deg, var(--tw-gradient-stops));
+}
+
+/* Loading spinner */
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.animate-spin {
+  animation: spin 1s linear infinite;
+}
+
+/* Brand font styling */
+.brand-font {
+  font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+  letter-spacing: -0.01em;
+}
+
+/* Enhanced focus states */
+input:focus, button:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(88, 196, 152, 0.5);
+}
+
+/* Notification badge pulse */
+.notification-badge {
+  animation: pulse 2s infinite;
+}
+
+/* Smooth transitions for all interactive elements */
+* {
+  transition: color 0.2s ease, background-color 0.2s ease, border-color 0.2s ease, 
+              transform 0.2s ease, opacity 0.2s ease, box-shadow 0.2s ease;
+}
+
+/* Enhanced modal backdrop */
+.modal-backdrop {
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  background: rgba(0, 0, 0, 0.6);
+}
+
+/* Avatar border animation */
+.avatar-border {
+  position: relative;
+}
+
+.avatar-border::after {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  border-radius: 50%;
+  padding: 2px;
+  background: conic-gradient(from 0deg, #58c498, #58c498, transparent, transparent, #58c498);
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+  -webkit-mask-composite: xor;
+  animation: spin 3s linear infinite;
+}
+
+/* Button press effect */
+button:active {
+  transform: scale(0.98);
+}
+
+/* Notification type indicators */
+.notification-friend-request {
+  border-left: 4px solid #58c498;
+}
+
+.notification-message {
+  border-left: 4px solid #7289da;
+}
+
+.notification-server-invite {
+  border-left: 4px solid #f04747;
+}
+
+.notification-system {
+  border-left: 4px solid #faa61a;
+}
+
+/* Status indicators */
+.status-online {
+  background: #43b581;
+  box-shadow: 0 0 8px rgba(67, 181, 129, 0.5);
+}
+
+.status-idle {
+  background: #faa61a;
+  box-shadow: 0 0 8px rgba(250, 166, 26, 0.5);
+}
+
+.status-dnd {
+  background: #f04747;
+  box-shadow: 0 0 8px rgba(240, 71, 71, 0.5);
+}
+
+.status-offline {
+  background: #747f8d;
+}
+
+/* Enhanced shadow effects */
+.shadow-glow {
+  box-shadow: 0 0 20px rgba(88, 196, 152, 0.3);
+}
+
+.shadow-glow-blue {
+  box-shadow: 0 0 20px rgba(114, 137, 218, 0.3);
+}
+
+.shadow-glow-red {
+  box-shadow: 0 0 20px rgba(240, 71, 71, 0.3);
+}
+
+/* Professional notification styling */
+.notification-item {
+  border-radius: 16px;
+  backdrop-filter: blur(8px);
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+.notification-item img {
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+/* Enhanced action buttons */
+.notification-item button {
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+/* Professional loading states */
+.loading-skeleton {
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0.1) 25%, rgba(255, 255, 255, 0.2) 50%, rgba(255, 255, 255, 0.1) 75%);
+  background-size: 200% 100%;
+  animation: loading 1.5s infinite;
+}
+
+@keyframes loading {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+/* Responsive design improvements */
+@media (max-width: 768px) {
+  .tab-button {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.875rem;
+  }
+  
+  .brand-font {
+    font-size: 1.125rem;
+  }
+  
+  .notification-item {
+    padding: 0.75rem;
+    margin: 0 0.5rem;
+  }
+  
+  .overflow-y-auto::-webkit-scrollbar {
+    width: 6px;
+  }
+}
+
+/* Dark mode enhancements */
+@media (prefers-color-scheme: dark) {
+  .bg-discord-bg {
+    background: #36393f;
+  }
+  
+  .bg-discord-darkest {
+    background: #2f3136;
+  }
+  
+  .bg-discord-darker {
+    background: #40444b;
+  }
+  
+  .bg-discord-light {
+    background: #484c52;
+  }
+}
+
+/* Professional hover states */
+.notification-item:hover .opacity-0 {
+  opacity: 1;
+}
+
+/* Enhanced transition for notification actions */
+.notification-actions {
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Improved focus management */
+.notification-item:focus-within {
+  outline: 2px solid rgba(88, 196, 152, 0.5);
+  outline-offset: 2px;
+}
+
+/* Better text handling for long usernames/messages */
+.notification-item h4 {
+  max-width: 200px;
+}
+
+.notification-item p {
+  line-height: 1.5;
+  max-height: 3em;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}

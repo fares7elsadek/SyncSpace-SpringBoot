@@ -1,0 +1,178 @@
+<div class="h-full flex flex-col bg-discord-sidebar">
+  <!-- Search Header -->
+  <div class="p-4 border-b border-discord-dark/30">
+    <div class="relative">
+      <input 
+        type="text" 
+        placeholder="Search members"
+        (input)="onSearchChange($event)"
+        class="w-full bg-discord-dark/60 text-white text-sm px-10 py-3 rounded-lg border border-discord-dark/50 outline-none focus:ring-2 focus:ring-discord-blurple focus:border-transparent transition-all duration-200 placeholder-discord-muted"
+      >
+      <svg class="w-5 h-5 absolute left-3 top-3.5 text-discord-muted" fill="currentColor" viewBox="0 0 24 24">
+        <path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
+      </svg>
+    </div>
+  </div>
+
+  <!-- Members List -->
+  <div class="flex-1 overflow-y-auto scrollbar-thin scrollbar-track-transparent scrollbar-thumb-discord-dark">
+    <div class="p-2 space-y-6">
+      
+      <!-- Owners Section -->
+      <div *ngIf="groupedMembers().owners.length > 0" class="space-y-2">
+        <div class="flex items-center justify-between px-3 py-2">
+          <div class="flex items-center space-x-2">
+            <span class="text-lg">👑</span>
+            <span class="text-xs font-bold text-yellow-400 uppercase tracking-wider">
+              {{getRoleDisplayName('OWNER')}}
+            </span>
+          </div>
+          <span class="text-xs text-discord-muted font-medium">
+            {{onlineStats().owners.online}}/{{onlineStats().owners.total}}
+          </span>
+        </div>
+        
+        <div class="space-y-1">
+          <div 
+            *ngFor="let member of groupedMembers().owners"
+            class="group relative overflow-hidden rounded-xl transition-all duration-300 hover:scale-[1.02]"
+          >
+            <!-- Owner special background with gradient -->
+            <div class="absolute inset-0 bg-gradient-to-r from-yellow-500/20 via-amber-500/15 to-yellow-600/20 opacity-60"></div>
+            <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent"></div>
+            
+            <div class="relative flex items-center p-3 backdrop-blur-sm border border-yellow-500/30 rounded-xl hover:border-yellow-400/50 transition-all duration-300">
+              <!-- Avatar with special crown border -->
+              <div class="relative mr-4 flex-shrink-0">
+                <div class="absolute -inset-1 bg-gradient-to-r from-yellow-400 to-amber-500 rounded-full animate-pulse opacity-75"></div>
+                <img 
+                  [src]="member.serverUserDto.avatarUrl" 
+                  alt="Owner Avatar" 
+                  class="relative w-12 h-12 rounded-full object-cover border-2 border-white/20 shadow-xl"
+                />
+                <div 
+                  class="absolute -bottom-1 -right-1 w-4 h-4 border-3 border-discord-sidebar rounded-full shadow-lg" 
+                  [ngClass]="'status-' + memberStatus(member.serverUserDto.isOnline)">
+                </div>
+                <div class="absolute -top-1 -right-1 text-sm">👑</div>
+              </div>
+              
+              <div class="flex-1 min-w-0">
+                <div class="flex items-center space-x-2">
+                  <div class="text-base font-bold text-yellow-300 truncate">{{member.serverUserDto.username}}</div>
+                  <div class="px-2 py-1 bg-yellow-500/20 text-yellow-300 text-xs font-semibold rounded-full border border-yellow-500/30">
+                    OWNER
+                  </div>
+                </div>
+                <div class="text-xs text-yellow-200/70 font-medium">Server Owner</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Admins Section -->
+      <div *ngIf="groupedMembers().admins.length > 0" class="space-y-2">
+        <div class="flex items-center justify-between px-3 py-2">
+          <div class="flex items-center space-x-2">
+            <span class="text-lg">🛡️</span>
+            <span class="text-xs font-bold text-blue-400 uppercase tracking-wider">
+              {{getRoleDisplayName('ADMIN')}}
+            </span>
+          </div>
+          <span class="text-xs text-discord-muted font-medium">
+            {{onlineStats().admins.online}}/{{onlineStats().admins.total}}
+          </span>
+        </div>
+        
+        <div class="space-y-1">
+          <div 
+            *ngFor="let member of groupedMembers().admins"
+            class="group relative overflow-hidden rounded-lg transition-all duration-300 hover:scale-[1.01]"
+          >
+            <!-- Admin special background -->
+            <div class="absolute inset-0 bg-gradient-to-r from-blue-500/15 via-indigo-500/10 to-blue-600/15 opacity-60"></div>
+            
+            <div class="relative flex items-center p-3 backdrop-blur-sm border border-blue-500/25 rounded-lg hover:border-blue-400/40 transition-all duration-300">
+              <!-- Avatar with admin border -->
+              <div class="relative mr-3 flex-shrink-0">
+                <div class="absolute -inset-0.5 bg-gradient-to-r from-blue-400 to-indigo-500 rounded-full opacity-50"></div>
+                <img 
+                  [src]="member.serverUserDto.avatarUrl" 
+                  alt="Admin Avatar" 
+                  class="relative w-10 h-10 rounded-full object-cover border-2 border-white/10 shadow-lg"
+                />
+                <div 
+                  class="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 border-2 border-discord-sidebar rounded-full shadow-md" 
+                  [ngClass]="'status-' + memberStatus(member.serverUserDto.isOnline)">
+                </div>
+                <div class="absolute -top-0.5 -right-0.5 text-xs">🛡️</div>
+              </div>
+              
+              <div class="flex-1 min-w-0">
+                <div class="flex items-center space-x-2">
+                  <div class="text-sm font-semibold text-blue-300 truncate">{{member.serverUserDto.username}}</div>
+                  <div class="px-1.5 py-0.5 bg-blue-500/20 text-blue-300 text-xs font-medium rounded border border-blue-500/30">
+                    ADMIN
+                  </div>
+                </div>
+                <div class="text-xs text-blue-200/60">Administrator</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Regular Members Section -->
+      <div *ngIf="groupedMembers().members.length > 0" class="space-y-2">
+        <div class="flex items-center justify-between px-3 py-2">
+          <div class="flex items-center space-x-2">
+            <div class="w-2 h-2 bg-green-500 rounded-full"></div>
+            <span class="text-xs font-bold text-discord-muted uppercase tracking-wider">
+              {{getRoleDisplayName('USER')}}
+            </span>
+          </div>
+          <span class="text-xs text-discord-muted font-medium">
+            {{onlineStats().members.online}}/{{onlineStats().members.total}}
+          </span>
+        </div>
+        
+        <div class="space-y-0.5">
+          <div 
+            *ngFor="let member of groupedMembers().members"
+            class="flex items-center px-3 py-2 rounded-lg hover:bg-discord-light/30 cursor-pointer group transition-all duration-200"
+          >
+            <!-- Regular avatar -->
+            <div class="relative mr-3 flex-shrink-0">
+              <img 
+                [src]="member.serverUserDto.avatarUrl" 
+                alt="User Avatar" 
+                class="w-9 h-9 rounded-full object-cover border border-discord-dark/50 shadow-sm group-hover:shadow-md transition-shadow duration-200"
+              />
+              <div 
+                class="absolute -bottom-0.5 -right-0.5 w-3 h-3 border-2 border-discord-sidebar rounded-full" 
+                [ngClass]="'status-' + memberStatus(member.serverUserDto.isOnline)">
+              </div>
+            </div>
+            
+            <div class="flex-1 min-w-0">
+              <div class="text-sm font-medium text-white/90 truncate group-hover:text-white transition-colors duration-200">
+                {{member.serverUserDto.username}}
+              </div>
+              <div class="text-xs text-discord-muted truncate">Member</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- No results message -->
+      <div *ngIf="filteredMembers().length === 0 && searchTerm()" class="text-center py-8">
+        <div class="text-discord-muted text-sm">
+          <div class="text-2xl mb-2">🔍</div>
+          No members found matching "{{searchTerm()}}"
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>

@@ -1,0 +1,390 @@
+<!-- Modern Discord-style Top Bar -->
+<div class="h-12 bg-discord-bg border-b border-discord-darkest/20 px-4 flex items-center shadow-lg backdrop-blur-sm">
+  <!-- Mobile Menu Toggle -->
+  <button class="md:hidden mr-3 p-2 hover:bg-discord-light/80 rounded-lg transition-all duration-200 btn-hover" onclick="toggleFriendsSidebar()">
+    <svg class="w-5 h-5 text-discord-text" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+    </svg>
+  </button>
+  
+  <div class="flex items-center flex-1">
+    <!-- Friends Icon with modern styling -->
+    <div class="flex items-center mr-6">
+      <div class="w-8 h-8 bg-gradient-to-br from-discord-green to-discord-green/80 rounded-lg flex items-center justify-center mr-3 shadow-lg">
+        <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24">
+          <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/>
+        </svg>
+      </div>
+      <h1 class="text-xl font-bold text-white brand-font tracking-tight">Friends</h1>
+    </div>
+    
+    <!-- Enhanced Friend Tabs -->
+    <nav class="flex items-center space-x-1 bg-discord-darker/50 rounded-xl p-1 backdrop-blur-sm border border-discord-darkest/30">
+      <button 
+        class="tab-button px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200"
+        routerLink="/app/friends/online"
+        routerLinkActive="active"
+        [ngClass]="{ 
+          'text-discord-text-muted hover:text-white hover:bg-discord-light/50': !isActive('/app/friends/online'),
+          'bg-discord-green text-white shadow-lg': isActive('/app/friends/online')
+        }">
+        Online
+        <span *ngIf="isActive('/app/friends/online')" class="ml-2 w-2 h-2 bg-white rounded-full inline-block animate-pulse"></span>
+      </button>
+
+      <button 
+        class="tab-button px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200"
+        routerLink="/app/friends/all"
+        routerLinkActive="active"
+        [ngClass]="{ 
+          'text-discord-text-muted hover:text-white hover:bg-discord-light/50': !isActive('/app/friends/all'),
+          'bg-discord-green text-white shadow-lg': isActive('/app/friends/all')
+        }">
+        All
+      </button>
+
+      <button 
+        class="tab-button px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200"
+        routerLink="/app/friends/pending"
+        routerLinkActive="active"
+        [ngClass]="{ 
+          'text-discord-text-muted hover:text-white hover:bg-discord-light/50': !isActive('/app/friends/pending'),
+          'bg-discord-green text-white shadow-lg': isActive('/app/friends/pending')
+        }">
+        Pending
+      </button>
+    </nav>
+
+    <!-- Add Friend Button -->
+    <button 
+      (click)="showAddFriendModal.set(true)" 
+      class="ml-4 bg-gradient-to-r from-discord-green to-green-500 hover:from-discord-green/90 hover:to-green-500/90 px-4 py-2 rounded-lg text-sm font-medium text-white transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105 flex items-center gap-2">
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+      </svg>
+      Add Friend
+    </button>
+  </div>
+
+  <!-- Right Section - Notifications & Actions -->
+  <div class="flex items-center space-x-2">
+    <!-- Search Button -->
+    <button class="p-2 hover:bg-discord-light/80 rounded-lg transition-all duration-200 btn-hover group" title="Search">
+      <svg class="w-5 h-5 text-discord-text-muted group-hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+      </svg>
+    </button>
+
+    <!-- Notifications Button -->
+    <div class="relative">
+      <button 
+        (click)="toggleNotificationsModal()"
+        class="p-2 hover:bg-discord-light/80 rounded-lg transition-all duration-200 btn-hover group relative" 
+        title="Notifications">
+        <svg class="w-5 h-5 text-discord-text-muted group-hover:text-white transition-colors" fill="currentColor" viewBox="0 0 24 24">
+          <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/>
+        </svg>
+        
+        <!-- Notification Badge -->
+        <div *ngIf="unreadCount() > 0" 
+             class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center font-bold shadow-lg animate-pulse">
+          {{ unreadCount() > 9 ? '9+' : unreadCount() }}
+        </div>
+      </button>
+    </div>
+
+    <!-- Settings Button -->
+    <button class="p-2 hover:bg-discord-light/80 rounded-lg transition-all duration-200 btn-hover group" title="Settings">
+      <svg class="w-5 h-5 text-discord-text-muted group-hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+      </svg>
+    </button>
+  </div>
+</div>
+
+<!-- Enhanced Add Friend Modal -->
+<div 
+  *ngIf="showAddFriendModal()"
+  class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm"
+  (click)="closeAddFriendModal()">
+  <div 
+    class="bg-discord-darkest rounded-2xl shadow-2xl w-full max-w-md p-6 animate-modalSlideIn border border-discord-light/20"
+    (click)="$event.stopPropagation()">
+    
+    <!-- Enhanced Header -->
+    <div class="flex justify-between items-center mb-6">
+      <div class="flex items-center gap-3">
+        <div class="w-8 h-8 bg-gradient-to-br from-discord-green to-green-500 rounded-lg flex items-center justify-center">
+          <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+          </svg>
+        </div>
+        <h2 class="text-xl font-bold text-white">Send Friend Request</h2>
+      </div>
+      <button 
+        (click)="closeAddFriendModal()" 
+        class="text-discord-text-muted hover:text-white p-1 rounded-lg hover:bg-discord-light/20 transition-all duration-200">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+        </svg>
+      </button>
+    </div>
+
+    <!-- Enhanced Form -->
+    <form (ngSubmit)="sendFriendRequest()" class="space-y-6">
+      <div class="space-y-2">
+        <label class="block text-sm font-medium text-discord-text mb-2">Username</label>
+        <div class="relative">
+          <input 
+            (focus)="errorMessage.set('')" 
+            [(ngModel)]="username" 
+            name="name" 
+            required
+            class="w-full rounded-xl bg-discord-darker border border-discord-light/30 px-4 py-3 text-white placeholder-discord-text-muted focus:ring-2 focus:ring-discord-green focus:border-discord-green focus:outline-none transition-all duration-200"
+            placeholder="Enter username (e.g., User#1234)" />
+          <div class="absolute right-3 top-3">
+            <svg class="w-5 h-5 text-discord-text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+            </svg>
+          </div>
+        </div>
+      </div>
+
+      <!-- Enhanced Error Message -->
+      <div *ngIf="errorMessage()" 
+           class="p-4 rounded-xl bg-red-500/10 border border-red-500/30 text-red-400 text-sm flex items-center gap-3 animate-shake">
+        <svg class="w-5 h-5 text-red-400 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+          <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
+        </svg>
+        {{ errorMessage() }}
+      </div>
+
+      <!-- Enhanced Buttons -->
+      <div class="flex justify-end gap-3 pt-4">
+        <button 
+          type="button" 
+          (click)="closeAddFriendModal()" 
+          class="px-6 py-3 rounded-xl bg-discord-light/20 text-discord-text hover:bg-discord-light/30 transition-all duration-200 font-medium">
+          Cancel
+        </button>
+        <button 
+          type="submit" 
+          [disabled]="isSendingRequest() || !username.trim()"
+          class="px-6 py-3 rounded-xl bg-gradient-to-r from-discord-green to-green-500 text-white hover:from-discord-green/90 hover:to-green-500/90 transition-all duration-200 font-medium disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 shadow-lg">
+          <svg *ngIf="isSendingRequest()" class="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+          </svg>
+          {{ isSendingRequest() ? 'Sending...' : 'Send Request' }}
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Enhanced Notifications Modal -->
+<div 
+  *ngIf="showNotificationsModal()"
+  class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm"
+  (click)="closeNotificationsModal()">
+  <div 
+    class="bg-discord-darkest rounded-2xl shadow-2xl w-full max-w-lg h-[80vh] flex flex-col border border-discord-light/20 m-4"
+    (click)="$event.stopPropagation()">
+    
+    <!-- Notifications Header -->
+    <div class="flex justify-between items-center p-6 pb-4 border-b border-discord-light/20 flex-shrink-0">
+      <div class="flex items-center gap-3">
+        <div class="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
+          <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/>
+          </svg>
+        </div>
+        <h2 class="text-xl font-bold text-white">Notifications</h2>
+        <span *ngIf="unreadCount() > 0" class="px-2 py-1 bg-red-500 text-white text-xs rounded-full font-bold animate-pulse">{{ unreadCount() }}</span>
+      </div>
+      <div class="flex items-center gap-2">
+        <button 
+          (click)="refreshNotifications()"
+          class="p-2 hover:bg-discord-light/20 rounded-lg transition-all duration-200 group" 
+          title="Refresh">
+          <svg class="w-4 h-4 text-discord-text-muted group-hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0V9a8 8 0 1115.356 2M15 15v5h5.582M4.582 15H4v-5"></path>
+          </svg>
+        </button>
+        <button 
+          (click)="markAllAsRead()"
+          *ngIf="unreadCount() > 0"
+          class="text-sm text-discord-green hover:text-discord-green/80 font-medium transition-colors px-2 py-1 rounded hover:bg-discord-green/10">
+          Mark all read
+        </button>
+        <button 
+          (click)="closeNotificationsModal()" 
+          class="text-discord-text-muted hover:text-white p-1 rounded-lg hover:bg-discord-light/20 transition-all duration-200">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Loading State -->
+    <div *ngIf="isLoadingNotifications()" class="flex-1 flex items-center justify-center">
+      <div class="text-center">
+        <svg class="w-8 h-8 animate-spin mx-auto mb-4 text-discord-green" fill="none" viewBox="0 0 24 24">
+          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+        </svg>
+        <p class="text-discord-text-muted">Loading notifications...</p>
+      </div>
+    </div>
+
+    <!-- Notifications List Container -->
+    <div class="flex-1 flex flex-col min-h-0">
+      <!-- Empty State -->
+      <div *ngIf="!isLoadingNotifications() && notifications().length === 0" class="flex-1 flex items-center justify-center text-center p-8">
+        <div>
+          <svg class="w-16 h-16 mx-auto mb-4 opacity-30 text-discord-text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"></path>
+          </svg>
+          <p class="text-lg font-medium text-discord-text-muted mb-2">No notifications</p>
+          <p class="text-sm text-discord-text-muted/70">You're all caught up!</p>
+        </div>
+      </div>
+
+      <!-- Notifications List -->
+      <div *ngIf="!isLoadingNotifications() && notifications().length > 0" class="flex-1 overflow-y-auto px-6">
+        <div class="space-y-3 py-4">
+          <div 
+            *ngFor="let notification of notifications()"
+            class="notification-item p-4 rounded-xl transition-all duration-200 border group cursor-pointer"
+            [ngClass]="{
+              'bg-discord-darker/30 border-discord-light/5 hover:bg-discord-darker/50': notification.read,
+              'bg-discord-green/5 border-discord-green/20 hover:bg-discord-green/8': !notification.read
+            }"
+            (click)="markAsRead(notification.id)">
+            
+            <div class="flex items-start gap-3">
+              <!-- Avatar or Icon -->
+              <div class="flex-shrink-0">
+                <img 
+                  *ngIf="notification.avatar; else iconTemplate"
+                  [src]="notification.avatar" 
+                  [alt]="notification.username || notification.title"
+                  class="w-10 h-10 rounded-full border-2"
+                  [ngClass]="{
+                    'border-discord-green': !notification.read,
+                    'border-discord-light/30': notification.read
+                  }">
+                <ng-template #iconTemplate>
+                  <div class="w-10 h-10 rounded-full flex items-center justify-center"
+                       [ngClass]="{
+                         'bg-discord-green/20': !notification.read,
+                         'bg-discord-light/20': notification.read
+                       }">
+                    <svg class="w-5 h-5" 
+                         [ngClass]="{
+                           'text-discord-green': !notification.read,
+                           'text-discord-text-muted': notification.read
+                         }" 
+                         fill="currentColor" viewBox="0 0 24 24">
+                      <path [attr.d]="getNotificationIcon(notification.type)"></path>
+                    </svg>
+                  </div>
+                </ng-template>
+              </div>
+
+              <!-- Content -->
+              <div class="flex-1 min-w-0">
+                <div class="flex items-center justify-between mb-1">
+                  <h4 class="font-semibold text-white text-sm truncate">{{ notification.title }}</h4>
+                  <div class="flex items-center gap-2 flex-shrink-0">
+                    <span class="text-xs text-discord-text-muted">{{ notification.timestamp }}</span>
+                    <div *ngIf="!notification.read" class="w-2 h-2 bg-discord-green rounded-full"></div>
+                  </div>
+                </div>
+                <p class="text-sm text-discord-text-muted mb-3 leading-relaxed">{{ notification.message }}</p>
+
+                <!-- Action Buttons for Friend Requests -->
+                <div *ngIf="notification.actionable && notification.type === 'FRIEND_REQUEST' && notification.friendshipStatus === 'PENDING'" 
+                     class="flex gap-2 opacity-100">
+                  <button 
+                    (click)="acceptFriendRequest(notification.relatedEntityId, notification.id); $event.stopPropagation()"
+                    class="px-3 py-1.5 bg-discord-green hover:bg-discord-green/80 text-white text-xs font-medium rounded-lg transition-all duration-200 flex items-center gap-1">
+                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                    </svg>
+                    Accept
+                  </button>
+                  <button 
+                    (click)="rejectFriendRequest(notification.relatedEntityId, notification.id); $event.stopPropagation()"
+                    class="px-3 py-1.5 bg-red-500/20 hover:bg-red-500/30 text-red-400 hover:text-red-300 text-xs font-medium rounded-lg transition-all duration-200 flex items-center gap-1">
+                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                    Decline
+                  </button>
+                </div>
+
+                <!-- Accepted Status Display -->
+                <div *ngIf="notification.type === 'FRIEND_ACCEPTED' || (notification.type === 'FRIEND_REQUEST' && notification.friendshipStatus === 'ACCEPTED')"
+                     class="flex items-center gap-2 text-discord-green text-sm">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                  </svg>
+                  <span class="font-medium">Friends</span>
+                </div>
+              </div>
+
+              <!-- Delete Button -->
+              <button 
+                (click)="deleteNotification(notification.id); $event.stopPropagation()"
+                class="opacity-0 group-hover:opacity-100 p-1.5 hover:bg-red-500/20 text-discord-text-muted hover:text-red-400 rounded-lg transition-all duration-200 flex-shrink-0">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                </svg>
+              </button>
+            </div>
+          </div>
+
+          <!-- Load More Button -->
+          <div *ngIf="hasMoreNotifications() && !isLoadingMore()" 
+               class="flex justify-center py-4">
+            <button 
+              (click)="loadMoreNotifications()"
+              class="px-6 py-2 bg-discord-light/20 hover:bg-discord-light/30 text-discord-text hover:text-white rounded-lg transition-all duration-200 font-medium flex items-center gap-2">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+              </svg>
+              Load More
+            </button>
+          </div>
+
+          <!-- Loading More Indicator -->
+          <div *ngIf="isLoadingMore()" class="flex justify-center py-4">
+            <div class="flex items-center gap-2 text-discord-text-muted">
+              <svg class="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              </svg>
+              <span class="text-sm">Loading more...</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer Actions -->
+    <div class="p-6 pt-4 border-t border-discord-light/20 flex justify-between items-center flex-shrink-0">
+      <span class="text-sm text-discord-text-muted">
+        {{ notifications().length }} of {{ totalElements }} notifications
+      </span>
+      <button 
+        *ngIf="notifications().length > 0"
+        (click)="clearAllNotifications()"
+        class="text-sm text-red-400 hover:text-red-300 font-medium transition-colors px-3 py-1 rounded hover:bg-red-500/10">
+        Clear all
+      </button>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,156 @@
+<!-- Animated Stars Background -->
+<div class="stars-bg">
+  <div class="stars">
+    <div class="star" *ngFor="let star of stars" 
+         [style.left.px]="star.x" 
+         [style.top.px]="star.y" 
+         [style.width.px]="star.size" 
+         [style.height.px]="star.size"
+         [style.animation-delay.s]="star.delay">
+    </div>
+  </div>
+  
+  <!-- Floating particles -->
+  <div class="particles">
+    <div class="particle" *ngFor="let particle of particles"
+         [style.left.%]="particle.x"
+         [style.animation-delay.s]="particle.delay">
+    </div>
+  </div>
+</div>
+
+<!-- Loading State -->
+<div *ngIf="isLoading" class="invite-container">
+  <div class="loading-card">
+    <h2>SyncSpace</h2>
+    <div class="loading-spinner">
+      <div class="spinner-ring"></div>
+    </div>
+    <p>Connecting to the cosmos...</p>
+  </div>
+</div>
+
+<!-- Error State -->
+<div *ngIf="errorMessage && !isLoading" class="invite-container">
+  <div class="error-card">
+    <div class="error-icon">
+      <div class="error-symbol">⚠️</div>
+    </div>
+    <h2>Houston, we have a problem</h2>
+    <p class="error-message">{{ errorMessage }}</p>
+    <div class="error-actions">
+      <button class="btn btn-secondary" (click)="navigateToFriends()">
+        <span class="btn-icon">🏠</span>
+        Return to Base
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Invite Modal -->
+<div *ngIf="showInviteModal && !hasJoined" class="invite-container">
+  <div class="invite-card">
+    <div class="invite-header">
+      <div class="syncspace-brand">
+        <span class="brand-text">SyncSpace</span>
+      </div>
+      <h1>You've been invited to join</h1>
+      <p class="invite-subtitle">Join this server</p>
+    </div>
+    
+    <div class="server-preview" *ngIf="serverInfo">
+     
+      
+      <div class="server-info">
+        <div class="server-avatar">
+          <img *ngIf="serverInfo.iconUrl" 
+               [src]="serverInfo.iconUrl" 
+               [alt]="serverInfo.name"
+               class="avatar-image">
+          <div *ngIf="!serverInfo.iconUrl" class="avatar-placeholder">
+            <span>{{ getServerInitials(serverInfo.name) }}</span>
+          </div>
+          <div class="avatar-status"></div>
+        </div>
+        
+        <div class="server-details">
+          <h2 class="server-name">{{ serverInfo.name }}</h2>
+          <div class="server-stats">
+            <div class="stat">
+              <div class="stat-dot online"></div>
+              <span>Online</span>
+            </div>
+            <div class="stat">
+              <div class="stat-dot"></div>
+              <span>{{ `${serverInfo.membersNumber} Members` }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="invite-actions">
+      <button class="btn btn-secondary" 
+              (click)="declineInvite()"
+              [disabled]="isJoining">
+        <span class="btn-text">Maybe Later</span>
+      </button>
+      
+      <button class="btn btn-primary" 
+              (click)="acceptInvite()"
+              [disabled]="isJoining">
+        <span *ngIf="!isJoining" class="btn-content">
+          <span class="btn-icon">🚀</span>
+          <span class="btn-text">Join Server</span>
+        </span>
+        <span *ngIf="isJoining" class="btn-loading">
+          <div class="loading-dots">
+            <span></span>
+            <span></span>
+            <span></span>
+          </div>
+          <span class="btn-text">Joining...</span>
+        </span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Success State -->
+<div *ngIf="hasJoined" class="invite-container">
+  <div class="success-card">
+    <div class="success-animation">
+      <div class="success-ring"></div>
+      <div class="success-icon">✨</div>
+    </div>
+    
+    <h1>Welcome to the galaxy!</h1>
+    <h2 class="server-welcome">{{ serverInfo?.name }}</h2>
+    <p class="success-message">Your spaceship has successfully docked</p>
+    
+    <div class="countdown-display">
+      <div class="countdown-circle">
+        <svg class="countdown-svg" width="80" height="80">
+          <circle cx="40" cy="40" r="35" 
+                  class="countdown-bg"/>
+          <circle cx="40" cy="40" r="35" 
+                  class="countdown-progress"
+                  [style.stroke-dashoffset]="getCountdownProgress()"/>
+        </svg>
+        <div class="countdown-number">{{ countdown }}</div>
+      </div>
+      <p class="countdown-text">Launching in {{ countdown }} seconds</p>
+    </div>
+    
+    <div class="success-actions">
+      <button class="btn btn-secondary" (click)="navigateToFriends()">
+        <span class="btn-icon">🏠</span>
+        <span class="btn-text">Mission Control</span>
+      </button>
+      <button class="btn btn-primary" (click)="navigateToServer()">
+        <span class="btn-icon">🚀</span>
+        <span class="btn-text">Launch Now</span>
+      </button>
+    </div>
+  </div>
+</div>

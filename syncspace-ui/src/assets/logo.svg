@@ -1,0 +1,73 @@
+<svg width="80" height="80" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+        <linearGradient id="logoGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" style="stop-color:#7c3aed;stop-opacity:1" />
+            <stop offset="50%" style="stop-color:#a855f7;stop-opacity:1" />
+            <stop offset="100%" style="stop-color:#c084fc;stop-opacity:1" />
+        </linearGradient>
+        <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+            <feMorphology operator="dilate" radius="2" in="SourceAlpha" result="thicken"/>
+            <feGaussianBlur in="thicken" stdDeviation="4" result="blurred"/>
+            <feFlood flood-color="#7c3aed" flood-opacity="0.6" result="glowColor"/>
+            <feComposite in="glowColor" in2="blurred" operator="in" result="softGlow"/>
+            <feMerge>
+                <feMergeNode in="softGlow"/>
+                <feMergeNode in="SourceGraphic"/>
+            </feMerge>
+        </filter>
+        <filter id="innerGlow" x="-50%" y="-50%" width="200%" height="200%">
+            <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+            <feMerge>
+                <feMergeNode in="coloredBlur"/>
+                <feMergeNode in="SourceGraphic"/>
+            </feMerge>
+        </filter>
+    </defs>
+
+    <!-- Outer orbital ring -->
+    <circle cx="40" cy="40" r="35" fill="none" stroke="url(#logoGradient)" stroke-width="1" opacity="0.3">
+        <animate attributeName="stroke-dasharray" values="0 220;110 110;0 220" dur="4s" repeatCount="indefinite"/>
+    </circle>
+
+    <!-- Main geometric structure -->
+    <g filter="url(#glow)">
+        <!-- Central hexagon -->
+        <polygon points="40,18 54,26 54,42 40,50 26,42 26,26" fill="url(#logoGradient)" opacity="0.9"/>
+
+        <!-- Connection nodes with pulsing effect -->
+        <circle cx="26" cy="26" r="4" fill="url(#logoGradient)">
+            <animate attributeName="r" values="3;5;3" dur="2s" repeatCount="indefinite"/>
+        </circle>
+        <circle cx="54" cy="26" r="4" fill="url(#logoGradient)">
+            <animate attributeName="r" values="3;5;3" dur="2s" begin="0.5s" repeatCount="indefinite"/>
+        </circle>
+        <circle cx="54" cy="42" r="4" fill="url(#logoGradient)">
+            <animate attributeName="r" values="3;5;3" dur="2s" begin="1s" repeatCount="indefinite"/>
+        </circle>
+        <circle cx="26" cy="42" r="4" fill="url(#logoGradient)">
+            <animate attributeName="r" values="3;5;3" dur="2s" begin="1.5s" repeatCount="indefinite"/>
+        </circle>
+
+        <!-- Central sync symbol -->
+        <g filter="url(#innerGlow)">
+            <path d="M32 32 L40 36 L48 32 M40 36 L40 44" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+            <circle cx="40" cy="44" r="2" fill="white"/>
+        </g>
+    </g>
+
+    <!-- Orbital elements -->
+    <g opacity="0.6">
+        <circle cx="40" cy="8" r="2" fill="#c084fc">
+            <animateTransform attributeName="transform" attributeType="XML"
+                              type="rotate" values="0 40 40;360 40 40" dur="20s" repeatCount="indefinite"/>
+        </circle>
+        <circle cx="68" cy="40" r="1.5" fill="#a855f7">
+            <animateTransform attributeName="transform" attributeType="XML"
+                              type="rotate" values="0 40 40;-360 40 40" dur="15s" repeatCount="indefinite"/>
+        </circle>
+        <circle cx="12" cy="40" r="1" fill="#7c3aed">
+            <animateTransform attributeName="transform" attributeType="XML"
+                              type="rotate" values="0 40 40;360 40 40" dur="25s" repeatCount="indefinite"/>
+        </circle>
+    </g>
+</svg>

@@ -32,14 +32,14 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: ${KEYCLOAK_ISSUER_URI:http://localhost:8080/realms/syncspace_realm}
-          jwk-set-uri: ${KEYCLOAK_JWK_SET_URI:http://keycloak:8080/realms/syncspace_realm/protocol/openid-connect/certs}
+          jwk-set-uri: http://keycloak:8080/auth/realms/syncspace_realm/protocol/openid-connect/certs
+          issuer-uri: http://localhost/auth/realms/syncspace_realm
 
 server:
   port: 9090
-
+  servlet:
+    context-path: /api/v1
 
 youtube:
   api:
     key: "AIzaSyDlYWWdCoOTgS2N4TPT7L4X8URiM2ANghU"
-

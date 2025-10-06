@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Syncspace</title>
+  <base href="/">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" type="image/x-icon" href="favicon.ico">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'discord': {
+                            'dark': '#36393f',
+                            'darker': '#2f3136',
+                            'darkest': '#202225',
+                            'gray': '#36393f',
+                            'light': '#40444b',
+                            'lighter': '#484c52',
+                            'blurple': '#5865f2',
+                            'green': '#23a55a',
+                            'yellow': '#f0b232',
+                            'red': '#f23f42',
+                            'text': '#dcddde',
+                            'text-muted': '#96989d',
+                            'text-dark': '#72767d',
+                            'sidebar': '#2f3136',
+                            'bg': '#36393f',
+                            'input': '#40444b'
+                        }
+                    },
+                    boxShadow: {
+                        'discord': '0 2px 10px 0 rgba(0,0,0,.2)',
+                        'discord-lg': '0 8px 16px rgba(0,0,0,.24)'
+                    }
+                }
+            }
+        }
+    </script>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+</head>
+  <body class="bg-discord-dark text-discord-text font-inter h-screen overflow-hidden">
+  <app-root></app-root>
+  <script>
+  window.global = window;
+</script>
+</body>
+</html>

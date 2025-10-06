@@ -8,33 +8,37 @@ services:
       POSTGRES_DB: syncspace
     volumes:
       - postgres-syncspace:/var/lib/postgresql/data
-    ports:
-      - 5433:5432
     networks:
       - syncspace-net
     restart: unless-stopped
 
   postgres-keycloak:
-    container_name: postgres-keycloak
     image: postgres
+    container_name: postgres-keycloak
     environment:
       POSTGRES_USER: kc_user
       POSTGRES_PASSWORD: kc_password
       POSTGRES_DB: keycloak_db
-    ports:
-      - 5435:5432
-    networks:
-      - syncspace-net
     volumes:
       - postgres-keycloak-syncspace:/var/lib/postgresql/data
+    networks:
+      - syncspace-net
+    restart: unless-stopped
 
   keycloak:
     image: quay.io/keycloak/keycloak:26.3.3
     container_name: keycloak
-    command: start-dev
+    command: start-dev --http-relative-path=/auth
     environment:
       KC_HOSTNAME: localhost
+      KC_HOSTNAME_URL: http://localhost/auth
+      KC_HOSTNAME_ADMIN_URL: http://localhost/auth
       KC_HOSTNAME_STRICT: false
+      KC_HOSTNAME_PORT: 80
+      KC_HOSTNAME_STRICT_HTTPS: false
+      KC_HTTP_ENABLED: true
+      KC_PROXY: edge
+      KC_HTTP_RELATIVE_PATH: /auth
       KC_DB: postgres
       KC_DB_URL_HOST: postgres-keycloak
       KC_DB_URL_DATABASE: keycloak_db
@@ -42,8 +46,6 @@ services:
       KC_DB_PASSWORD: kc_password
       KEYCLOAK_ADMIN: admin
       KEYCLOAK_ADMIN_PASSWORD: admin
-    ports:
-      - "8080:8080"
     depends_on:
       - postgres-keycloak
     networks:
@@ -51,25 +53,46 @@ services:
     volumes:
       - ./providers:/opt/keycloak/providers
       - ./themes:/opt/keycloak/themes
+    restart: unless-stopped
 
   redis:
     image: redis
     container_name: redis-syncspace
-    ports:
-      - 6379:6379
     networks:
       - syncspace-net
+    restart: unless-stopped
 
   syncspace-api:
     image: fareselsadek/syncspace
     container_name: syncspace-api
-    ports:
-      - 9090:9090
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/syncspace
+      SPRING_DATASOURCE_USERNAME: user
+      SPRING_DATASOURCE_PASSWORD: password
+      SPRING_REDIS_HOST: redis
+      SPRING_REDIS_PORT: 6379
     networks:
       - syncspace-net
     depends_on:
       - postgres
       - redis
+    restart: unless-stopped
+
+  nginx:
+    image: nginx:1.25-alpine
+    container_name: nginx-proxy
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./default.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./syncspace-ui/dist/syncspace/browser:/usr/share/nginx/html:ro
+    ports:
+      - "80:80"
+    depends_on:
+      - syncspace-api
+      - keycloak
+    networks:
+      - syncspace-net
+    restart: unless-stopped
 
 networks:
   syncspace-net:

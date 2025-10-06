@@ -1,0 +1,23 @@
+<div *ngIf="isLoading" class="loading-overlay">
+      <div class="space-container">
+        <!-- Stars -->
+        <div class="stars" *ngFor="let star of stars; let i = index" 
+             [style.left.%]="star.x" 
+             [style.top.%]="star.y"
+             [style.animation-delay]="star.delay + 's'">
+        </div>
+        
+        <!-- Main loading spinner -->
+        <div class="spinner-container">
+          <div class="outer-ring"></div>
+          <div class="middle-ring"></div>
+          <div class="inner-ring"></div>
+          <div class="center-dot"></div>
+        </div>
+        
+        <!-- SyncSpace text -->
+        <div class="loading-text">
+          <span class="sync">Sync</span><span class="space">Space</span>
+        </div>
+      </div>
+    </div>

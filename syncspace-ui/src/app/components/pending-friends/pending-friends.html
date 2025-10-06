@@ -1,0 +1,33 @@
+<!-- Online Friends Header -->
+<div class="text-xs font-semibold text-discord-text-dark uppercase tracking-wide mb-4 flex items-center">
+    <span>Pending — {{pendingNumber()}}</span>
+</div>
+
+<!-- Online Friends -->
+<div class="space-y-2" id="friends-list">
+    <div class="friend-item flex items-center p-3 rounded-lg" *ngFor="let request of pendingRequests()">
+                    <div class="relative mr-3 flex-shrink-0">
+                    <img 
+                        src="{{request.user.avatarUrl}}" 
+                        alt="User Avatar" 
+                        class="w-10 h-10 rounded-full object-cover border-2 border-gray-300 shadow-sm"
+                    />
+                    </div>
+
+                    <div class="flex-1 min-w-0">
+                        <div class="text-sm font-medium text-white">{{displayName(request.user.firstName,request.user.lastName)}}</div>
+                    </div>
+                    <div class="flex items-center space-x-2"> 
+                        <button class="p-2 bg-discord-green hover:bg-discord-green/80 rounded-full transition-colors" title="Accept" (click)="acceptFriend(request.id)">
+                            <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+                            </svg>
+                        </button>
+                        <button class="p-2 bg-discord-red hover:bg-discord-red/80 rounded-full transition-colors" title="Decline" (click)="declineFriend(request.id)">
+                            <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+</div>

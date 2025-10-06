@@ -1,0 +1,42 @@
+<div 
+  *ngIf="modal.showCreateServerModal()"
+  class="fixed inset-0 z-50 flex items-center justify-center
+   bg-black/50 backdrop-blur-sm"
+>
+  <div class="bg-discord-darkest rounded-2xl shadow-xl w-full max-w-md p-6 animate-fadeIn">
+    <!-- Header -->
+    <div class="flex justify-between items-center mb-4">
+      <h2 class="text-lg font-bold text-white">Create a Server</h2>
+      <button (click)="closeModal()" class="text-gray-400 hover:text-white">&times;</button>
+    </div>
+
+    <!-- Form -->
+    <form (ngSubmit)="createServer()" class="space-y-4">
+      <div>
+        <label class="block text-sm text-gray-300 mb-1">Server Name</label>
+        <input [(ngModel)]="newServer.name" name="name" required
+          class="w-full rounded-lg bg-discord-darker border border-gray-600 px-3 py-2 text-white placeholder-gray-400 focus:ring-2 focus:ring-discord-green focus:outline-none"
+          placeholder="Enter server name" />
+      </div>
+
+      <div>
+        <label class="block text-sm text-gray-300 mb-1">Description</label>
+        <textarea [(ngModel)]="newServer.description" name="description" rows="3"
+          class="w-full rounded-lg bg-discord-darker border border-gray-600 px-3 py-2 text-white placeholder-gray-400 focus:ring-2 focus:ring-discord-green focus:outline-none"
+          placeholder="What is this server about?"></textarea>
+      </div>
+
+      <!-- Buttons -->
+      <div class="flex justify-end gap-2 mt-6">
+        <button type="button" (click)="closeModal()" 
+          class="px-4 py-2 rounded-lg bg-gray-700 text-gray-300 hover:bg-gray-600 transition">
+          Cancel
+        </button>
+        <button type="submit" [disabled]="isCreatingServer()"
+          class="px-4 py-2 rounded-lg bg-discord-green text-white hover:bg-green-600 transition">
+          {{ isCreatingServer() ? 'Creating...' : 'Create' }}
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

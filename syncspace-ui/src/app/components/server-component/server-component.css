@@ -1,0 +1,18 @@
+/* server.component.css */
+:host {
+  display: flex;
+  flex: 1;
+  height: 100vh; /* Change from 100% to 100vh */
+  width: 100%;
+  min-height: 0; /* Critical for nested flex containers */
+}
+
+/* Add these new classes */
+.chat-messages-area {
+  min-height: 0; /* Allows flex child to shrink */
+  overflow: hidden; /* Prevents layout issues */
+}
+
+.messages-container-wrapper {
+  min-height: 0; /* Critical for flex scrolling */
+}

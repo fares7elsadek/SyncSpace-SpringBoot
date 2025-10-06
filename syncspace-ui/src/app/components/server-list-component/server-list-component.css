@@ -1,0 +1,323 @@
+/* Updated Button styles - SVG as the entire clickable button */
+.home-button {
+  position: relative;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  padding: 0;
+  display: block;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border-radius: 24px;
+  width: 48px;
+  height: 48px;
+  overflow: visible;
+  z-index: 10;
+}
+
+.home-button:hover {
+  border-radius: 16px;
+  transform: translateY(-2px);
+  filter: drop-shadow(0 8px 16px rgba(124, 58, 237, 0.25));
+  z-index: 1001;
+}
+
+.home-button:hover .orbital-ring {
+  animation-duration: 2s !important;
+}
+
+.home-button:hover .pulsing-nodes circle {
+  animation-duration: 1s !important;
+}
+
+.home-button:hover .orbital-elements circle {
+  animation-duration: 8s !important;
+}
+
+.home-button:hover .tooltip {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(-50%) translateX(8px);
+}
+
+.home-button:active {
+  transform: translateY(-1px) scale(0.95);
+  transition: all 0.15s ease;
+}
+
+.home-button:focus {
+  outline: none;
+  filter: drop-shadow(0 0 0 3px rgba(124, 58, 237, 0.3));
+}
+
+/* SVG fills the entire button area */
+.logo-svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.tooltip {
+  position: absolute;
+  left: 58px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: #18191c;
+  color: #dcddde;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  white-space: nowrap;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  pointer-events: none;
+  z-index: 9999;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.35);
+}
+
+.tooltip::before {
+  content: '';
+  position: absolute;
+  left: -4px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 0;
+  height: 0;
+  border-top: 4px solid transparent;
+  border-bottom: 4px solid transparent;
+  border-right: 4px solid #18191c;
+}
+
+/* SCROLLBAR STYLES - Applied to the server container */
+.server-scroll-area {
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-width: none;
+  height: 100%;
+  scroll-behavior: smooth;
+}
+
+/* Hide webkit scrollbar completely */
+.server-scroll-area::-webkit-scrollbar {
+  width: 0px;
+  background: transparent;
+}
+
+.server-scroll-area::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.server-scroll-area::-webkit-scrollbar-thumb {
+  background: transparent;
+}
+
+/* Firefox scrollbar hiding */
+@supports (scrollbar-width: none) {
+  .server-scroll-area {
+    scrollbar-width: none;
+  }
+}
+
+/* PORTAL TOOLTIPS - These are rendered outside the scroll container */
+.tooltip-portal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  z-index: 10000;
+  width: 100vw;
+  height: 100vh;
+}
+
+/* Server tooltip styles - FIXED: Instant show/hide like Discord */
+.server-tooltip-portal {
+  position: absolute;
+  background: #18191c;
+  color: #dcddde;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  white-space: nowrap;
+  opacity: 0;
+  visibility: hidden;
+  /* REMOVED: Smooth transitions that were causing the annoying effect */
+  transition: none;
+  pointer-events: none;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.35);
+  transform: translateY(-50%);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.server-tooltip-portal.show {
+  opacity: 1;
+  visibility: visible;
+  /* INSTANT show - no transition */
+  transition: none;
+}
+
+.server-tooltip-portal::before {
+  content: '';
+  position: absolute;
+  left: -5px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 0;
+  height: 0;
+  border-top: 5px solid transparent;
+  border-bottom: 5px solid transparent;
+  border-right: 5px solid #18191c;
+}
+
+/* Server button styling */
+.server-button {
+  position: relative;
+  width: 48px;
+  height: 48px;
+  border-radius: 24px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  overflow: hidden;
+  background: transparent;
+}
+
+.server-button:hover {
+  border-radius: 16px;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(88, 101, 242, 0.3);
+}
+
+.server-button img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 24px;
+  transition: all 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.server-button:hover img {
+  border-radius: 16px;
+}
+
+/* Add Server button styling - FIXED: Now positioned at bottom */
+.add-server-btn {
+  position: relative;
+  width: 48px;
+  height: 48px;
+  border-radius: 24px;
+  background: #2b2d31;
+  border: none;
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.add-server-btn:hover {
+  border-radius: 16px;
+  background: #5865f2;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(88, 101, 242, 0.3);
+}
+
+.add-server-btn svg {
+  width: 24px;
+  height: 24px;
+  color: #5865f2;
+  transition: all 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.add-server-btn:hover svg {
+  color: white;
+  transform: rotate(90deg);
+}
+
+/* Add Server tooltip - Same instant behavior as server tooltips */
+.add-server-tooltip {
+  position: absolute;
+  left: 58px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: #18191c;
+  color: #dcddde;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  white-space: nowrap;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  pointer-events: none;
+  z-index: 9999;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.35);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.add-server-tooltip::before {
+  content: '';
+  position: absolute;
+  left: -5px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 0;
+  height: 0;
+  border-top: 5px solid transparent;
+  border-bottom: 5px solid transparent;
+  border-right: 5px solid #18191c;
+}
+
+.add-server-btn:hover .add-server-tooltip {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* Active indicator improvements */
+.absolute.left-0.w-1 {
+  background: white;
+  border-radius: 0 4px 4px 0;
+  transition: all 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  box-shadow: 0 0 8px rgba(255, 255, 255, 0.5);
+}
+
+/* Button focus styles */
+button:focus-visible {
+  outline: 2px solid #5865f2;
+  outline-offset: 2px;
+}
+
+/* Micro-interactions for server icons */
+.space-y-2 > div {
+  transition: transform 0.2s ease;
+}
+
+@keyframes fadeIn {
+  from { 
+    opacity: 0; 
+    transform: translateY(10px) scale(0.95); 
+  }
+  to { 
+    opacity: 1; 
+    transform: translateY(0) scale(1); 
+  }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+/* Active server gets rounded corners */
+.server-button.active-server {
+  border-radius: 16px !important;
+}
+
+.server-button.active-server img {
+  border-radius: 16px !important;
+}

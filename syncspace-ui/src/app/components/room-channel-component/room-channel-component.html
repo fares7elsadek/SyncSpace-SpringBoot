@@ -1,0 +1,245 @@
+<!-- Watch Party Channel Component Template -->
+<div class="flex-1 flex flex-col bg-discord-bg relative watch-party-container">
+    
+    <!-- Video Player Section -->
+    <div class="video-section" [class.collapsed]="isVideoCollapsed()">
+        <!-- Video Container -->
+        <div class="video-wrapper" [class.collapsed]="isVideoCollapsed()">
+            
+            <!-- Empty State - No Video -->
+            <div *ngIf="!currentVideoId()" class="empty-video-state">
+                <div class="empty-video-content">
+                    <div class="empty-video-icon">
+                        <svg class="w-16 h-16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/>
+                        </svg>
+                    </div>
+                    <h3 class="empty-video-title">No video playing</h3>
+                    <p class="empty-video-subtitle">Add a YouTube URL below to start watching together</p>
+                    <div class="quick-actions">
+                        <button class="quick-action-btn" (click)="scrollToInput()">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                            </svg>
+                            Add Video
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- YouTube Player -->
+            <div *ngIf="currentVideoId()" class="player-container" [class.collapsed]="isVideoCollapsed()">
+                <youtube-player
+                    #youtubePlayer
+                    [videoId]="currentVideoId()"
+                    [playerVars]="playerVars"
+                    (ready)="onPlayerReady($event)"
+                    (stateChange)="onPlayerStateChange($event)"
+                    (error)="onPlayerError($event)"
+                    class="youtube-iframe">
+                </youtube-player>
+                
+                <!-- Collapse Button -->
+                <button 
+                    class="collapse-video-btn"
+                    [class.collapsed]="isVideoCollapsed()"
+                    (click)="toggleVideoCollapse()"
+                    [title]="isVideoCollapsed() ? 'Expand Video' : 'Collapse Video'">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                    </svg>
+                </button>
+                
+                <!-- Video Overlay Info -->
+                <div class="video-overlay-info">
+                    <div class="viewers-count">
+                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"/>
+                        </svg>
+                        <span>{{viewerCount()}} watching</span>
+                    </div>
+                    <div class="sync-indicator" *ngIf="isSyncing()">
+                        <div class="sync-spinner"></div>
+                        <span>Syncing...</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Current Video Info Bar -->
+            <div *ngIf="currentVideoId()" class="video-info-bar" [class.collapsed-mode]="isVideoCollapsed()">
+                <div class="video-info-content">
+                    <!-- Expand Button (Shows when collapsed) -->
+                    <button 
+                        *ngIf="isVideoCollapsed()"class="expand-video-btn"
+                        (click)="toggleVideoCollapse()"
+                        title="Expand Video">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                        </svg>
+                        Expand Video
+                    </button>
+                    
+                    <div class="video-thumbnail-small">
+                        <img [src]="'https://img.youtube.com/vi/' + currentVideoId() + '/default.jpg'" 
+                             alt="Video thumbnail"
+                             class="thumbnail-img">
+                        <div class="playing-indicator" *ngIf="isPlaying()">
+                            <div class="eq-bar"></div>
+                            <div class="eq-bar"></div>
+                            <div class="eq-bar"></div>
+                        </div>
+                    </div>
+                    <div class="video-details">
+                        <h4 class="video-title">{{videoTitle() || 'Loading video...'}}</h4>
+                        <p class="video-meta">
+                            <span class="video-host">
+                                <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"/>
+                                </svg>
+                                Hosted by {{videoHost()}}
+                            </span>
+                        </p>
+                    </div>
+                    <div class="video-controls-compact">
+                        <!-- Only show controls to host -->
+                        <ng-container *ngIf="isHost()">
+                            <button class="control-btn" (click)="togglePlayPause()" [title]="isPlaying() ? 'Pause' : 'Play'">
+                                <svg *ngIf="!isPlaying()" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd"/>
+                                </svg>
+                                <svg *ngIf="isPlaying()" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zM7 8a1 1 0 012 0v4a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v4a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd"/>
+                                </svg>
+                            </button>
+                            <button class="control-btn" (click)="skipForward()" title="Skip 10s">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"/>
+                                </svg>
+                            </button>
+                            <button class="control-btn-danger" (click)="stopVideo()" title="Stop & Clear">
+                                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8 7a1 1 0 00-1 1v4a1 1 0 001 1h4a1 1 0 001-1V8a1 1 0 00-1-1H8z" clip-rule="evenodd"/>
+                                </svg>
+                            </button>
+                        </ng-container>
+                        
+                        <!-- Viewer status badge -->
+                        <ng-container *ngIf="!isHost()">
+                            <div class="viewer-badge">
+                                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                    <path d="M10 12a2 2 0 100-4 2 2 0 000 4z"/>
+                                    <path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd"/>
+                                </svg>
+                                Viewer
+                            </div>
+                        </ng-container>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Chat & Input Section -->
+    <div class="chat-input-section">
+        
+        <!-- Add Video Input - Only show when no active video OR user is host -->
+        <div class="add-video-container" *ngIf="!hasActiveVideo() || isHost()">
+            <div class="add-video-header">
+                <div class="add-video-title">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"/>
+                    </svg>
+                    <span>Add YouTube Video</span>
+                </div>
+            </div>
+            
+            <div class="input-with-preview">
+                <div class="url-input-container">
+                    <input 
+                        #videoUrlInput
+                        type="text" 
+                        [(ngModel)]="videoUrl"
+                        (keyup.enter)="loadVideo()"
+                        placeholder="Paste YouTube URL or Video ID..."
+                        class="video-url-input"
+                        [disabled]="isLoadingVideo()"
+                    />
+                    <button 
+                        class="load-video-btn"
+                        (click)="loadVideo()"
+                        [disabled]="!videoUrl || isLoadingVideo()"
+                        [class.loading]="isLoadingVideo()">
+                        <span *ngIf="!isLoadingVideo()" class="btn-content">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                            Load Video
+                        </span>
+                        <span *ngIf="isLoadingVideo()" class="btn-content">
+                            <div class="btn-spinner"></div>
+                            Loading...
+                        </span>
+                    </button>
+                </div>
+                
+                <!-- URL Helper Text -->
+                <div class="url-helper">
+                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
+                    </svg>
+                    <span>Supports: youtube.com/watch?v=..., youtu.be/..., or just the video ID</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Chat Messages Container -->
+        <div #chatContainer class="chat-messages-container discord-scrollbar-enhanced">
+            
+            <!-- Loading State -->
+            <div *ngIf="isLoadingMessages() && !messages().messages.length" class="chat-loading-state">
+                <div class="chat-spinner"></div>
+                <span class="chat-loading-text">Loading chat...</span>
+            </div>
+
+            <!-- Messages -->
+            <div class="chat-messages-list" *ngIf="messages().messages.length > 0">
+                <div *ngFor="let message of messages().messages; trackBy: trackByMessageId" 
+                     class="chat-message-row"
+                     [class.own-message]="message.isOwnMessage">
+                    <div class="chat-message-avatar">
+                        <img 
+                            *ngIf="message.sender.avatarUrl; else chatAvatarFallback"
+                            [src]="message.sender.avatarUrl" 
+                            alt="Avatar" 
+                            class="avatar-img"
+                        />
+                        <ng-template #chatAvatarFallback>
+                            <span class="avatar-text">
+                                {{ message.sender.username.charAt(0).toUpperCase() }}
+                            </span>
+                        </ng-template>
+                    </div>
+                    <div class="chat-message-content">
+                        <div class="chat-message-header">
+                            <span class="chat-username">{{message.sender.username}}</span>
+                            <span class="chat-timestamp">{{message.sentAt}}</span>
+                        </div>
+                        <div class="chat-message-text">{{message.content}}</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Empty Chat State -->
+            <div *ngIf="!isLoadingMessages() && !messages().messages.length" class="empty-chat-state">
+                <div class="empty-chat-icon">
+                    <svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
+                    </svg>
+                </div>
+                <p class="empty-chat-text">No messages yet</p>
+                <p class="empty-chat-subtext">Be the first to share your thoughts!</p>
+            </div>
+        </div>
+    </div>
+</div>

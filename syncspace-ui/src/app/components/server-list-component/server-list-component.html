@@ -1,0 +1,147 @@
+<!-- Server List Sidebar -->
+<div class="hidden md:flex flex-col w-20 bg-discord-darker py-3 h-full">
+  <!-- Home Button (Fixed at top) -->
+  <div class="px-3 mb-2 flex-shrink-0">
+    <button routerLink="friends" class="home-button group relative">
+      <svg class="logo-svg" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="logoGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" style="stop-color:#7c3aed;stop-opacity:1" />
+            <stop offset="50%" style="stop-color:#a855f7;stop-opacity:1" />
+            <stop offset="100%" style="stop-color:#c084fc;stop-opacity:1" />
+          </linearGradient>
+          <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+            <feMorphology operator="dilate" radius="2" in="SourceAlpha" result="thicken"/>
+            <feGaussianBlur in="thicken" stdDeviation="4" result="blurred"/>
+            <feFlood flood-color="#7c3aed" flood-opacity="0.6" result="glowColor"/>
+            <feComposite in="glowColor" in2="blurred" operator="in" result="softGlow"/>
+            <feMerge>
+              <feMergeNode in="softGlow"/>
+              <feMergeNode in="SourceGraphic"/>
+            </feMerge>
+          </filter>
+          <filter id="innerGlow" x="-50%" y="-50%" width="200%" height="200%">
+            <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+            <feMerge>
+              <feMergeNode in="coloredBlur"/>
+              <feMergeNode in="SourceGraphic"/>
+            </feMerge>
+          </filter>
+        </defs>
+        <!-- Outer orbital ring -->
+        <circle class="orbital-ring" cx="40" cy="40" r="35" fill="none" stroke="url(#logoGradient)" stroke-width="1" opacity="0.3">
+          <animate attributeName="stroke-dasharray" values="0 220;110 110;0 220" dur="4s" repeatCount="indefinite"/>
+        </circle>
+        <!-- Main geometric structure -->
+        <g filter="url(#glow)">
+          <!-- Central hexagon -->
+          <polygon points="40,18 54,26 54,42 40,50 26,42 26,26" fill="url(#logoGradient)" opacity="0.9"/>
+          <!-- Connection nodes with pulsing effect -->
+          <g class="pulsing-nodes">
+            <circle cx="26" cy="26" r="4" fill="url(#logoGradient)">
+              <animate attributeName="r" values="3;5;3" dur="2s" repeatCount="indefinite"/>
+            </circle>
+            <circle cx="54" cy="26" r="4" fill="url(#logoGradient)">
+              <animate attributeName="r" values="3;5;3" dur="2s" begin="0.5s" repeatCount="indefinite"/>
+            </circle>
+            <circle cx="54" cy="42" r="4" fill="url(#logoGradient)">
+              <animate attributeName="r" values="3;5;3" dur="2s" begin="1s" repeatCount="indefinite"/>
+            </circle>
+            <circle cx="26" cy="42" r="4" fill="url(#logoGradient)">
+              <animate attributeName="r" values="3;5;3" dur="2s" begin="1.5s" repeatCount="indefinite"/>
+            </circle>
+          </g>
+          <!-- Central sync symbol -->
+          <g filter="url(#innerGlow)">
+            <path d="M32 32 L40 36 L48 32 M40 36 L40 44" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+            <circle cx="40" cy="44" r="2" fill="white"/>
+          </g>
+        </g>
+        <!-- Orbital elements -->
+        <g class="orbital-elements" opacity="0.6">
+          <circle cx="40" cy="8" r="2" fill="#c084fc">
+            <animateTransform attributeName="transform" attributeType="XML"
+                              type="rotate" values="0 40 40;360 40 40" dur="20s" repeatCount="indefinite"/>
+          </circle>
+          <circle cx="68" cy="40" r="1.5" fill="#a855f7">
+            <animateTransform attributeName="transform" attributeType="XML"
+                              type="rotate" values="0 40 40;-360 40 40" dur="15s" repeatCount="indefinite"/>
+          </circle>
+          <circle cx="12" cy="40" r="1" fill="#7c3aed">
+            <animateTransform attributeName="transform" attributeType="XML"
+                              type="rotate" values="0 40 40;360 40 40" dur="25s" repeatCount="indefinite"/>
+          </circle>
+        </g>
+      </svg>
+      
+      <!-- Tooltip -->
+      <div class="tooltip">
+        Direct Messages
+      </div>
+    </button>
+  </div>
+
+  <!-- Server Separator (Fixed) -->
+  <div class="px-3 mb-2 flex-shrink-0">
+    <div class="h-0.5 bg-discord-gray rounded"></div>
+  </div>
+
+  <!-- Server Icons with Custom Scrollbar (Flexible area) -->
+  <div class="flex-1 min-h-0 px-3">
+    <div class="server-scroll-area">
+      <div class="space-y-2">
+  <div class="relative" *ngFor="let server of servers(); trackBy: trackByServerId">
+    <!-- Active indicator - shows ONLY when this server is active -->
+    <div
+      *ngIf="activeServerId() === server.id"
+      class="absolute left-0 w-1 h-10 bg-white rounded-r top-1/2 -translate-y-1/2 -ml-3 z-10"
+    ></div>
+    
+    <button
+      [routerLink]="'/app/server/' + server.id"
+      class="group w-12 h-12 rounded-3xl hover:rounded-xl flex items-center justify-center transition-all duration-200 relative text-white font-bold text-lg server-button"
+      [class.active-server]="activeServerId() === server.id"
+      (mouseenter)="showServerTooltip($event, server.name)"
+      (mouseleave)="hideServerTooltip()"
+    >
+      <img
+        *ngIf="server.iconUrl; else fallback"
+        [src]="server.iconUrl"
+        [alt]="server.name"
+        class="w-full h-full object-cover rounded-3xl group-hover:rounded-xl transition-all duration-200"
+      />
+      <ng-template #fallback>
+        <span class="text-white font-bold text-lg">{{ server.name[0] }}</span>
+      </ng-template>
+    </button>
+  </div>
+</div>
+    </div>
+  </div>
+
+  <!-- Add Server Button (Fixed at bottom) -->
+  <div class="px-3 flex-shrink-0">
+    <button 
+      (click)="modal.openCreateServerModal()"
+      class="w-12 h-12 bg-discord-light hover:bg-discord-green rounded-3xl hover:rounded-xl flex items-center justify-center transition-all duration-200 group relative add-server-btn"
+    >
+      <svg class="w-6 h-6 text-discord-green group-hover:text-white" fill="currentColor" viewBox="0 0 24 24">
+        <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
+      </svg>
+      <div class="add-server-tooltip">
+        Add a Server
+      </div>
+    </button>
+  </div>
+
+  <!-- Single Tooltip Portal -->
+  <div class="tooltip-portal" #tooltipPortal>
+    <div 
+      class="server-tooltip-portal" 
+      #serverTooltip
+      [class.show]="showTooltip"
+    >
+      {{ tooltipText }}
+    </div>
+  </div>
+</div>

@@ -1,0 +1,73 @@
+<div class="text-xs font-semibold text-discord-text-dark uppercase tracking-wide mb-4 flex items-center">
+  <span>All Friends — {{friends().length}}</span>
+</div>
+
+<div class="space-y-2" id="friends-list" *ngFor="let friend of friends()">
+  <div 
+    class="friend-item flex items-center p-3 rounded-lg cursor-pointer group relative" 
+    [ngClass]="{'opacity-50': friendStatus(friend.user.isOnline) === 'offline'}"
+    (mouseleave)="this.activeFriendOptions.set('')"
+  >
+    <!-- Avatar + Status -->
+    <div class="relative mr-3 flex-shrink-0">
+      <img 
+        src="{{friend.user.avatarUrl}}" 
+        alt="User Avatar" 
+        class="w-10 h-10 rounded-full object-cover border-2 border-gray-300 shadow-sm"
+      />
+      <div 
+        class="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 border-2 border-discord-bg rounded-full" 
+        [ngClass]="'status-' + friendStatus(friend.user.isOnline)">
+      </div>
+    </div>
+
+    <!-- Friend Info -->
+    <div class="flex-1 min-w-0">
+      <div class="text-sm font-medium text-white">
+        {{friend.user.firstName + " " + friend.user.lastName}}
+      </div>
+      <div class="text-xs text-discord-text-muted">Playing</div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="flex items-center space-x-2 opacity-0 group-hover:opacity-100 transition-opacity">
+      <!-- DM Button -->
+      <button 
+        class="p-2 hover:bg-discord-darker rounded-full" 
+        title="Message" 
+>
+        <svg class="w-5 h-5 text-discord-text-muted hover:text-discord-text" fill="currentColor" viewBox="0 0 24 24">
+          <path d="M20 2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h4v3c0 .6.4 1 1 1h.5c.2 0 .4-.1.5-.2l3.7-3.8H20c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/>
+        </svg>
+      </button>
+
+      <!-- More Button -->
+      <div class="relative">
+        <button 
+          class="p-2 hover:bg-discord-darker rounded-full" 
+          title="More" 
+          (click)="toggleOptions(friend.user.id, $event)">
+          <svg class="w-5 h-5 text-discord-text-muted hover:text-discord-text" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/>
+          </svg>
+        </button>
+
+        <!-- Dropdown Menu -->
+        <div 
+          *ngIf="activeFriendOptions() === friend.user.id"
+          class="absolute right-0 mt-2 w-40 bg-discord-darkest border border-discord-darker rounded-lg shadow-lg z-50 animate-fade-in"
+        >
+          <ul class="py-1 text-sm text-gray-200">
+            <li>
+              <button 
+                class="flex w-full px-4 py-2 hover:bg-red-500 hover:text-white transition rounded-t-lg"
+                (click)="removeFriend(friend.user.id)">
+                Remove Friend
+              </button>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
