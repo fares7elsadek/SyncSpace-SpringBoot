@@ -35,13 +35,13 @@ export class ActivityCardComponent implements OnInit, OnDestroy {
   }
 
   loadActivities(): void {
-    this.loading = true;
+    //this.loading = true;
     this.apiService.getUserActivity()
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (response) => {
           this.activities.set(response.data)
-          this.loading = false;
+          //this.loading = false;
         },
         error: (error) => {
           console.error('Error loading activities:', error);
