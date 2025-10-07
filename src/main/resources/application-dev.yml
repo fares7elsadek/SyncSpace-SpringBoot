@@ -33,7 +33,7 @@ spring:
       resourceserver:
         jwt:
           jwk-set-uri: http://keycloak:8080/auth/realms/syncspace_realm/protocol/openid-connect/certs
-          issuer-uri: http://localhost/auth/realms/syncspace_realm
+          issuer-uri: https://syncspace.devtalk.me/auth/realms/syncspace_realm
 
 server:
   port: 9090

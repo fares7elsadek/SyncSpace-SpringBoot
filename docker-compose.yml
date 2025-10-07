@@ -28,17 +28,18 @@ services:
   keycloak:
     image: quay.io/keycloak/keycloak:26.3.3
     container_name: keycloak
-    command: start-dev --http-relative-path=/auth
+    command: start --http-relative-path=/auth
     environment:
-      KC_HOSTNAME: localhost
-      KC_HOSTNAME_URL: http://localhost/auth
-      KC_HOSTNAME_ADMIN_URL: http://localhost/auth
+      KC_HOSTNAME: syncspace.devtalk.me
+      KC_HOSTNAME_URL: https://syncspace.devtalk.me/auth
+      KC_HOSTNAME_ADMIN_URL: https://syncspace.devtalk.me/auth
       KC_HOSTNAME_STRICT: false
-      KC_HOSTNAME_PORT: 80
-      KC_HOSTNAME_STRICT_HTTPS: false
       KC_HTTP_ENABLED: true
+      KC_PROXY_HEADERS: xforwarded
       KC_PROXY: edge
       KC_HTTP_RELATIVE_PATH: /auth
+      KC_HEALTH_ENABLED: true
+      KC_METRICS_ENABLED: true
       KC_DB: postgres
       KC_DB_URL_HOST: postgres-keycloak
       KC_DB_URL_DATABASE: keycloak_db
@@ -85,8 +86,11 @@ services:
       - ./nginx.conf:/etc/nginx/nginx.conf:ro
       - ./default.conf:/etc/nginx/conf.d/default.conf:ro
       - ./syncspace-ui/dist/syncspace/browser:/usr/share/nginx/html:ro
+      - /etc/letsencrypt:/etc/letsencrypt:ro
+      - /var/lib/letsencrypt:/var/lib/letsencrypt:ro
     ports:
       - "80:80"
+      - "443:443"
     depends_on:
       - syncspace-api
       - keycloak
