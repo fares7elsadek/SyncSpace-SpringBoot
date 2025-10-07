@@ -17,7 +17,7 @@ export class ActivityCardComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
 
   activities: WritableSignal<RoomState[]> = signal([]);
-  loading: boolean = true;
+  loading: boolean = false;
 
   constructor(private apiService: ApiService,private websockets:WebsocketService) {}
 
