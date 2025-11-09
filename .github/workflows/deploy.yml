@@ -61,6 +61,6 @@ jobs:
             npm install
             npm run build
             cd ..
-            docker-compose pull
+            docker pull fareselsadek/syncspace:latest
             docker-compose up -d --force-recreate
             docker image prune -f
