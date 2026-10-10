@@ -48,10 +48,10 @@ services:
       KC_DB_PASSWORD: kc_password
       KEYCLOAK_ADMIN: admin
       KEYCLOAK_ADMIN_PASSWORD: admin
-      SYNCSPACE_TOKEN_URL: https://syncspace.fareselsadek.fyi/auth/realms/syncspace_realm
-      SYNCSPACE_CLIENT_ID: test_id
-      SYNCSPACE_CLIENT_SECRET: test_secret
-      SYNCSPACE_USER_INFO_URL: test_url
+      SYNCSPACE_TOKEN_URL: ${SYNCSPACE_TOKEN_URL}
+      SYNCSPACE_CLIENT_ID: ${SYNCSPACE_CLIENT_ID}
+      SYNCSPACE_CLIENT_SECRET: ${SYNCSPACE_CLIENT_SECRET}
+      SYNCSPACE_USER_INFO_URL: ${SYNCSPACE_USER_INFO_URL}
     depends_on:
       - postgres-keycloak
     networks:
