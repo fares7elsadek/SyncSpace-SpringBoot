@@ -31,8 +31,8 @@ services:
     command: start --http-relative-path=/auth
     environment:
       KC_HOSTNAME: syncspace.devtalk.me
-      KC_HOSTNAME_URL: https://syncspace.devtalk.me/auth
-      KC_HOSTNAME_ADMIN_URL: https://syncspace.devtalk.me/auth
+      KC_HOSTNAME_URL: https://syncspace.fareselsadek.fyi/auth
+      KC_HOSTNAME_ADMIN_URL: https://syncspace.fareselsadek.fyi/auth
       KC_HOSTNAME_STRICT: false
       KC_HTTP_ENABLED: true
       KC_PROXY_HEADERS: xforwarded
