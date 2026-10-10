@@ -30,7 +30,7 @@ services:
     container_name: keycloak
     command: start --http-relative-path=/auth
     environment:
-      KC_HOSTNAME: syncspace.devtalk.me
+      KC_HOSTNAME: syncspace.fareselsadek.fyi
       KC_HOSTNAME_URL: https://syncspace.fareselsadek.fyi/auth
       KC_HOSTNAME_ADMIN_URL: https://syncspace.fareselsadek.fyi/auth
       KC_HOSTNAME_STRICT: falsegit
